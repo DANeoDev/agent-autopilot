@@ -1,4 +1,4 @@
-﻿---
+---
 name: project-autopilot
 description: Enables full end-to-end autonomous project execution in Google Antigravity. Guides dynamic permission granting, implementation plan execution, continuous testing, bug fixing, and verification until all criteria are satisfied.
 ---
@@ -18,10 +18,12 @@ When the user gives directives such as:
 ### The Security Handshake (Mandatory Step):
 Before executing actions without pausing for individual confirmations, you MUST:
 1. Check current project settings via `agy-autopilot --dir . --status` or inspect the project configuration.
-2. Present a clear security warning to the user outlining the elevated permissions:
-   - Command Execution: `CASCADE_COMMANDS_AUTO_EXECUTION_EAGER`
+2. Present a clear security warning to the user outlining the elevated permissions and experimental status:
+   - **Warning**: *"Autopilot is experimental software and has not been extensively tested. Use at your own risk."*
+   - Command Execution: `CASCADE_COMMANDS_AUTO_EXECUTION_EAGER` (runs shell commands without step-by-step review)
    - File Operations: Full read/write within workspace
    - Automated testing and dependency installation
+   - Remind the user to work on a clean Git branch with backed-up work.
 3. Confirm that the user explicitly consented (or confirm that `agy-autopilot --enable-autopilot` was run).
 
 ---

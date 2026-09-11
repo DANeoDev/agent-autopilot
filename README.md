@@ -1,10 +1,19 @@
-﻿# Antigravity Autopilot 🚀
+# Antigravity Autopilot 🚀
 
 > **Fully Automated Multi-Tier Model Routing, Intelligent Orchestration & Autonomous Project Execution for Google Antigravity.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platform: Windows](https://img.shields.io/badge/Platform-Windows%2010%2F11-0078D6.svg?logo=windows)](https://microsoft.com)
 [![Compatible: Google Antigravity](https://img.shields.io/badge/Compatible-Google%20Antigravity%202.0%20%2B%20CLI-4285F4.svg?logo=google)](https://antigravity.google)
+
+> [!WARNING]
+> **DISCLAIMER & EXPERIMENTAL STATUS: USE AT YOUR OWN RISK!**
+> **Antigravity Autopilot is experimental software and has not been extensively tested across all operating environments.**
+> Autonomous execution (`project-autopilot`) elevates command and file permissions (`CASCADE_COMMANDS_AUTO_EXECUTION_EAGER`), allowing the agent to execute shell commands and modify code without per-step human review.
+> - **Use strictly at your own risk.** You are solely responsible for actions taken on your system.
+> - Always work on dedicated, isolated Git branches with clean commits and backups.
+> - Never run in directories containing sensitive production credentials, unbacked-up data, or untrusted code.
+> - Review [docs/SECURITY_AND_PERMISSIONS.md](docs/SECURITY_AND_PERMISSIONS.md) before enabling autonomous mode.
 
 ---
 

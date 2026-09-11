@@ -1,4 +1,4 @@
-﻿# Antigravity Autopilot - One-Click Windows Installer
+# Antigravity Autopilot - One-Click Windows Installer
 # Installs intelligent model routing, autonomous project mode, and CLI tools machine-wide.
 
 [CmdletBinding()]
@@ -10,6 +10,7 @@ $ErrorActionPreference = "Stop"
 
 Write-Host "========================================================" -ForegroundColor Cyan
 Write-Host "  ANTIGRAVITY AUTOPILOT - ONE-CLICK INSTALLER" -ForegroundColor Cyan
+Write-Host "  (Experimental Tooling - Use At Your Own Risk)" -ForegroundColor Yellow
 Write-Host "========================================================" -ForegroundColor Cyan
 Write-Host ""
 

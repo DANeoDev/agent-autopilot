@@ -1,4 +1,4 @@
-﻿"""
+"""
 Antigravity Project Settings & Autopilot Manager
 Allows programmatic inspection and modification of Antigravity project-level settings
 (e.g., auto-execution policies, file access, permission grants) with explicit security checks.
@@ -86,20 +86,27 @@ def show_status(project_file: Path, project_data: Dict[str, Any]):
 
 
 def enable_autopilot(project_file: Path, project_data: Dict[str, Any], force: bool = False):
-    print("\n" + "!" * 58)
-    print("  SECURITY NOTICE: ENABLING AUTOPILOT (EAGER EXECUTION)")
-    print("!" * 58)
+    print("\n" + "!" * 64)
+    print("  SECURITY WARNING: ENABLING AUTOPILOT (EAGER EXECUTION)")
+    print("  USE AT YOUR OWN RISK! - THIS HAS NOT BEEN EXTENSIVELY TESTED")
+    print("!" * 64)
     print("This mode enables the agent to execute shell commands and file")
     print("operations in this workspace without interrupting you for manual")
-    print("permission on every single step.\n")
+    print("permission on every single step.")
+    print()
+    print("CAUTION: Autonomous execution can run arbitrary local commands,")
+    print("install dependencies, or modify code without per-step confirmation.")
+    print("Always work on a clean Git branch and avoid directories with")
+    print("sensitive credentials or unbacked-up data.")
+    print()
     print("Changes that will be applied to this project:")
     print("  [+] autoExecutionPolicy -> CASCADE_COMMANDS_AUTO_EXECUTION_EAGER")
     print("  [+] fileAccessPolicy    -> AGENT_SETTING_POLICY_ALLOW")
     print("  [+] permissionGrants    -> Common git, python/pytest, npm commands")
-    print("!" * 58 + "\n")
+    print("!" * 64 + "\n")
 
     if not force:
-        confirm = input("Do you grant full action permission for this project? (y/N): ").strip().lower()
+        confirm = input("I understand this is experimental. Grant full action permission? (y/N): ").strip().lower()
         if confirm != "y":
             print("Operation cancelled. Settings were NOT changed.")
             return
