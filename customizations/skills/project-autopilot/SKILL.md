@@ -104,13 +104,23 @@ At each milestone, the agent internally audits its progress by asking itself:
 - Execute relevant test suites (`pytest`, `npm test`, `cargo test`, build scripts) after every milestone.
 - **Never ask the user how to fix a test failure**: Inspect the stack trace, diagnose the root cause, modify the code, and re-run until all tests pass.
 
-### D. Multi-Pass Self-Correction Trajectory (X-Pass Autopilot)
-When executing complex or multi-task prompts (especially lists of 10–20+ dense requirements), single-pass execution is susceptible to LLM "attention sinks," causing subtle requirements (such as secondary dropdown options, hover directions, contrast styling, or edge cases) to be dropped.
+### D. Complex Cognitive State & Self-Learning Engine (Z = X + iY)
+When executing complex or multi-task prompts (especially lists of 10–20+ dense requirements), execution depth is governed by a **Continuous Complex Cognitive State**:
 
-To guarantee 100% fidelity without human ping-pong, Autopilot operates on an **$X$-Pass Self-Correction Trajectory** (Default: $X=2$ Double-Pass):
+$$
+Z = X + iY \in \mathbb{C}
+$$
+
+- **Physical Execution Depth ($X = \mathrm{Re}(Z) \in [1.0, 3.0]$)**:
+  Measures code creation, AST mutations, and in-situ delta repair passes.
+- **Epistemic Reflection Depth ($Y = \mathrm{Im}(Z) \in [0.0, 3.0]$)**:
+  Measures internal simulation, reasoning tokens, mathematical proof checking, and test synthesis.
+- **Cognitive Energy ($R = |Z| = \sqrt{X^2 + Y^2}$)** & **Phase Angle ($\theta = \arctan(Y/X)$)**:
+  - $\theta < 20^\circ$: Action-dominant (heavy file refactoring, fast mechanical execution).
+  - $\theta > 55^\circ$: Epistemic-dominant (deep algorithmic proofs, minimal code churn).
 
 ```text
-[Pass 1: Primary Batch Execution]
+[Pass 1: Primary Batch Execution (Physical X)]
                │
                ▼
 ┌─────────────────────────────────────────────────────────────┐
@@ -126,6 +136,14 @@ To guarantee 100% fidelity without human ping-pong, Autopilot operates on an **$
 ┌─────────────────────────────────────────────────────────────┐
 │ Pass 3: High-Complexity Edge Case & Cross-Element Polish    │
 │ (Boundary conditions, zero-state edge cases, mobile CSS)    │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│ Automated Telemetry & Online Weight Adaptation (Self-Learning)│
+│ • Derive ground truth: X* (based on delta items) & Y*       │
+│ • Update local cognitive model via online SGD (w <- w - n*e) │
+│ • Log privacy-safe hashed vector to samples.jsonl           │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -136,14 +154,16 @@ Pass 2 does **NOT** restart blindly from scratch. Instead, because files are alr
 3. **The Delta Plan**: Isolate any micro-features that were dropped or only partially solved.
 4. **Surgical Execution**: Apply targeted edits to resolve gaps, then re-execute the test suite.
 
-#### Recommended Pass Scaling Table
+#### Continuous & Discrete Pass Scaling Table
 
-| Passes ($X$) | Workload & Prompt Density | Operational Dynamics |
+| State ($Z = X + iY$) | Workload & Task Topology | Operational Dynamics |
 |---|---|---|
-| **$X=1$ (Single-Pass)** | 1–5 focused tasks, simple bug fixes | Maximum speed, minimal latency. Zero risk of dropped requirements on narrow tasks. |
-| **$X=2$ (Double-Pass)** | **Standard Default**: 5–15 tasks, full PRs, UI + backend | **Gold Standard**. 100% item recovery via "Is vs. Ought" delta audit at high KV-cache efficiency. |
-| **$X=3$ (Triple-Pass)** | 15–25+ dense tasks, rating math + db + multi-page UI + CSS | Deep edge-case validation, boundary checks (e.g. 0-game players), responsive layout polishing. |
-| **$X \ge 4$** | *Not Recommended* | Diminishing returns. Introduces risks of circular refactoring or infinite micro-polishing. |
+| **$X \approx 1.0, Y \le 0.5$** | 1–5 focused tasks, simple bug fixes | **Single-Pass**. Maximum speed, lowest latency. Straightforward mechanical edit. |
+| **$X \approx 2.0, Y \approx 1.0$** | **Standard Default**: 5–15 tasks, full PRs, UI + backend | **Double-Pass Gold Standard**. Recovers ~100% of dropped micro-requirements via "Is vs. Ought" gap analysis. |
+| **$X \approx 1.0, Y \ge 2.0$** | Formal mathematical proofs, rating algorithms, crypto | **Epistemic Heavy**. High reasoning/thinking tokens; write code once with verified rigor. |
+| **$X \approx 3.0, Y \approx 1.5$** | 15–25+ dense tasks, rating math + db + multi-page UI + CSS | **Triple-Pass**. Deep edge-case validation, boundary stress-testing, and complete visual fidelity. |
+| **$X \ge 4.0$** | *Not Recommended* | Diminishing returns. Introduces risks of circular refactoring or infinite micro-polishing. |
+
 
 ### E. GitHub-Compliant Math & Notation Readability Audit
 Whenever generating or updating documentation, README files, walkthroughs, or architectural notes:

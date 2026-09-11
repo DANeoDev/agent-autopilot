@@ -99,7 +99,7 @@ install_rules "$HOME/.config/agents/AGENTS.md" "Universal Config"
 echo -e "${YELLOW}[6/6] Installing CLI Tools & Configuring PATH...${NC}"
 mkdir -p "$BIN_TARGET"
 cp -rf "$BIN_SRC/"* "$BIN_TARGET/"
-chmod +x "$BIN_TARGET/agy-route" "$BIN_TARGET/agy-autopilot" "$BIN_TARGET/agent-route" "$BIN_TARGET/agent-autopilot" 2>/dev/null || true
+chmod +x "$BIN_TARGET/agy-route" "$BIN_TARGET/agy-autopilot" "$BIN_TARGET/agy-predict" "$BIN_TARGET/agent-route" "$BIN_TARGET/agent-autopilot" "$BIN_TARGET/agent-predict" 2>/dev/null || true
 
 PATH_LINE="export PATH=\"\$HOME/.gemini/antigravity/bin:\$PATH\""
 for rc_file in "$HOME/.zshrc" "$HOME/.bashrc" "$HOME/.profile"; do
@@ -124,7 +124,8 @@ echo -e "${CYAN}========================================================${NC}"
 echo -e "${CYAN}  INSTALLATION COMPLETED SUCCESSFULLY!                 ${NC}"
 echo -e "${CYAN}========================================================${NC}"
 echo "Available CLI commands across all agent terminals:"
-echo "  * agy-route / agent-route       : Classify and select optimal model"
+echo "  * agy-route / agent-route         : Classify and select optimal model"
 echo "  * agy-autopilot / agent-autopilot : Inspect or enable autonomous mode"
+echo "  * agy-predict / agent-predict     : Predict continuous complex pass depth (Z = X + iY)"
 echo ""
 

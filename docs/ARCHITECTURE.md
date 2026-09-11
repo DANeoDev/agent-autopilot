@@ -213,7 +213,72 @@ In a real-world testing benchmark, a prompt requested 12 dense requirements acro
 | **$X=3$ (Triple-Pass)** | 15–25+ dense tasks, rating math + db + multi-page UI + CSS | Deep edge-case validation, boundary stress-testing, and complete visual/documentation fidelity. |
 | **$X \ge 4$** | *Not Recommended* | Diminishing returns. Risks circular refactoring or infinite micro-polishing loops. |
 
-### 4.3 Coherent Enhancements Roadmap
+### 4.3 The Complex Cognitive Plane ($Z = X + iY$) & Self-Learning Engine
+
+In advanced agent theory, execution depth cannot be restricted to an integer counter. Cognitive effort naturally bifurcates into two orthogonal dimensions: **Physical Action Depth** (creating and mutating code) and **Epistemic Reflection Depth** (reasoning, simulating, and verifying without modifying files).
+
+Autopilot models execution state as a continuous parameter in the complex plane:
+
+$$
+Z = X + iY \in \mathbb{C}
+$$
+
+```text
+              Imaginary Axis (Y: Epistemic / Reflection Depth)
+                   ▲
+                   │
+                   │     Z = 1.0 + 2.5i (Mathematical Proof:
+                   │                     Write code once, think deeply)
+                   │          ●
+                   │
+                   │               Z = 2.0 + 1.0i (Fullstack Overhaul:
+                   │                               Double-pass code, balanced thinking)
+                   │                    ●
+                   │
+                   │                          Z = 2.0 + 0.2i (Bulk CSS Refactor:
+                   │                                          Double pass on files, low math)
+                   │                               ●
+                   └────────────────────────────────────────► Real Axis (X: File Action Depth)
+```
+
+#### Orthogonal State Dimensions
+1. **Physical Action Depth ($X = \mathrm{Re}(Z) \in [1.0, 3.0]$)**:
+   Quantifies file mutations, AST adjustments, and in-situ delta repair cycles:
+   - $X = 1.0$: Direct batch execution without secondary audits.
+   - $X = 1.3$: Scoped sub-pass targeting high-risk boundary constraints.
+   - $X = 2.0$: Full Double-Pass (100% "Is vs. Ought" gap audit).
+   - $X = 3.0$: Triple-pass with multi-tier stress testing and cross-platform matrix checks.
+2. **Epistemic Reflection Depth ($Y = \mathrm{Im}(Z) \in [0.0, 3.0]$)**:
+   Quantifies internal verification tokens, counterfactual simulation, test synthesis, and mathematical proof checking prior to file writes.
+3. **Polar State Metrics ($Z = R e^{i\theta}$)**:
+   - **Cognitive Energy Budget ($R = |Z| = \sqrt{X^2 + Y^2}$)**: The total attentional mass allocated to the prompt.
+   - **Attentional Phase Angle ($\theta = \arctan(Y/X)$)**:
+     - $\theta < 20^\circ$: Action-dominant (heavy file refactoring, minimal reflection).
+     - $20^\circ \le \theta \le 50^\circ$: Balanced cognitive flow (synchronized backend, frontend, and tests).
+     - $\theta > 55^\circ$: Epistemic-dominant (formal mathematical proofs, protocol invariants).
+
+#### Dynamic Feature Hashing & Online Self-Learning
+
+To eliminate reliance on static, hand-curated keyword dictionaries, Autopilot implements an unsupervised subword feature hashing engine (the hashing trick):
+
+$$
+h: \text{token} \longrightarrow \{1, \dots, D\} \quad (D = 256)
+$$
+
+1. **Subword & Character 3-Gram Hashing**: Incoming prompts are projected into a 256-dimensional sparse vector $\vec{\phi}(\text{prompt}) \in \mathbb{R}^{256}$.
+2. **Online Stochastic Gradient Descent (SGD)**:
+   At the conclusion of each session, empirical ground truth $(X^*, Y^*)$ is evaluated based on whether Pass 2 uncovered delta items or test regressions:
+
+   $$
+   \vec{w} \leftarrow \vec{w} - \eta \cdot \nabla \mathcal{L}\left( \vec{w}^T \vec{\phi}(\text{prompt}), X^* \right)
+   $$
+
+3. **Autonomous Correlation Discovery**:
+   The engine automatically discovers which subword patterns correlate with attention drops across any language or domain, continuously tuning local weights without human intervention.
+4. **Privacy-Preserving Telemetry**:
+   Hashed vectors and outcome signals are appended to local storage (`~/.gemini/autopilot/telemetry/samples.jsonl`). Zero raw prompt text, code, or file paths ever leave the user's system.
+
+### 4.4 Coherent Enhancements Roadmap
 
 Upon reaching the Satisfactory threshold, the session automatically delivers 3–5 high-value, logical next-step proposals that naturally expand upon the fulfilled foundation without violating product identity.
 

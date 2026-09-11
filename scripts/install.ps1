@@ -140,7 +140,8 @@ Write-Host "========================================================" -Foregroun
 Write-Host "  INSTALLATION COMPLETED SUCCESSFULLY!" -ForegroundColor Cyan
 Write-Host "========================================================" -ForegroundColor Cyan
 Write-Host "Available CLI commands across all agent terminals:" -ForegroundColor White
-Write-Host "  * agy-route / agent-route       : Classify and select optimal model" -ForegroundColor White
+Write-Host "  * agy-route / agent-route         : Classify and select optimal model" -ForegroundColor White
 Write-Host "  * agy-autopilot / agent-autopilot : Inspect or enable autonomous mode" -ForegroundColor White
+Write-Host "  * agy-predict / agent-predict     : Predict continuous complex pass depth (Z = X + iY)" -ForegroundColor White
 Write-Host ""
 

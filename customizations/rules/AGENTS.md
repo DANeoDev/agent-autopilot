@@ -101,19 +101,28 @@ Whenever creating or updating documentation, markdown files, technical explanati
 
 ---
 
-## 9. Multi-Pass Self-Correction Trajectory (X-Pass Autopilot)
+## 9. Complex Cognitive State & Self-Learning Autopilot (Z = X + iY)
 
-When executing under Project Autopilot on multi-task prompts (especially lists of 5–20+ requirements), single-pass execution is prone to the LLM "attention sink" effect where subtle requirements (styling nuances, hover positions, secondary options, edge cases) get overlooked.
+When executing under Project Autopilot, the required execution and verification depth is modeled as a continuous state in the complex plane:
 
-- **Standard Default ($X=2$ Double-Pass)**:
-  - **Pass 1 (Primary Execution)**: Implement the core architecture, files, endpoints, UI components, and tests.
-  - **Pass 2 (Gap-Audit "Is vs. Ought" Analysis)**: Perform a line-by-line audit comparing the original prompt ("Ought") against modified files and `git diff` ("Is"). Extract all partial or missed items into a Delta Plan and execute fixes immediately without starting over.
-- **Pass Scaling Heuristic**:
-  - $X=1$: Simple, focused 1–5 task prompts with minimal cross-cutting dependencies.
-  - $X=2$ (**Default Gold Standard**): Standard multi-task feature sets (5–15 items).
-  - $X=3$: Ultra-dense feature dumps (15–25+ requirements spanning backend math, database migrations, complex UI/CSS, and edge cases).
-  - $X \ge 4$: Not recommended (diminishing returns, risk of infinite micro-polishing).
-- **Never Restart from Scratch in Pass 2**: Pass 2 is an in-situ delta inspection and surgical repair pass. Working files are already warm in KV cache, making Pass 2 fast, cheap, and virtually 100% effective at catching dropped requirements.
+$$
+Z = X + iY \in \mathbb{C}
+$$
+
+- **Physical Execution Depth ($X = \mathrm{Re}(Z) \in [1.0, 3.0]$)**:
+  - $X = 1.0$: Direct batch implementation without secondary audits.
+  - $X = 2.0$ (**Standard Default Gold Standard**): Pass 1 primary execution followed by Pass 2 in-situ **"Is vs. Ought" Gap Analysis** (comparing raw prompt requirements against modified files and `git diff`, building an immediate Delta Plan, and applying surgical fixes).
+  - $X = 3.0$: Full double-pass plus adversarial edge-case testing, boundary fuzzing, and multi-tier regression verification.
+  - Fractional $X$ (e.g. $X=1.3$): Scoped sub-pass targeting only the highest-complexity files or highest-risk constraints.
+- **Epistemic Reflection Depth ($Y = \mathrm{Im}(Z) \in [0.0, 3.0]$)**:
+  - Governs internal verification tokens, counterfactual simulation, test synthesis, and mathematical proof checking prior to file writes.
+- **Cognitive Energy ($R = |Z| = \sqrt{X^2 + Y^2}$)** and **Phase Angle ($\theta = \arctan(Y/X)$)**:
+  - $\theta < 20^\circ$: Action-dominant (heavy code refactoring, minimal reflection).
+  - $\theta > 55^\circ$: Epistemic-dominant (heavy mathematical/architectural reasoning, minimal file edits).
+- **Dynamic Self-Learning (Feature Hashing & Online SGD)**:
+  - Autopilot learns vocabulary correlations dynamically using subword feature hashing (zero static hardcoded keyword dictionaries).
+  - At the conclusion of Phase 2, the agent observes whether Pass 2 uncovered delta items or test regressions, deriving empirical ground truth $(X^*, Y^*)$ and updating local model weights (`bin/cognitive_engine.py --learn X* Y*`) in a privacy-preserving telemetry buffer.
+
 
 ---
 

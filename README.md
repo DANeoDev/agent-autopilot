@@ -204,6 +204,111 @@ agent-autopilot --dir . --passes 3
 
 ---
 
+## 🧠 Complex Cognitive State ($Z = X + iY$) & Self-Learning Engine
+
+Autopilot does not treat pass execution as a rigid integer loop counter. In agentic software engineering, cognitive effort spans two orthogonal dimensions: **Physical Execution Depth** (mutating code) and **Epistemic Reflection Depth** (reasoning, simulating, and verifying without editing files).
+
+Autopilot models execution depth as a continuous state in the complex plane:
+
+$$
+Z = X + iY \in \mathbb{C}
+$$
+
+```text
+              Imaginary Axis (Y: Epistemic / Reflection Depth)
+                   ▲
+                   │
+                   │     Z = 1.0 + 2.5i (e.g., Glicko Convergence Proof:
+                   │                     Write code once, think deeply)
+                   │          ●
+                   │
+                   │               Z = 2.0 + 1.0i (Fullstack Leaderboard:
+                   │                               Double-pass code, balanced thinking)
+                   │                    ●
+                   │
+                   │                          Z = 2.0 + 0.2i (Bulk CSS Migration:
+                   │                                          Double pass on files, low math)
+                   │                               ●
+                   └────────────────────────────────────────► Real Axis (X: File Action Depth)
+```
+
+### 1. The Two Orthogonal Dimensions of Agent Work
+
+| Component | Dimension | Physical Meaning in Agent Runtime |
+|---|---|---|
+| **Real: $X = \mathrm{Re}(Z) \in [1.0, 3.0]$** | **Action / Physical Mutation** | File creation, AST edits, refactoring passes, and in-situ delta repair loops. |
+| **Imaginary: $Y = \mathrm{Im}(Z) \in [0.0, 3.0]$** | **Epistemic / Cognitive Reflection** | Reasoning tokens, proof checking, counterfactual simulation, and test synthesis. |
+
+#### Polar Coordinates: Energy and Phase
+In polar form $Z = R e^{i\theta}$:
+1. **Cognitive Energy Budget ($R = |Z| = \sqrt{X^2 + Y^2}$)**:
+   The total computational mass allocated to the prompt.
+2. **Attentional Phase Angle ($\theta = \arctan(Y/X)$)**:
+   - **$\theta < 20^\circ$ (Action-Dominant)**: High code churn, mechanical migrations, formatting (e.g. $Z = 2.0 + 0.2i$).
+   - **$20^\circ \le \theta \le 50^\circ$ (Balanced Cognitive Flow)**: Standard fullstack PRs with synchronized frontend, backend, and tests ($Z = 2.0 + 1.0i$).
+   - **$\theta > 55^\circ$ (Epistemic-Dominant)**: Complex algorithms, formal proofs, concurrency invariants ($Z = 1.0 + 2.5i$).
+
+### 2. Continuous & Fractional Pass Execution ($X \in \mathbb{R}^+$)
+
+Pass depth is continuous rather than all-or-nothing:
+- **$X = 1.0$ (Direct Pass)**: Direct batch implementation without secondary audits.
+- **$X = 1.3$ (Scoped Sub-Pass)**: Pass 1 executes fully, followed by a targeted audit focused strictly on high-risk boundary constraints and negative exclusions.
+- **$X = 2.0$ (Gold Standard Double-Pass)**: Full 100% "Is vs. Ought" gap audit across every prompt requirement against modified files.
+- **$X = 3.0$ (Triple-Pass)**: Full double pass plus adversarial edge-case generation and cross-platform regression matrices.
+
+### 3. Self-Learning Vocabulary via Feature Hashing (Zero Hardcoded Dictionaries)
+
+Traditional tools rely on brittle keyword dictionaries (*"database"*, *"route"*, *"hover"*). Agent Autopilot replaces hardcoded lists with **unsupervised subword feature hashing (the hashing trick)**:
+
+$$
+h: \text{token} \longrightarrow \{1, \dots, D\} \quad (D = 256)
+$$
+
+1. **Dynamic Character 3-Gram & Token Projections**: The prompt is projected into a 256-dimensional sparse vector $\vec{\phi}(\text{prompt})$.
+2. **Online Stochastic Gradient Descent (SGD)**:
+   At the end of every Autopilot run, the agent evaluates ground truth $(X^*, Y^*)$ (did Pass 2 find missed items? did tests pass?) and performs an online weight update:
+
+   $$
+   \vec{w} \leftarrow \vec{w} - \eta \cdot \nabla \mathcal{L}(\vec{w}^T \vec{\phi}(\text{prompt}), X^*)
+   $$
+
+3. **Autonomous Correlation Discovery**:
+   If prompts containing terms like *"mutex"*, *"debounce"*, or *"WCAG"* consistently drop requirements in Pass 1, the model **automatically increases the weights** of those hash buckets without requiring manual dictionary updates.
+
+### 4. Privacy-First Local & Federated Telemetry
+
+- **Zero Prompt Leaks**: Raw prompts, code, filenames, and project directories **never** leave your machine.
+- **Telemetry Buffer**: Local samples are recorded as anonymized feature hashes to `~/.gemini/autopilot/telemetry/samples.jsonl`:
+  ```json
+  {"features_hash": "e207de1031d6bea1", "dim": 256, "pred_x": 2.0, "pred_y": 1.0, "actual_x": 1.0, "actual_y": 0.2, "samples_seen": 1}
+  ```
+
+### 5. CLI Usage: Instant Cognitive Pass Prediction
+
+You can inspect the predicted complex state $Z = X + iY$ for any prompt before executing:
+
+```bash
+# Using agent-predict (or agy-predict)
+agent-predict "Build Glicko rating volatility convergence proof and unit tests"
+
+# Output:
+# ========================================================
+#   AUTOPILOT COGNITIVE COMPLEX STATE ENGINE (Z = X + iY)
+# ========================================================
+# Complex State (Z)   : 1.94 + 0.95i in C
+# Physical Depth (X)  : 1.943 -> Double-Pass (Gold Standard)
+# Epistemic Depth (Y) : 0.955 (Internal reflection & reasoning)
+# Cognitive Budget (R): 2.165 (Total attentional energy)
+# Phase Angle (θ)     : 26.2° -> Balanced Cognitive Flow
+# Samples Trained     : 1
+# ========================================================
+
+# Or via agent-autopilot
+agent-autopilot --predict "Migrate 12 Jinja templates to React"
+```
+
+---
+
 
 ## ⚡ The Autopilot Advantage: Velocity & Token Economics
 
@@ -272,6 +377,9 @@ Modern inference backends (Gemini and Claude) rely heavily on Prompt/KV Caching.
 ## ✨ Features
 
 - 🧠 **Dynamic 5-Tier Decision Matrix**: Classifies prompts in <50ms and routes to the exact model tier needed.
+- 🧬 **Complex Cognitive State Engine ($Z = X + iY \in \mathbb{C}$)**: Models execution on a continuous complex spectrum: physical file mutation ($X = \mathrm{Re}(Z) \in [1.0, 3.0]$) and epistemic reflection ($Y = \mathrm{Im}(Z) \in [0.0, 3.0]$) with polar energy and attentional phase metrics.
+- 🎓 **Self-Learning Vocabulary via Feature Hashing**: Zero static keyword dictionaries. Uses character 3-gram feature hashing and online Stochastic Gradient Descent (SGD) to automatically learn which terms correlate with attention drops over time.
+- 📡 **Privacy-Preserving Telemetry & Local Buffer**: Stores purely anonymized numeric vectors and empirical outcomes locally (`samples.jsonl`) with zero prompt text, code, or filename exposure.
 - 🚀 **Proactive Autopilot Onboarding (Kickoff Discovery)**: When initiating a major feature or new project without explicitly requesting Autopilot, the agent proactively asks *once* if you want to activate Project Autopilot (starting cleanly with Collaborative Alignment & Planning before any execution).
 - 🤖 **Two-Phase Autonomous Project Mode (`project-autopilot`)**:
   - **Phase 1: Collaborative Alignment**: The agent acts as an engineering sounding board to discuss architectural trade-offs, clarify domain rules, and align on a detailed implementation plan.
@@ -427,25 +535,26 @@ agent-autopilot/
 ├── bin/
 │   ├── agy_router.py              # Cross-platform CLI task classifier & decision engine
 │   ├── agy_project_manager.py     # Cross-platform project permissions & autopilot manager
-│   ├── agy-route.bat              # Windows launcher for agy-route
-│   ├── agy-autopilot.bat          # Windows launcher for agy-autopilot
-│   ├── agy-route                  # macOS & Linux launcher for agy-route
-│   ├── agy-autopilot              # macOS & Linux launcher for agy-autopilot
-│   ├── agent-route.bat            # Universal Windows launcher for agent-route
-│   ├── agent-autopilot.bat        # Universal Windows launcher for agent-autopilot
-│   ├── agent-route                # Universal macOS & Linux launcher for agent-route
-│   └── agent-autopilot            # Universal macOS & Linux launcher for agent-autopilot
+│   ├── cognitive_engine.py        # Self-learning continuous complex pass predictor (Z = X + iY)
+│   ├── agy-route.bat / agy-route  # Route launchers
+│   ├── agy-autopilot.bat / agy-autopilot # Autopilot launchers
+│   ├── agy-predict.bat / agy-predict # Cognitive state predictor launchers
+│   ├── agent-route.bat / agent-route # Universal route launchers
+│   ├── agent-autopilot.bat / agent-autopilot # Universal autopilot launchers
+│   └── agent-predict.bat / agent-predict # Universal cognitive state predictor launchers
 ├── customizations/
 │   ├── rules/
-│   │   └── AGENTS.md              # Machine-wide model orchestration rules
+│   │   └── AGENTS.md              # Machine-wide model orchestration & complex cognitive rules
 │   └── skills/
 │       ├── model-router/          # Skill: Task classification & subagent dispatch
 │       │   └── SKILL.md
-│       └── project-autopilot/     # Skill: Autonomous goal execution & self-healing
+│       └── project-autopilot/     # Skill: Complex cognitive state execution & online learning
 │           └── SKILL.md
 ├── docs/
-│   ├── ARCHITECTURE.md            # Deep dive on runtime, velocity dynamics & token economics
+│   ├── ARCHITECTURE.md            # Deep dive on complex plane Z=X+iY, runtime dynamics & token economics
 │   └── SECURITY_AND_PERMISSIONS.md # Security boundaries & permission guidelines
+├── models/
+│   └── cognitive_weights.json     # Calibrated baseline & locally learned neural feature weights
 ├── scripts/
 │   ├── install.bat                # Windows batch bootstrap runner
 │   ├── install.ps1                # Multi-agent Windows PowerShell installer

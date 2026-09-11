@@ -164,8 +164,25 @@ def main():
     parser.add_argument("--enable-autopilot", action="store_true", help="Enable eager execution for autonomous workflow")
     parser.add_argument("--disable-autopilot", action="store_true", help="Revert to prompt-for-review mode")
     parser.add_argument("--passes", type=int, choices=[1, 2, 3], default=None, help="Set execution pass depth (1=Single-Pass, 2=Double-Pass default, 3=Triple-Pass deep audit)")
+    parser.add_argument("--predict", type=str, default=None, help="Predict optimal complex pass state Z = X + iY for a prompt")
     parser.add_argument("--yes", "-y", action="store_true", help="Bypass interactive security confirmation")
     args = parser.parse_args()
+
+    if args.predict:
+        from cognitive_engine import CognitiveEngine
+        engine = CognitiveEngine()
+        result = engine.predict(args.predict)
+        print("\n========================================================")
+        print("  AUTOPILOT COGNITIVE COMPLEX STATE ENGINE (Z = X + iY)")
+        print("========================================================")
+        print(f"Complex State (Z)   : {result['Z']} in C")
+        print(f"Physical Depth (X)  : {result['X_continuous']} -> {result['X_description']}")
+        print(f"Epistemic Depth (Y) : {result['Y_continuous']} (Internal reflection & reasoning)")
+        print(f"Cognitive Budget (R): {result['R_magnitude']} (Total attentional energy)")
+        print(f"Phase Angle (theta) : {result['theta_degrees']} deg -> {result['orientation']}")
+        print(f"Samples Trained     : {result['samples_trained']}")
+        print("========================================================\n")
+        return
 
     target_dir = Path(args.dir).resolve()
     pfile, pdata = find_project_for_directory(target_dir)
