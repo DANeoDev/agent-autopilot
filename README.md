@@ -3,8 +3,9 @@
 > **Fully Automated Multi-Tier Model Routing, Intelligent Orchestration & Autonomous Project Execution for Google Antigravity.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Platform: Windows](https://img.shields.io/badge/Platform-Windows%2010%2F11-0078D6.svg?logo=windows)](https://microsoft.com)
-[![Compatible: Google Antigravity](https://img.shields.io/badge/Compatible-Google%20Antigravity%202.0%20%2B%20CLI-4285F4.svg?logo=google)](https://antigravity.google)
+[![Platform: Windows | macOS | Linux](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-0078D6.svg)](https://github.com/DANeoDev/antigravity-autopilot)
+[![Compatible: Google Antigravity 2.12.2+](https://img.shields.io/badge/Antigravity-v2.12.2%2B%20(2.0%2B)-4285F4.svg?logo=google)](https://antigravity.google)
+[![Python: 3.10+](https://img.shields.io/badge/Python-3.10%2B%20(Tested%203.13.5)-3776AB.svg?logo=python)](https://python.org)
 
 > [!WARNING]
 > **DISCLAIMER & EXPERIMENTAL STATUS: USE AT YOUR OWN RISK!**
@@ -29,10 +30,65 @@ Google Antigravity is a groundbreaking agentic development environment, but choo
 
 ---
 
+## ⚡ The Autopilot Advantage: Velocity & Token Economics
+
+Why does running tasks under **Antigravity Autopilot** feel orders of magnitude faster, cleaner, and more responsive?
+
+It is not an illusion—it is a **measurable compounding effect** driven by runtime execution mechanics, cognitive context persistence, and fundamental LLM token economics.
+
+### 1. Eliminating the "Human Ping-Pong" Latency (The Flow State)
+In standard conversational pair-programming, execution is severely fragmented:
+$$\text{Agent Step 1} \longrightarrow \text{Pause \& Explain} \longrightarrow \text{Human Reads} \longrightarrow \text{User Types "OK"} \longrightarrow \text{Model Resumes} \longrightarrow \text{Step 2}\dots$$
+Even if each model response takes only 15–20 seconds, human context switching, reading pauses, and conversational round-trips easily stretch a **3-minute coding task into a 45-minute interactive slog**.
+
+Under Autopilot, all 10–20 steps (reading schemas, modifying routes, adjusting templates, styling CSS, updating test suites) happen back-to-back in an **unbroken execution chain**. The assistant acts as an autonomous senior engineer executing an entire PR checklist rather than an autocomplete engine waiting for keystrokes.
+
+### 2. Cognitive Momentum & "Hot Cache" Working Memory
+When an agent is forced to stop and wait between turns, subtle state drift occurs: variable names get slightly mismatched, CSS selectors diverge, and codebase assumptions reset.
+
+Under Autopilot, zero cold-start re-evaluation is needed:
+- The full mental model of the codebase (how backend queries link with templates, variable names, query parameters, CSS utility classes, and test fixtures) stays **actively primed in working context**.
+- All changes across backend, frontend, and test files are authored in direct, simultaneous alignment.
+
+### 3. Immediate Autonomous Feedback Loops (Self-Healing in Real Time)
+In traditional development, an unexpected test failure halts everything:
+> *"Hey, 2 unit tests failed because default parameters changed. How should I proceed?"*
+
+This burns two full conversational round-trips. In Autopilot:
+- The test suite is triggered **immediately** after multi-file changes.
+- Test failures or regressions are diagnosed on the spot, code and assertions are aligned to match project specifications, and tests are re-run until passing at 100%—**zero human pauses required**.
+
+### 4. Systemic Batching vs. Fragmented Tweaks
+In fragmented development, fixing a UI bug often exposes a route issue, which reveals a database schema oversight. Tackling them as a cohesive, batch-compiled system means touching each file **once** with complete contextual clarity, rather than patching the same file 5 times across an hour.
+
+### 5. Extreme Token Efficiency: Defeating $O(N^2)$ Inflation
+From an LLM architectural perspective, Autopilot is significantly more token-efficient than turn-by-turn chat:
+
+#### A. Eliminating the "Conversation History Tax" ($O(N^2)$ Growth)
+Every time a new message is sent in a traditional chat session, the **entire past conversation history** must be re-sent to the model as input tokens for that turn:
+$$\text{Input Tokens}_{\text{Turn-by-Turn}} \approx \sum_{k=1}^{N} \left( \text{Initial Context} + \sum_{i=1}^{k} \text{Turn}_i \right) \propto O(N^2)$$
+Every intermediate status check, conversational transition, and "Please proceed" becomes permanent conversational weight re-processed and billed on every subsequent step.
+- **Autopilot Flow**: Operates in a single continuous tool-calling trajectory. Zero redundant conversational turns re-ingesting back-and-forth history.
+
+#### B. Zero "Politeness & Transition" Token Bloat
+Standard turn-by-turn chat generates 200–500 tokens *per micro-step* of conversational filler:
+> *"I have successfully modified user_service.py. Here is a summary of what changed: [...]. Now I will move on to user_profile.html. Would you like me to proceed?"*
+
+Across 8 micro-steps, that alone generates **2,000–4,000 output tokens of pure fluff** that serves zero functional purpose and burdens subsequent turns. Autopilot strips this away entirely: it executes tool calls directly until the Definition of Done is met.
+
+#### C. Drastic Reduction in Redundant File Inspection
+When an agent halts between turns, it loses certainty and repeatedly re-runs `view_file` and `grep_search` on the same files. In a continuous Autopilot flow, a single inspection informs the routes, templates, and unit tests in one pass—no redundant re-reading.
+
+#### D. Maximized KV-Cache Hit Rates
+Modern inference backends (Gemini and Claude) rely heavily on Prompt/KV Caching. Rapid, unblocked tool sequences keep prompt prefixes warm in server memory. Long idle periods between human prompts cause cache eviction, requiring expensive re-computation of the context window.
+
+---
+
+
 ## ✨ Features
 
 - 🧠 **Dynamic 5-Tier Decision Matrix**: Classifies prompts in <50ms and routes to the exact model tier needed.
-- ⚡ **1-Click Windows Installer**: Double-click `install.bat` and the entire machine-wide configuration is installed in seconds.
+- 🚀 **Proactive Autopilot Onboarding (Kickoff Discovery)**: When initiating a major feature or new project without explicitly requesting Autopilot, the agent proactively asks *once* if you want to activate Project Autopilot (starting cleanly with Collaborative Alignment & Planning before any execution).
 - 🤖 **Two-Phase Autonomous Project Mode (`project-autopilot`)**:
   - **Phase 1: Collaborative Alignment**: The agent acts as an engineering sounding board to discuss architectural trade-offs, clarify domain rules, and align on a detailed implementation plan.
   - **The Launch Gate**: Prompts explicitly: *"The plan is aligned. Do you want me to engage full Autopilot execution now?"*
@@ -65,19 +121,48 @@ Google Antigravity is a groundbreaking agentic development environment, but choo
 
 ---
 
-## 🚀 Quickstart (1-Click Windows Install)
+## 💻 System & Platform Compatibility
 
-### Option A: Double-Click Installer (Zero Setup)
-1. Download or clone this repository.
+Antigravity Autopilot is engineered to integrate cleanly into Google Antigravity's machine configuration directory (`~/.gemini/config`).
+
+| Component | Target / Verified Specification | Status |
+|---|---|---|
+| **Antigravity Engine** | **Google Antigravity v2.12.2+** (ProductVersion 2.12.2.0; Antigravity 2.0+ architecture) | ✅ Primary Reference Target |
+| **Primary OS** | **Windows 11** (Build 10.0.26200+, AMD64 64-bit) & **Windows 10** (1809+) | ✅ Native 1-Click Installer (`install.bat`) |
+| **macOS Support** | macOS 13+ (Ventura, Sonoma, Sequoia - Apple Silicon & Intel) | ✅ Supported via `./scripts/install.sh` |
+| **Linux / WSL** | Ubuntu 22.04+, Debian 12+, Fedora 38+, Arch, WSL2 | ✅ Supported via `./scripts/install.sh` |
+| **Python Runtime** | **Python 3.10+** (Verified on Python 3.13.5 64-bit) | ✅ Required for CLI tools & router |
+
+---
+
+## 🚀 Quickstart & Installation
+
+Antigravity Autopilot provides dedicated, platform-specific installers for **Windows**, **macOS**, and **Linux**.
+
+### 🪟 Windows (1-Click Install)
+
+#### Option A: Double-Click Installer (Zero Command Line)
+1. Clone or download this repository.
 2. Double-click **`install.bat`** in the repository root.
-3. Done! All global rules, skills, and CLI tools are installed and added to your `PATH`.
+3. Done! Machine-wide rules, skills, and CLI binaries are instantly installed and configured on your User `PATH`.
 
-### Option B: PowerShell
+#### Option B: PowerShell
 ```powershell
 git clone https://github.com/DANeoDev/antigravity-autopilot.git
 cd antigravity-autopilot
 .\scripts\install.ps1
 ```
+
+### 🍎 macOS & 🐧 Linux (1-Line Shell Install)
+
+Run the native POSIX installer:
+```bash
+git clone https://github.com/DANeoDev/antigravity-autopilot.git
+cd antigravity-autopilot
+chmod +x scripts/install.sh
+./scripts/install.sh
+```
+*This installs global skills to `~/.gemini/config/skills/`, configures `~/.gemini/config/AGENTS.md`, deploys executable wrappers to `~/.gemini/antigravity/bin`, and adds the bin directory to your `~/.zshrc` / `~/.bashrc`.*
 
 ---
 
@@ -133,27 +218,31 @@ agy-autopilot --dir . --enable-autopilot
 ```text
 antigravity-autopilot/
 ├── bin/
-│   ├── agy_router.py              # CLI task classifier and decision engine
-│   ├── agy-route.bat              # Global CLI command
-│   ├── agy_project_manager.py     # Project permissions and autopilot engine
-│   └── agy-autopilot.bat          # Project settings CLI command
+│   ├── agy_router.py              # Cross-platform CLI task classifier & decision engine
+│   ├── agy_project_manager.py     # Cross-platform project permissions & autopilot manager
+│   ├── agy-route.bat              # Windows launcher for agy-route
+│   ├── agy-autopilot.bat          # Windows launcher for agy-autopilot
+│   ├── agy-route                  # macOS & Linux launcher for agy-route
+│   └── agy-autopilot              # macOS & Linux launcher for agy-autopilot
 ├── customizations/
 │   ├── rules/
-│   │   └── AGENTS.md              # Machine-wide orchestration rule
+│   │   └── AGENTS.md              # Machine-wide model orchestration rules
 │   └── skills/
 │       ├── model-router/          # Skill: Task classification & subagent dispatch
 │       │   └── SKILL.md
 │       └── project-autopilot/     # Skill: Autonomous goal execution & self-healing
 │           └── SKILL.md
 ├── docs/
-│   ├── ARCHITECTURE.md            # Deep dive on runtime & multi-agent routing
+│   ├── ARCHITECTURE.md            # Deep dive on runtime, velocity dynamics & token economics
 │   └── SECURITY_AND_PERMISSIONS.md # Security boundaries & permission guidelines
 ├── scripts/
-│   ├── install.ps1                # PowerShell installer
-│   ├── install.bat                # Batch bootstrap runner
-│   ├── uninstall.ps1              # Clean uninstaller
-│   └── verify.ps1                 # Health checker
-├── install.bat                    # Root 1-click double-clickable installer
+│   ├── install.bat                # Windows batch bootstrap runner
+│   ├── install.ps1                # Windows PowerShell installer
+│   ├── install.sh                 # macOS & Linux Bash installer
+│   ├── uninstall.ps1              # Windows uninstaller
+│   ├── uninstall.sh               # macOS & Linux uninstaller
+│   └── verify.ps1                 # Windows health check script
+├── install.bat                    # Root 1-click double-clickable Windows installer
 ├── LICENSE                        # MIT License
 └── README.md                      # Documentation
 ```
@@ -163,9 +252,17 @@ antigravity-autopilot/
 ## 🗑️ Uninstallation
 
 To cleanly remove the global skills and binaries from your machine:
+
+**Windows (PowerShell):**
 ```powershell
 .\scripts\uninstall.ps1
 ```
+
+**macOS & Linux (Bash):**
+```bash
+./scripts/uninstall.sh
+```
+
 *(Your `~/.gemini/config/AGENTS.md` is preserved so custom non-autopilot rules are not lost).*
 
 ---

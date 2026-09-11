@@ -1,4 +1,4 @@
-﻿# Antigravity Global Model Orchestration Guidelines
+# Antigravity Global Model Orchestration Guidelines
 
 These guidelines apply across all projects and workspaces on this machine.
 
@@ -61,8 +61,20 @@ High-tier models (Claude Opus 4.6, Claude Sonnet 4.6 Thinking) have stricter hou
 
 ---
 
-## 5. Mandatory Model Attribution Footer
+## 5. Proactive Project Autopilot Onboarding (Kickoff Rule)
+
+At the start of a project or whenever the user presents a substantial multi-step feature, architectural refactor, or new pipeline implementation without explicitly activating Autopilot in their prompt:
+- **Ask ONCE**: Inquire whether the user would like to activate **Project Autopilot** for this project/task.
+- **Clarify the Two-Phase Nature**: Explicitly remind the user that enabling Autopilot **does NOT mean leaping directly into execution**. Autopilot begins with **Phase 1: Collaborative Alignment & Planning** (where the user and agent align on design trade-offs, scavenge reusable patterns, and establish concrete milestones before any hands-off execution begins).
+- **Standard Prompt Format**:
+  > *"Would you like to activate **Project Autopilot** for this project? (Note: Autopilot begins with our collaborative Alignment & Planning phase before any autonomous execution starts.)"*
+- **Strict Single Prompting**: If the user declines or expresses preference for standard turn-by-turn mode, respect the decision and do not prompt again for the remainder of that task.
+
+---
+
+## 6. Mandatory Model Attribution Footer
 
 At the very end of EVERY response, you MUST include a clear attribution note indicating which model(s) performed the work. Use the following format:
 
 > 🤖 **Model Used**: [Primary Model Name] *(if subagents were invoked, add: `+ [Subagent Model / Tier] for [specific subtask]`)*
+

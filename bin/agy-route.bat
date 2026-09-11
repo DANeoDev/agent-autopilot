@@ -1,2 +1,2 @@
 @echo off
-python "C:\Users\danie\.gemini\antigravity\bin\agy_router.py" %*
+python "%~dp0agy_router.py" %*

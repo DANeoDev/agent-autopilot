@@ -54,8 +54,16 @@ To prevent premature assumptions while ensuring 100% uninterrupted execution, Au
 ---
 
 ## 2. Phase 1: Collaborative Alignment & Planning
+ 
+### A. Kickoff Discovery (One-Time Onboarding Prompt)
+When a project session begins or the user presents a substantial multi-step feature, major refactoring, or new pipeline implementation without explicitly requesting Autopilot:
+- Inquire **once**:
+  > *"Would you like to activate **Project Autopilot** for this project? (Note: Autopilot begins with our collaborative Alignment & Planning phase before any autonomous execution starts.)"*
+- If confirmed: Transition into Collaborative Alignment.
+- If declined: Proceed in standard interactive turn-by-turn pairing without prompting again for that task.
 
-When the user first presents a vision or project proposal:
+### B. Interactive Alignment
+When Phase 1 begins:
 1. **Act as an Expert Engineering Sounding Board**:
    - Address embedded questions, trade-offs, and design options (e.g. *"Should we scaffold fresh or copy files?"*, *"Is pairwise decomposition sufficient for 3p/4p games?"*).
    - Clarify domain constraints, unwanted legacy baggage, and specific requirements.
