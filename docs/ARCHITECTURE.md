@@ -154,12 +154,18 @@ The dramatic speedup and quality gains observed during autonomous execution are 
 
 In standard conversational pair-programming, wall-clock time is dominated not by model inference, but by **interactive friction**:
 
-$$\text{Total Wall Clock Time} = \sum_{k=1}^{M} \left( T_{\text{infer}, k} + T_{\text{read}, k} + T_{\text{human\_prompt}, k} + T_{\text{context\_switch}, k} \right)$$
+$$
+\text{Total Wall Clock Time} = \sum_{k=1}^{M} \left( T_{\mathrm{infer}, k} + T_{\mathrm{read}, k} + T_{\mathrm{prompt}, k} + T_{\mathrm{switch}, k} \right)
+$$
 
-Even with an ultra-fast model ($T_{\text{infer}} \approx 10\text{s}$), human review, prompt formulation, and conversational pauses add $60\text{s}$ to $180\text{s}$ per turn. A 15-step feature implementation balloons from **3 minutes of model compute into 45+ minutes of human waiting**.
+Even with an ultra-fast model ($T_{\mathrm{infer}} \approx 10\text{s}$), human review, prompt formulation, and conversational pauses add $60\text{s}$ to $180\text{s}$ per turn. A 15-step feature implementation balloons from **3 minutes of model compute into 45+ minutes of human waiting**.
 
-Under **Autopilot**, the human terms $T_{\text{read}} + T_{\text{human\_prompt}} + T_{\text{context\_switch}} \to 0$:
-$$\text{Total Autopilot Time} \approx \sum_{k=1}^{M} T_{\text{infer}, k}$$
+Under **Autopilot**, the human friction terms $T_{\mathrm{read}} + T_{\mathrm{prompt}} + T_{\mathrm{switch}} \to 0$:
+
+$$
+\text{Total Autopilot Time} \approx \sum_{k=1}^{M} T_{\mathrm{infer}, k}
+$$
+
 All steps execute back-to-back at hardware speed.
 
 ### 5.2 Cognitive Momentum & Working Context Continuity
@@ -169,19 +175,24 @@ When an agent pauses between prompts:
 2. **Cold-Start File Re-Inspection**: Disjointed agents repeatedly call `view_file` or `grep_search` to verify symbols they previously inspected because their internal certainty decays.
 3. **Hot Cache Continuity**: In Autopilot, a single unified trajectory holds the schema, backend routes, HTML template blocks, CSS classes, and test fixtures in uninterrupted working context. Code is written in total lockstep with zero re-inspection overhead.
 
-### 5.3 Mathematical Proof: Defeating $O(N^2)$ Token Inflation
+### 5.3 Mathematical Proof: Defeating `O(N^2)` Token Inflation
 
 The common belief that autonomous agents consume more tokens is mathematically false. Turn-by-turn chat carries a severe **"Conversation History Tax"** that compounds quadratically.
 
-#### The Turn-by-Turn History Tax ($O(N^2)$ Growth):
+#### The Turn-by-Turn History Tax (`O(N^2)` Growth):
 On each user turn $k \in [1, N]$, the client re-transmits the initial system prompt $S$ plus the entire transcript of all prior user messages $U_i$ and assistant responses $A_i$:
 
-$$\text{Cumulative Input Tokens}_{\text{Turn-by-Turn}} = \sum_{k=1}^{N} \left( S + \sum_{i=1}^{k-1} (U_i + A_i) \right) = N \cdot S + \sum_{k=1}^{N} (N - k)(U_k + A_k) \propto O(N^2)$$
+$$
+\text{Cumulative Input Tokens}_{\text{Turn-by-Turn}} = \sum_{k=1}^{N} \left( S + \sum_{i=1}^{k-1} (U_i + A_i) \right) = N \cdot S + \sum_{k=1}^{N} (N - k)(U_k + A_k) \propto \mathcal{O}(N^2)
+$$
 
-#### The Autopilot Trajectory ($O(N)$ Tool Execution):
+#### The Autopilot Trajectory (`O(N)` Tool Execution):
 In Autopilot, execution occurs within a single turn via continuous tool call steps $T_k$. The initial prompt $S$ and user intent $U$ are processed **once**, and tool outputs are streamed linearly without re-packaging cumulative conversational back-and-forths:
 
-$$\text{Cumulative Input Tokens}_{\text{Autopilot}} \approx S + U + \sum_{k=1}^{M} \Delta_{\text{tool}, k} \propto O(N)$$
+$$
+\text{Cumulative Input Tokens}_{\text{Autopilot}} \approx S + U + \sum_{k=1}^{M} \Delta_{\mathrm{tool}, k} \propto \mathcal{O}(N)
+$$
+
 
 #### Elimination of "Conversational Fluff":
 Standard interactive turns generate 200–500 tokens *per turn* of polite transitions:

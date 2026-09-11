@@ -30,6 +30,89 @@ Google Antigravity is a groundbreaking agentic development environment, but choo
 
 ---
 
+## 📖 How to Use Autopilot: From a 20-Task Dump to Finished Code
+
+You don't need to micro-manage your assistant step-by-step or spoon-feed functions one-by-one. With Antigravity Autopilot, you can dump an entire PR punch list or **15–20 substantive tasks in a single prompt**.
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│ 1. THE KICKOFF PROMPT                                                  │
+│    Dump 10-20 tasks or high-level vision in a single prompt            │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│ 2. PHASE 1: COLLABORATIVE ALIGNMENT & PLANNING (Interactive)           │
+│    • Explores domain trade-offs & re-uses existing codebase patterns   │
+│    • Structures the 20 tasks into a dependency-ordered milestone plan  │
+│    • Prompts the Launch Gate: "Strategy aligned. Engage Autopilot?"    │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │ (User says "yes")
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│ 3. PRE-EXECUTION PERMISSION ELEVATION                                  │
+│    Instantly applies eager mode; zero "allow action" UI interruptions  │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│ 4. PHASE 2: AUTONOMOUS HIGH-VELOCITY EXECUTION (Hands-Off)             │
+│    • Batch-executes all 20 tasks with Cognitive Momentum               │
+│    • Immediate Self-Healing: Diagnoses & fixes test failures on-the-fly│
+│    • Reflective Auditing: Verifies vision fidelity & strips legacy     │
+│    • Terminates only when 4-Point Definition of Done is fully met      │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│ 5. END-OF-SESSION DELIVERABLES                                         │
+│    Verification Walkthrough (with test proof) + Future Horizon Roadmap │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+### The 4-Step Prompting Walkthrough
+
+#### Step 1: Dump Your Tasks in One Go
+Paste your entire feature list into the chat:
+```text
+"Full Dashboard & Rating Engine Overhaul:
+Enable autopilot and implement these 14 requirements:
+1. Parse tournament JSON match results decomposed into pairwise matchups.
+2. Update Glicko-2 backend parameters (tau=0.5, default rating=1500).
+3. Create migration script for SQLite player_ratings table.
+4. Build FastAPI route /api/leaderboard with min_matches filtering.
+5. Add Jinja2 template leaderboard.html with sorting and delta badges.
+6. Refactor CSS with clean responsive flexbox/grid layout.
+7. Add streaming CSV export route for leaderboard data.
+8. Build player profile view with rating history table.
+9. Fix edge case where players with 0 games throw 500 error.
+10. Remove deprecated RB48 delta tab and clean unused routes.
+11. Write comprehensive pytest suite covering rating calculations.
+12. Ensure all tests pass with code 0 and verify CLI commands."
+```
+> 💡 **Kickoff Discovery**: If you forget to write *"enable autopilot"* on a new project or large task, the agent proactively asks **once**:  
+> *"Would you like to activate **Project Autopilot** for this project? (Note: Autopilot begins with our collaborative Alignment & Planning phase before any autonomous execution starts.)"*
+
+#### Step 2: Phase 1 — Collaborative Alignment & Planning
+The agent does **not** leap blindly into editing files. Instead, it acts as your senior engineering peer:
+- It checks existing code to reuse schemas and utilities.
+- It highlights any trade-offs or ambiguous choices.
+- It formats all 14 tasks into an actionable Implementation Plan with clear test commands.
+- It halts at the **Launch Gate**:
+  > *"The strategy is aligned and the plan is ready. Do you want me to engage full Autopilot execution now?"*
+
+#### Step 3: Pre-Execution Permission Elevation
+The moment you confirm (*"yes"*, *"go ahead"*), the agent immediately elevates project permissions (`agy-autopilot --dir . --enable-autopilot --yes`).  
+**Zero interruptions**: Subsequent commands, file writes, package installs, and test runs proceed hands-off without repetitive *"allow this action once / always"* UI popups.
+
+#### Step 4: Phase 2 — Autonomous High-Velocity Execution
+The agent executes the entire plan in an unbroken chain:
+- **Cognitive Momentum**: Routes, templates, CSS, and tests are authored in direct alignment.
+- **Immediate Self-Healing**: It runs tests immediately. If a test fails, it diagnoses the discrepancy, updates code or assertions, and re-tests until 100% passing without stopping to ask *"what should I do?"*.
+- **4-Point Definition of Done**: Plan completeness, tangible test evidence (code 0), strict vision fidelity, and clean out-of-the-box usability.
+
+---
+
 ## ⚡ The Autopilot Advantage: Velocity & Token Economics
 
 Why does running tasks under **Antigravity Autopilot** feel orders of magnitude faster, cleaner, and more responsive?
@@ -38,7 +121,11 @@ It is not an illusion—it is a **measurable compounding effect** driven by runt
 
 ### 1. Eliminating the "Human Ping-Pong" Latency (The Flow State)
 In standard conversational pair-programming, execution is severely fragmented:
-$$\text{Agent Step 1} \longrightarrow \text{Pause \& Explain} \longrightarrow \text{Human Reads} \longrightarrow \text{User Types "OK"} \longrightarrow \text{Model Resumes} \longrightarrow \text{Step 2}\dots$$
+
+```text
+[Step 1] ──> [Pause & Explain] ──> [Human Reads] ──> [User Types "OK"] ──> [Model Resumes] ──> [Step 2] ...
+```
+
 Even if each model response takes only 15–20 seconds, human context switching, reading pauses, and conversational round-trips easily stretch a **3-minute coding task into a 45-minute interactive slog**.
 
 Under Autopilot, all 10–20 steps (reading schemas, modifying routes, adjusting templates, styling CSS, updating test suites) happen back-to-back in an **unbroken execution chain**. The assistant acts as an autonomous senior engineer executing an entire PR checklist rather than an autocomplete engine waiting for keystrokes.
@@ -61,14 +148,19 @@ This burns two full conversational round-trips. In Autopilot:
 ### 4. Systemic Batching vs. Fragmented Tweaks
 In fragmented development, fixing a UI bug often exposes a route issue, which reveals a database schema oversight. Tackling them as a cohesive, batch-compiled system means touching each file **once** with complete contextual clarity, rather than patching the same file 5 times across an hour.
 
-### 5. Extreme Token Efficiency: Defeating $O(N^2)$ Inflation
+### 5. Extreme Token Efficiency: Defeating `O(N^2)` Inflation
 From an LLM architectural perspective, Autopilot is significantly more token-efficient than turn-by-turn chat:
 
-#### A. Eliminating the "Conversation History Tax" ($O(N^2)$ Growth)
+#### A. Eliminating the "Conversation History Tax" (`O(N^2)` Growth)
 Every time a new message is sent in a traditional chat session, the **entire past conversation history** must be re-sent to the model as input tokens for that turn:
-$$\text{Input Tokens}_{\text{Turn-by-Turn}} \approx \sum_{k=1}^{N} \left( \text{Initial Context} + \sum_{i=1}^{k} \text{Turn}_i \right) \propto O(N^2)$$
+
+$$
+\text{Input Tokens}_{\text{Turn-by-Turn}} \approx \sum_{k=1}^{N} \left( \text{Initial Context} + \sum_{i=1}^{k} \text{Turn}_i \right) \propto \mathcal{O}(N^2)
+$$
+
 Every intermediate status check, conversational transition, and "Please proceed" becomes permanent conversational weight re-processed and billed on every subsequent step.
 - **Autopilot Flow**: Operates in a single continuous tool-calling trajectory. Zero redundant conversational turns re-ingesting back-and-forth history.
+
 
 #### B. Zero "Politeness & Transition" Token Bloat
 Standard turn-by-turn chat generates 200–500 tokens *per micro-step* of conversational filler:
@@ -106,6 +198,7 @@ Modern inference backends (Gemini and Claude) rely heavily on Prompt/KV Caching.
 - 🛡️ **Explicit Security Handshake**: Never elevates project permissions silently. Shows clear warnings and requires explicit user consent before enabling eager execution.
 - 🔒 **100% Strict User Override**: Say `"use currently selected model"` or `"no subagents"`, and the agent strictly executes directly without delegating.
 - 📉 **Quota & Rate Limit Awareness**: Actively protects Claude Opus and Sonnet token caps. Partitions tasks and falls back to capable models when quota pressure is detected.
+- 📐 **GitHub-Compliant Math & Notation Auditing**: Autopilot actively audits generated documentation, architecture notes, and walkthroughs so that all mathematical formulas, Big-O notations, and technical diagrams adhere to GitHub Flavored Markdown (GFM) and render flawlessly in GitHub's web repository explorer.
 - 🏷️ **Transparent Model Attribution**: Concludes every response with an attribution footer detailing which model(s) performed the work.
 
 ---

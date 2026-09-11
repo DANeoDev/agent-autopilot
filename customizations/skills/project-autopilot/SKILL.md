@@ -104,6 +104,13 @@ At each milestone, the agent internally audits its progress by asking itself:
 - Execute relevant test suites (`pytest`, `npm test`, `cargo test`, build scripts) after every milestone.
 - **Never ask the user how to fix a test failure**: Inspect the stack trace, diagnose the root cause, modify the code, and re-run until all tests pass.
 
+### D. GitHub-Compliant Math & Notation Readability Audit
+Whenever generating or updating documentation, README files, walkthroughs, or architectural notes:
+- **Audit GitHub Web Explorer Rendering**: Always verify that mathematical expressions, Big-O notations, and architectural formulas render cleanly in GitHub's native markdown preview.
+- **Dedicated Block Math Lines**: Ensure `$$` delimiters sit on their own isolated lines with blank lines before and after.
+- **Subscript Safety**: Never use raw underscores inside text labels that could trigger markdown italic parsing (`_`).
+- **Visual Flow Diagrams over Fragile LaTeX**: Use clean text/Unicode flow diagrams (`[Step 1] ──> [Step 2]`) instead of fragile LaTeX arrows (`\longrightarrow`) for procedural workflows.
+
 ---
 
 ## 4. Objective Heuristic for "Satisfactory Level" (Definition of Done)
@@ -116,8 +123,9 @@ The agent must NOT rely on subjective feeling or declare premature victory. Exec
    The code compiles, builds, and passes all unit/integration tests with exit code `0`. The agent has empirical evidence of success, not just theoretical assumptions.
 3. **Vision Fidelity**:
    All specific domain rules, data formats, and constraints requested by the user are strictly satisfied and verified against sample inputs.
-4. **Sensible Usability**:
-   The code runs out-of-the-box with clean error handling, sensible configuration defaults, and readable documentation.
+4. **Sensible Usability & Documentation Integrity**:
+   The code runs out-of-the-box with clean error handling, sensible configuration defaults, and readable documentation (including 100% GitHub-compliant math and notation formatting).
+
 
 ---
 

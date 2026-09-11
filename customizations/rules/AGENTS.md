@@ -88,10 +88,23 @@ Whenever modifying `antigravity-autopilot` files in this repository (rules, skil
 
 ---
 
-## 8. Mandatory Model Attribution Footer
+## 8. GitHub-Compliant Math & Notation Readability Heuristic
+
+Whenever creating or updating documentation, markdown files, technical explanations, or artifacts containing mathematical formulas, algorithmic complexity, or runtime metrics:
+- **GitHub Explorer Standard**: All mathematical and notation formatting MUST be 100% readable and cleanly rendered in the GitHub web repository explorer:
+  1. **Dedicated Block Math Lines**: Always isolate block math delimiters `$$` on their own separate lines, with an empty line before and after. Never place `$$` inline with text.
+  2. **Subscript Markdown Safety**: Never use raw underscores inside `\text{foo_bar}` that could trigger markdown italic parsing (`_`). Use `\mathrm{foo\_bar}` or camelCase / hyphen notation.
+  3. **Strict Inline Math**: Keep inline math delimiters strictly flush with the equation `$x$` (no inner leading/trailing spaces). For complexity, prefer `` `O(N^2)` `` or `$\mathcal{O}(N^2)$`.
+  4. **Visual Diagrams vs. Math**: Do not wrap conversational workflows or sequential steps in LaTeX formulas (`\longrightarrow`). Use clean text/Unicode flow diagrams (`[Step 1] ──> [Step 2]`) or Mermaid diagrams, ensuring immediate readability even if JavaScript or math rendering is disabled.
+  5. **No KaTeX-Only Delimiters**: Never use `\(...\)` or `\[...\]` in Markdown, as GitHub web UI ignores them.
+
+---
+
+## 9. Mandatory Model Attribution Footer
 
 At the very end of EVERY response, you MUST include a clear attribution note indicating which model(s) performed the work. Use the following format:
 
 > 🤖 **Model Used**: [Primary Model Name] *(if subagents were invoked, add: `+ [Subagent Model / Tier] for [specific subtask]`)*
+
 
 
