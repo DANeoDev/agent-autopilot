@@ -131,7 +131,7 @@ Autonomous development requires a strict boundary between strategic deliberation
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### The 4-Point "Definition of Done" (Objective Heuristic)
+### 4.1 The 4-Point "Definition of Done" (Objective Heuristic)
 
 To avoid premature completion ("lazy exit") or infinite over-engineering, Phase 2 execution evaluates against a 4-point objective rubric:
 
@@ -140,7 +140,80 @@ To avoid premature completion ("lazy exit") or infinite over-engineering, Phase 
 3. **Vision Fidelity**: Explicit domain constraints and user rules are strictly respected and validated against real sample inputs.
 4. **Sensible Usability**: The deliverable works out-of-the-box with clean error handling, sensible configuration defaults, and readable documentation.
 
-### Coherent Enhancements Roadmap
+### 4.2 The Multi-Pass Self-Correction Trajectory ($X$-Pass Autopilot)
+
+When an agent is presented with a complex, dense list of 15–20+ requirements, single-pass batch execution experiences the classic LLM **"attention sink"** phenomenon. Frontier models prioritize structural scaffolding (schemas, models, main routes), but frequently drop 10%–25% of micro-requirements (e.g., hover tooltip orientations, specific dropdown options, edge-case checks, contrast adjustments).
+
+```text
+[Initial User Prompt: 15-20 Atomic Requirements]
+                        │
+                        ▼
+┌─────────────────────────────────────────────────────────────┐
+│ Pass 1: Primary Architectural Scaffolding & Core Features    │
+│ • Database schema migrations & backend endpoints            │
+│ • Main UI templates & component layouts                     │
+│ • Pytest / unit test execution                              │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│ Pass 2: In-Situ "Is vs. Ought" Gap Analysis (Gold Standard)  │
+│ • Extract user prompt requirements: {r_1, r_2, ..., r_m}     │
+│ • Code diff comparison: Evaluate implemented state vs prompt│
+│ • Classify: [COMPLETE], [PARTIAL], or [MISSED]              │
+│ • Formulate Delta Plan & execute surgical fixes in-situ     │
+│ • Re-verify test suite with exit code 0                     │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ (Optional Pass 3 for dense 20+ item lists)
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│ Pass 3: Edge-Case Stress Testing & Cross-Element Polishing  │
+│ • Boundary conditions (0-game players, null states)         │
+│ • Mobile layout, contrast ratios, and doc synchronization   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### The "Is vs. Ought" Formalism
+
+Let $P = \{r_1, r_2, \dots, r_m\}$ represent the set of atomic requirements specified in the user's prompt. After Pass 1, the codebase state is $C_1$.
+
+The agent computes the delta set $\Delta(P, C_1)$:
+
+$$
+\Delta(P, C_1) = \left\{ r_i \in P \;\middle|\; \mathrm{Status}(r_i, C_1) \in \{ \mathrm{PARTIAL}, \mathrm{MISSED} \} \right\}
+$$
+
+Pass 2 executes repairs strictly targeting $\Delta(P, C_1)$ without cold-starting or rewriting established code $C_1$. Because $C_1$ is already resident in server KV cache, Pass 2 executes with near-zero latency and high token efficiency.
+
+#### Real-World Case Study (The 20-Item Leaderboard Punch List)
+
+In a real-world testing benchmark, a prompt requested 12 dense requirements across backend Glicko/WHR rating engines, Jinja2 templates, and responsive CSS:
+1. *Player filter*: Display actual leaderboard rank instead of `#1`.
+2. *Single-player search*: Scroll/jump to player row in the full leaderboard rather than filtering other players out.
+3. *Multi-name search*: Support comma-separated player list filtering.
+4. *Hover direction*: Force mode selector tooltips to orient downwards to prevent viewport clipping.
+5. *Hover cleanup*: Remove unnecessary hover icons on self-explanatory mode toggles.
+6. *Filter guidance*: Add tooltip explaining the multi-name comma filter syntax.
+7. *Deltas view*: Keep delta selector visible at all times, with "last update" as the top option under OFF.
+8. *Timestamp tracking*: Record rating calculation timestamps for delta diffing.
+9. *Zero-game edge cases*: Prevent 500 error when inspecting player profiles with 0 recorded matches.
+10. *Accessibility*: Adjust badge color contrast to meet WCAG standards.
+11. *Export route*: Build streaming CSV download for filtered table views.
+12. *Verification*: Write pytest suite confirming rating calculations and edge-case handling.
+
+- **Under Single-Pass ($X=1$)**: The agent successfully delivered items 1, 2, 8, 9, 11, and 12, but dropped the hover downwards orientation (item 4), omitted "last update" from the delta dropdown (item 7), and filtered out other players instead of scrolling to the single player (item 2 nuance).
+- **Under Double-Pass ($X=2$)**: Pass 2 detected all 3 discrepancies during the "Is vs. Ought" gap audit, applied surgical edits to CSS and Jinja2 templates, and achieved 100% prompt fidelity without a single user intervention.
+
+#### Recommended Pass Scaling Matrix
+
+| Passes ($X$) | Workload & Prompt Density | Operational Dynamics |
+|---|---|---|
+| **$X=1$ (Single-Pass)** | 1–5 focused tasks, simple bug fixes | Maximum speed, lowest latency. Minimal attention sink on narrow tasks. |
+| **$X=2$ (Double-Pass)** | **Standard Default**: 5–15 tasks, full PRs, UI + backend | **Gold Standard**. Recovers ~100% of dropped micro-requirements via "Is vs. Ought" gap analysis. |
+| **$X=3$ (Triple-Pass)** | 15–25+ dense tasks, rating math + db + multi-page UI + CSS | Deep edge-case validation, boundary stress-testing, and complete visual/documentation fidelity. |
+| **$X \ge 4$** | *Not Recommended* | Diminishing returns. Risks circular refactoring or infinite micro-polishing loops. |
+
+### 4.3 Coherent Enhancements Roadmap
 
 Upon reaching the Satisfactory threshold, the session automatically delivers 3–5 high-value, logical next-step proposals that naturally expand upon the fulfilled foundation without violating product identity.
 

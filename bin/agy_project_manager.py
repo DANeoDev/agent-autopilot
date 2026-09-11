@@ -71,6 +71,8 @@ def show_status(project_file: Path, project_data: Dict[str, Any]):
     auto_exec = settings.get("autoExecutionPolicy", "Not configured (Prompts on every command)")
     file_access = settings.get("fileAccessPolicy", "Not configured (Default)")
     sandbox = settings.get("sandboxMode", "False (Disabled)")
+    passes = settings.get("autopilotPasses", 2)
+    pass_desc = {1: "Single-Pass", 2: "Double-Pass (Gold Standard Default)", 3: "Triple-Pass (Deep Audit)"}.get(passes, f"{passes}-Pass")
     grants = project_data.get("permissionGrants", {}).get("permissionGrants", {}).get("allow", [])
 
     print("\n========================================================")
@@ -80,12 +82,13 @@ def show_status(project_file: Path, project_data: Dict[str, Any]):
     print(f"Config Path       : {project_file}")
     print(f"Auto-Execution    : {auto_exec}")
     print(f"File Access Policy: {file_access}")
+    print(f"Autopilot Passes  : {passes} ({pass_desc})")
     print(f"Sandbox Mode      : {sandbox}")
     print(f"Allowed Commands  : {len(grants)} pre-approved patterns")
     print("========================================================\n")
 
 
-def enable_autopilot(project_file: Path, project_data: Dict[str, Any], force: bool = False):
+def enable_autopilot(project_file: Path, project_data: Dict[str, Any], force: bool = False, passes: Optional[int] = None):
     print("\n" + "!" * 64)
     print("  SECURITY WARNING: ENABLING AUTOPILOT (EAGER EXECUTION)")
     print("  USE AT YOUR OWN RISK! - THIS HAS NOT BEEN EXTENSIVELY TESTED")
@@ -99,9 +102,12 @@ def enable_autopilot(project_file: Path, project_data: Dict[str, Any], force: bo
     print("Always work on a clean Git branch and avoid directories with")
     print("sensitive credentials or unbacked-up data.")
     print()
+    target_passes = passes or project_data.get("settings", {}).get("autopilotPasses", 2)
+    pass_desc = {1: "Single-Pass", 2: "Double-Pass (Gold Standard Default)", 3: "Triple-Pass (Deep Audit)"}.get(target_passes, f"{target_passes}-Pass")
     print("Changes that will be applied to this project:")
     print("  [+] autoExecutionPolicy -> CASCADE_COMMANDS_AUTO_EXECUTION_EAGER")
     print("  [+] fileAccessPolicy    -> AGENT_SETTING_POLICY_ALLOW")
+    print(f"  [+] autopilotPasses     -> {target_passes} ({pass_desc})")
     print("  [+] permissionGrants    -> Common git, python/pytest, npm commands")
     print("!" * 64 + "\n")
 
@@ -114,6 +120,7 @@ def enable_autopilot(project_file: Path, project_data: Dict[str, Any], force: bo
     settings = project_data.setdefault("settings", {})
     settings["autoExecutionPolicy"] = "CASCADE_COMMANDS_AUTO_EXECUTION_EAGER"
     settings["fileAccessPolicy"] = "AGENT_SETTING_POLICY_ALLOW"
+    settings["autopilotPasses"] = target_passes
 
     perm_dict = project_data.setdefault("permissionGrants", {}).setdefault("permissionGrants", {})
     existing_allows = set(perm_dict.get("allow", []))
@@ -124,8 +131,19 @@ def enable_autopilot(project_file: Path, project_data: Dict[str, Any], force: bo
     with open(project_file, "w", encoding="utf-8") as f:
         json.dump(project_data, f, indent=2)
 
-    print("[SUCCESS] Project autopilot mode enabled.")
+    print(f"[SUCCESS] Project autopilot mode enabled ({pass_desc}).")
     print("The agent can now execute full implementation plans autonomously in this project.\n")
+
+
+def set_passes(project_file: Path, project_data: Dict[str, Any], passes: int):
+    settings = project_data.setdefault("settings", {})
+    settings["autopilotPasses"] = passes
+    pass_desc = {1: "Single-Pass", 2: "Double-Pass (Gold Standard Default)", 3: "Triple-Pass (Deep Audit)"}.get(passes, f"{passes}-Pass")
+
+    with open(project_file, "w", encoding="utf-8") as f:
+        json.dump(project_data, f, indent=2)
+
+    print(f"[SUCCESS] Project autopilot passes set to {passes} ({pass_desc}).\n")
 
 
 def disable_autopilot(project_file: Path, project_data: Dict[str, Any]):
@@ -145,6 +163,7 @@ def main():
     parser.add_argument("--status", action="store_true", help="Show current project settings")
     parser.add_argument("--enable-autopilot", action="store_true", help="Enable eager execution for autonomous workflow")
     parser.add_argument("--disable-autopilot", action="store_true", help="Revert to prompt-for-review mode")
+    parser.add_argument("--passes", type=int, choices=[1, 2, 3], default=None, help="Set execution pass depth (1=Single-Pass, 2=Double-Pass default, 3=Triple-Pass deep audit)")
     parser.add_argument("--yes", "-y", action="store_true", help="Bypass interactive security confirmation")
     args = parser.parse_args()
 
@@ -157,9 +176,11 @@ def main():
         sys.exit(1)
 
     if args.enable_autopilot:
-        enable_autopilot(pfile, pdata, force=args.yes)
+        enable_autopilot(pfile, pdata, force=args.yes, passes=args.passes)
     elif args.disable_autopilot:
         disable_autopilot(pfile, pdata)
+    elif args.passes is not None:
+        set_passes(pfile, pdata, args.passes)
     else:
         show_status(pfile, pdata)
 

@@ -101,11 +101,24 @@ Whenever creating or updating documentation, markdown files, technical explanati
 
 ---
 
-## 9. Mandatory Model Attribution Footer
+## 9. Multi-Pass Self-Correction Trajectory (X-Pass Autopilot)
+
+When executing under Project Autopilot on multi-task prompts (especially lists of 5–20+ requirements), single-pass execution is prone to the LLM "attention sink" effect where subtle requirements (styling nuances, hover positions, secondary options, edge cases) get overlooked.
+
+- **Standard Default ($X=2$ Double-Pass)**:
+  - **Pass 1 (Primary Execution)**: Implement the core architecture, files, endpoints, UI components, and tests.
+  - **Pass 2 (Gap-Audit "Is vs. Ought" Analysis)**: Perform a line-by-line audit comparing the original prompt ("Ought") against modified files and `git diff` ("Is"). Extract all partial or missed items into a Delta Plan and execute fixes immediately without starting over.
+- **Pass Scaling Heuristic**:
+  - $X=1$: Simple, focused 1–5 task prompts with minimal cross-cutting dependencies.
+  - $X=2$ (**Default Gold Standard**): Standard multi-task feature sets (5–15 items).
+  - $X=3$: Ultra-dense feature dumps (15–25+ requirements spanning backend math, database migrations, complex UI/CSS, and edge cases).
+  - $X \ge 4$: Not recommended (diminishing returns, risk of infinite micro-polishing).
+- **Never Restart from Scratch in Pass 2**: Pass 2 is an in-situ delta inspection and surgical repair pass. Working files are already warm in KV cache, making Pass 2 fast, cheap, and virtually 100% effective at catching dropped requirements.
+
+---
+
+## 10. Mandatory Model Attribution Footer
 
 At the very end of EVERY response, you MUST include a clear attribution note indicating which model(s) performed the work. Use the following format:
 
 > 🤖 **Model Used**: [Primary Model Name] *(if subagents were invoked, add: `+ [Subagent Model / Tier] for [specific subtask]`)*
-
-
-

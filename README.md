@@ -114,6 +114,97 @@ The agent executes the entire plan in an unbroken chain:
 
 ---
 
+## 🔄 Multi-Pass Self-Correction Trajectory: Why $X=2$ (Double-Pass) is the Gold Standard
+
+When managing dense, multi-faceted prompt requests (15–20+ requirements spanning backend math, database schemas, responsive CSS, and subtle UX interactions), single-pass execution faces a universal frontier model limitation: **the LLM "attention sink" effect**.
+
+### 1. The Real-World Prompt Challenge (The 20-Item Punch List)
+
+Consider this real-world prompt dump from a tournament leaderboard & rating system overhaul:
+
+```text
+"Leaderboard & Rating Overhaul:
+1. When using player filter, don't show 'rank #1' - show the player's ACTUAL leaderboard rank.
+2. If filtering for a single player, jump/scroll to their spot in the full leaderboard rather than hiding everyone else.
+3. If multiple names are provided (comma-separated), filter the table to show only those players.
+4. Fix mode selector hovers (Glicko-2 / WHR) to orient downwards so they aren't clipped by the viewport.
+5. Remove redundant hover icon from mode selector; keep it self-explanatory.
+6. Add tooltip on the player filter explaining how the comma-separated multi-player search works.
+7. Always display deltas: keep delta selector, but add 'last update' as first option under OFF.
+8. Implement backend rating update timestamp tracking for leaderboard delta calculations.
+9. Fix edge case where players with 0 recorded games crash profile view with 500 error.
+10. Refactor leaderboard CSS: improve contrast ratio on secondary badges for WCAG accessibility.
+11. Add streaming CSV export route for filtered leaderboard view.
+12. Write comprehensive pytest assertions verifying ranking logic, deltas, and edge cases."
+```
+
+In a traditional single-pass execution:
+- The agent builds the primary backend routes, Glicko calculations, and Jinja2 templates (Pass 1).
+- But subtle micro-requirements (e.g. tooltip orientation to the bottom, the "last update" dropdown option, comma-separated name parsing) easily get lost in the attention sink.
+- In turn-by-turn development, the developer must inspect every file, notice what was dropped, and manually re-prompt: *"Hey, you forgot to orient the hovers downwards and didn't add 'last update' to the selector."*
+
+### 2. The Solution: In-Situ "Is vs. Ought" Gap Analysis
+
+Instead of requiring human proofreading, Autopilot introduces an **autonomous self-correction trajectory** with a default depth of **$X=2$ (Double-Pass)**:
+
+```text
+[User Prompt: 15-20 Tasks]
+             │
+             ▼
+┌────────────────────────────────────────────────────────┐
+│ PASS 1: Primary Batch Execution                        │
+│ • Builds schemas, routes, templates, CSS, and tests    │
+│ • Runs test suite & resolves primary errors            │
+└────────────────────────────┬───────────────────────────┘
+                             │
+                             ▼
+┌────────────────────────────────────────────────────────┐
+│ PASS 2: "Is vs. Ought" Gap Analysis (Gold Standard)    │
+│ 1. Extract raw requirements line-by-line (Ought)       │
+│ 2. Inspect git diff & modified files (Is)              │
+│ 3. Classify: [COMPLETE], [PARTIAL], or [MISSED]        │
+│ 4. Formulate in-situ Delta Plan for gaps               │
+│ 5. Execute delta repairs & re-verify test suite        │
+└────────────────────────────┬───────────────────────────┘
+                             │ (Definition of Done satisfied)
+                             ▼
+┌────────────────────────────────────────────────────────┐
+│ Complete, Verified Codebase with 100% Feature Fidelity │
+└────────────────────────────────────────────────────────┘
+```
+
+#### Why Pass 2 is Lightning Fast & Token-Efficient:
+- **Zero Cold Starts**: The agent does **not** restart from scratch or wipe existing work.
+- **Warm KV-Cache**: All modified files and schemas are already loaded in working memory and server KV cache.
+- **Surgical Delta Execution**: Pass 2 only writes the missing pieces (e.g., adding the dropdown option and adjusting the CSS tooltip offset).
+
+### 3. Recommended Pass Depth Scaling Matrix
+
+| Passes ($X$) | Workload & Prompt Density | Operational Dynamics |
+|---|---|---|
+| **$X=1$ (Single-Pass)** | 1–5 focused tasks, simple bug fixes | Maximum velocity, minimal latency. Low probability of attention drop on narrow scopes. |
+| **$X=2$ (Double-Pass)** | **Standard Default**: 5–15 tasks, full PRs, UI + backend | **Gold Standard**. Recovers ~100% of dropped micro-requirements via "Is vs. Ought" delta audit. |
+| **$X=3$ (Triple-Pass)** | 15–25+ dense tasks, rating math + db + multi-page UI + CSS | Deep edge-case validation, boundary condition stress-testing (e.g. 0-game players), full WCAG styling audit. |
+| **$X \ge 4$** | *Not Recommended* | Diminishing returns. Risks circular refactoring or infinite micro-polishing. |
+
+### 4. Configuring Pass Depth via CLI
+
+You can inspect or configure the pass depth for any workspace using `agent-autopilot`:
+
+```bash
+# View active project status and pass configuration
+agent-autopilot --dir . --status
+
+# Configure workspace to Double-Pass (Gold Standard Default)
+agent-autopilot --dir . --passes 2
+
+# Configure workspace to Triple-Pass for massive multi-tier projects
+agent-autopilot --dir . --passes 3
+```
+
+---
+
+
 ## ⚡ The Autopilot Advantage: Velocity & Token Economics
 
 Why does running tasks under **Antigravity Autopilot** feel orders of magnitude faster, cleaner, and more responsive?

@@ -104,7 +104,48 @@ At each milestone, the agent internally audits its progress by asking itself:
 - Execute relevant test suites (`pytest`, `npm test`, `cargo test`, build scripts) after every milestone.
 - **Never ask the user how to fix a test failure**: Inspect the stack trace, diagnose the root cause, modify the code, and re-run until all tests pass.
 
-### D. GitHub-Compliant Math & Notation Readability Audit
+### D. Multi-Pass Self-Correction Trajectory (X-Pass Autopilot)
+When executing complex or multi-task prompts (especially lists of 10–20+ dense requirements), single-pass execution is susceptible to LLM "attention sinks," causing subtle requirements (such as secondary dropdown options, hover directions, contrast styling, or edge cases) to be dropped.
+
+To guarantee 100% fidelity without human ping-pong, Autopilot operates on an **$X$-Pass Self-Correction Trajectory** (Default: $X=2$ Double-Pass):
+
+```text
+[Pass 1: Primary Batch Execution]
+               │
+               ▼
+┌─────────────────────────────────────────────────────────────┐
+│ Pass 2: Gap-Audit "Is vs. Ought" Analysis (Gold Standard)   │
+│ 1. Extract raw requirements from initial user prompt (Ought)│
+│ 2. Audit current modified files & git diff (Is)             │
+│ 3. Classify: [COMPLETE], [PARTIAL], or [MISSED]             │
+│ 4. Formulate in-situ Delta Plan for partial/missed items    │
+│ 5. Execute delta fixes & re-run test suite                  │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ (Optional Pass 3 for dense 20+ item lists)
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│ Pass 3: High-Complexity Edge Case & Cross-Element Polish    │
+│ (Boundary conditions, zero-state edge cases, mobile CSS)    │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### The "Is vs. Ought" Gap Analysis Engine
+Pass 2 does **NOT** restart blindly from scratch. Instead, because files are already loaded into working context and KV cache, it performs a focused delta audit:
+1. **The "Ought"**: Extract every atomic requirement from the user's prompt (e.g., *"jump to player in leaderboard, don't just show one player"*, *"hovers must show to the bottom"*, *"keep delta selector but add 'last update' under OFF"*).
+2. **The "Is"**: Check the actual source code and `git diff` to verify if the implementation matches.
+3. **The Delta Plan**: Isolate any micro-features that were dropped or only partially solved.
+4. **Surgical Execution**: Apply targeted edits to resolve gaps, then re-execute the test suite.
+
+#### Recommended Pass Scaling Table
+
+| Passes ($X$) | Workload & Prompt Density | Operational Dynamics |
+|---|---|---|
+| **$X=1$ (Single-Pass)** | 1–5 focused tasks, simple bug fixes | Maximum speed, minimal latency. Zero risk of dropped requirements on narrow tasks. |
+| **$X=2$ (Double-Pass)** | **Standard Default**: 5–15 tasks, full PRs, UI + backend | **Gold Standard**. 100% item recovery via "Is vs. Ought" delta audit at high KV-cache efficiency. |
+| **$X=3$ (Triple-Pass)** | 15–25+ dense tasks, rating math + db + multi-page UI + CSS | Deep edge-case validation, boundary checks (e.g. 0-game players), responsive layout polishing. |
+| **$X \ge 4$** | *Not Recommended* | Diminishing returns. Introduces risks of circular refactoring or infinite micro-polishing. |
+
+### E. GitHub-Compliant Math & Notation Readability Audit
 Whenever generating or updating documentation, README files, walkthroughs, or architectural notes:
 - **Audit GitHub Web Explorer Rendering**: Always verify that mathematical expressions, Big-O notations, and architectural formulas render cleanly in GitHub's native markdown preview.
 - **Dedicated Block Math Lines**: Ensure `$$` delimiters sit on their own isolated lines with blank lines before and after.
