@@ -25,10 +25,10 @@ Agent Autopilot generates **objective, empirical ground truth $(X^*, Y^*)$ autom
 ```
 
 ### The Ground Truth Formula:
-- **$X^* = 1.0$**: All requirements implemented in Pass 1, 0 test failures, and 0 delta items found during the gap audit. Running secondary passes was unnecessary.
-- **$X^* = 2.0$**: Pass 1 dropped $\ge 1$ micro-requirements, and Pass 2 successfully resolved them. Double-pass was optimal.
-- **$X^* = 3.0$**: Pass 2 required deep secondary edge-case refinement or resolved regressions caught during secondary testing.
-- **$Y^*$**: Scaled proportionally to internal reasoning token depth and complexity of invariant checking.
+- **Pass 1 Ground Truth** ($X^* = 1.0$): All requirements implemented in Pass 1, 0 test failures, and 0 delta items found during the gap audit. Running secondary passes was unnecessary.
+- **Pass 2 Ground Truth** ($X^* = 2.0$): Pass 1 dropped $\ge 1$ micro-requirements, and Pass 2 successfully resolved them. Double-pass was optimal.
+- **Pass 3 Ground Truth** ($X^* = 3.0$): Pass 2 required deep secondary edge-case refinement or resolved regressions caught during secondary testing.
+- **Epistemic Ground Truth** ($Y^*$): Scaled proportionally to internal reasoning token depth and complexity of invariant checking.
 
 ---
 

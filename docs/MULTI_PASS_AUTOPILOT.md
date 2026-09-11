@@ -16,7 +16,7 @@ In standard turn-by-turn development, this triggers **frustrating human ping-pon
 
 ## 2. The Solution: In-Situ "Is vs. Ought" Gap Analysis
 
-Instead of requiring human proofreading, Autopilot introduces an **automated self-correction trajectory** with a default depth of **$X=2$ (Double-Pass)**:
+Instead of requiring human proofreading, Autopilot introduces an **automated self-correction trajectory** with a default depth of **Double-Pass** ($X=2$):
 
 ```text
 [User Prompt: 15-20 Tasks]
@@ -100,10 +100,10 @@ To test this in practice, an agent was given an extensive tournament leaderboard
 
 | Passes ($X$) | Workload & Prompt Density | Operational Dynamics |
 |---|---|---|
-| **$X=1$ (Single-Pass)** | 1–5 focused tasks, simple bug fixes | Maximum speed, lowest latency. Minimal attention sink on narrow tasks. |
-| **$X=2$ (Double-Pass)** | **Standard Default**: 5–15 tasks, full PRs, UI + backend | **Gold Standard**. Recovers ~100% of dropped micro-requirements via "Is vs. Ought" gap analysis. |
-| **$X=3$ (Triple-Pass)** | 15–25+ dense tasks, rating math + db + multi-page UI + CSS | Deep edge-case validation, boundary stress-testing, and complete visual/documentation fidelity. |
-| **$X \ge 4$** | *Not Recommended* | Diminishing returns. Risks circular refactoring or infinite micro-polishing loops. |
+| **Pass 1** (Single-Pass) | 1–5 focused tasks, simple bug fixes | Maximum speed, lowest latency. Minimal attention sink on narrow tasks. |
+| **Pass 2** (Double-Pass) | **Standard Default**: 5–15 tasks, full PRs, UI + backend | **Gold Standard**. Recovers ~100% of dropped micro-requirements via "Is vs. Ought" gap analysis. |
+| **Pass 3** (Triple-Pass) | 15–25+ dense tasks, rating math + db + multi-page UI + CSS | Deep edge-case validation, boundary stress-testing, and complete visual/documentation fidelity. |
+| **Pass 4+** | *Not Recommended* | Diminishing returns. Risks circular refactoring or infinite micro-polishing loops. |
 
 ---
 

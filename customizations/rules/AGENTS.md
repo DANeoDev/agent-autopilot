@@ -109,14 +109,14 @@ $$
 Z = X + iY \in \mathbb{C}
 $$
 
-- **Physical Execution Depth ($X = \mathrm{Re}(Z) \in [1.0, 3.0]$)**:
+- **Physical Execution Depth** ($X = \mathrm{Re}(Z) \in [1.0, 3.0]$):
   - $X = 1.0$: Direct batch implementation without secondary audits.
   - $X = 2.0$ (**Standard Default Gold Standard**): Pass 1 primary execution followed by Pass 2 in-situ **"Is vs. Ought" Gap Analysis** (comparing raw prompt requirements against modified files and `git diff`, building an immediate Delta Plan, and applying surgical fixes).
   - $X = 3.0$: Full double-pass plus adversarial edge-case testing, boundary fuzzing, and multi-tier regression verification.
   - Fractional $X$ (e.g. $X=1.3$): Scoped sub-pass targeting only the highest-complexity files or highest-risk constraints.
-- **Epistemic Reflection Depth ($Y = \mathrm{Im}(Z) \in [0.0, 3.0]$)**:
+- **Epistemic Reflection Depth** ($Y = \mathrm{Im}(Z) \in [0.0, 3.0]$):
   - Governs internal verification tokens, counterfactual simulation, test synthesis, and mathematical proof checking prior to file writes.
-- **Cognitive Energy ($R = |Z| = \sqrt{X^2 + Y^2}$)** and **Phase Angle ($\theta = \arctan(Y/X)$)**:
+- **Cognitive Energy** $R = |Z| = \sqrt{X^2 + Y^2}$ and **Phase Angle** $\theta = \arctan(Y/X)$:
   - $\theta < 20^\circ$: Action-dominant (heavy code refactoring, minimal reflection).
   - $\theta > 55^\circ$: Epistemic-dominant (heavy mathematical/architectural reasoning, minimal file edits).
 - **Dynamic Self-Learning (Feature Hashing & Online SGD)**:

@@ -36,10 +36,10 @@ $$
 
 ### 2.1 The Real Component: Physical Action Depth ($X = \mathrm{Re}(Z) \in [1.0, 3.0]$)
 Measures the depth of physical file mutation, AST alterations, and in-situ delta repair cycles:
-- **$X = 1.0$ (Direct Single-Pass)**: Direct batch execution. Code is authored in a single continuous tool-calling trajectory without secondary audits.
-- **$X = 1.3$ (Scoped Sub-Pass)**: Pass 1 executes fully, followed by a targeted audit focused strictly on high-risk boundary constraints and negative exclusions.
-- **$X = 2.0$ (Double-Pass Gold Standard)**: Full Pass 1 execution followed by a 100% "Is vs. Ought" gap audit comparing prompt requirements against modified files.
-- **$X = 3.0$ (Triple-Pass)**: Full double pass plus adversarial edge-case stress-testing, fuzzing, and cross-platform matrix validation.
+- $X = 1.0$ **(Direct Single-Pass)**: Direct batch execution. Code is authored in a single continuous tool-calling trajectory without secondary audits.
+- $X = 1.3$ **(Scoped Sub-Pass)**: Pass 1 executes fully, followed by a targeted audit focused strictly on high-risk boundary constraints and negative exclusions.
+- $X = 2.0$ **(Double-Pass Gold Standard)**: Full Pass 1 execution followed by a 100% "Is vs. Ought" gap audit comparing prompt requirements against modified files.
+- $X = 3.0$ **(Triple-Pass)**: Full double pass plus adversarial edge-case stress-testing, fuzzing, and cross-platform matrix validation.
 
 ### 2.2 The Imaginary Component: Epistemic Reflection Depth ($Y = \mathrm{Im}(Z) \in [0.0, 3.0]$)
 Measures internal cognitive deliberation that occurs without touching files:
@@ -51,12 +51,12 @@ Measures internal cognitive deliberation that occurs without touching files:
 ### 2.3 Polar State Coordinates ($Z = R e^{i\theta}$)
 Representing $Z$ in polar form reveals two vital operational metrics:
 
-1. **Cognitive Energy Budget ($R = |Z| = \sqrt{X^2 + Y^2}$)**:
+1. **Cognitive Energy Budget** $R = |Z| = \sqrt{X^2 + Y^2}$:
    The total computational mass allocated to the prompt.
-2. **Attentional Phase Angle ($\theta = \arctan(Y/X)$)**:
-   - **$\theta < 20^\circ$ (Action-Dominant)**: High code churn, mechanical migrations, formatting (e.g. $Z = 2.0 + 0.2i$).
-   - **$20^\circ \le \theta \le 50^\circ$ (Balanced Cognitive Flow)**: Standard fullstack PRs with synchronized frontend, backend, and tests ($Z = 2.0 + 1.0i$).
-   - **$\theta > 55^\circ$ (Epistemic-Dominant)**: Complex algorithms, formal proofs, concurrency invariants ($Z = 1.0 + 2.5i$).
+2. **Attentional Phase Angle** $\theta = \arctan(Y/X)$:
+   - $\theta < 20^\circ$ **(Action-Dominant)**: High code churn, mechanical migrations, formatting (e.g. $Z = 2.0 + 0.2i$).
+   - $20^\circ \le \theta \le 50^\circ$ **(Balanced Cognitive Flow)**: Standard fullstack PRs with synchronized frontend, backend, and tests ($Z = 2.0 + 1.0i$).
+   - $\theta > 55^\circ$ **(Epistemic-Dominant)**: Complex algorithms, formal proofs, concurrency invariants ($Z = 1.0 + 2.5i$).
 
 ---
 

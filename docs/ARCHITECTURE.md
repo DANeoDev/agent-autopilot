@@ -201,17 +201,17 @@ In a real-world testing benchmark, a prompt requested 12 dense requirements acro
 11. *Export route*: Build streaming CSV download for filtered table views.
 12. *Verification*: Write pytest suite confirming rating calculations and edge-case handling.
 
-- **Under Single-Pass ($X=1$)**: The agent successfully delivered items 1, 2, 8, 9, 11, and 12, but dropped the hover downwards orientation (item 4), omitted "last update" from the delta dropdown (item 7), and filtered out other players instead of scrolling to the single player (item 2 nuance).
-- **Under Double-Pass ($X=2$)**: Pass 2 detected all 3 discrepancies during the "Is vs. Ought" gap audit, applied surgical edits to CSS and Jinja2 templates, and achieved 100% prompt fidelity without a single user intervention.
+- **Single-Pass Execution** ($X=1$): The agent successfully delivered items 1, 2, 8, 9, 11, and 12, but dropped the hover downwards orientation (item 4), omitted "last update" from the delta dropdown (item 7), and filtered out other players instead of scrolling to the single player (item 2 nuance).
+- **Double-Pass Execution** ($X=2$): Pass 2 detected all 3 discrepancies during the "Is vs. Ought" gap audit, applied surgical edits to CSS and Jinja2 templates, and achieved 100% prompt fidelity without a single user intervention.
 
 #### Recommended Pass Scaling Matrix
 
 | Passes ($X$) | Workload & Prompt Density | Operational Dynamics |
 |---|---|---|
-| **$X=1$ (Single-Pass)** | 1–5 focused tasks, simple bug fixes | Maximum speed, lowest latency. Minimal attention sink on narrow tasks. |
-| **$X=2$ (Double-Pass)** | **Standard Default**: 5–15 tasks, full PRs, UI + backend | **Gold Standard**. Recovers ~100% of dropped micro-requirements via "Is vs. Ought" gap analysis. |
-| **$X=3$ (Triple-Pass)** | 15–25+ dense tasks, rating math + db + multi-page UI + CSS | Deep edge-case validation, boundary stress-testing, and complete visual/documentation fidelity. |
-| **$X \ge 4$** | *Not Recommended* | Diminishing returns. Risks circular refactoring or infinite micro-polishing loops. |
+| **Pass 1** (Single-Pass) | 1–5 focused tasks, simple bug fixes | Maximum speed, lowest latency. Minimal attention sink on narrow tasks. |
+| **Pass 2** (Double-Pass) | **Standard Default**: 5–15 tasks, full PRs, UI + backend | **Gold Standard**. Recovers ~100% of dropped micro-requirements via "Is vs. Ought" gap analysis. |
+| **Pass 3** (Triple-Pass) | 15–25+ dense tasks, rating math + db + multi-page UI + CSS | Deep edge-case validation, boundary stress-testing, and complete visual/documentation fidelity. |
+| **Pass 4+** | *Not Recommended* | Diminishing returns. Risks circular refactoring or infinite micro-polishing loops. |
 
 ### 4.3 The Complex Cognitive Plane ($Z = X + iY$) & Self-Learning Engine
 
@@ -242,17 +242,17 @@ $$
 ```
 
 #### Orthogonal State Dimensions
-1. **Physical Action Depth ($X = \mathrm{Re}(Z) \in [1.0, 3.0]$)**:
+1. **Physical Action Depth** ($X = \mathrm{Re}(Z) \in [1.0, 3.0]$):
    Quantifies file mutations, AST adjustments, and in-situ delta repair cycles:
    - $X = 1.0$: Direct batch execution without secondary audits.
    - $X = 1.3$: Scoped sub-pass targeting high-risk boundary constraints.
    - $X = 2.0$: Full Double-Pass (100% "Is vs. Ought" gap audit).
    - $X = 3.0$: Triple-pass with multi-tier stress testing and cross-platform matrix checks.
-2. **Epistemic Reflection Depth ($Y = \mathrm{Im}(Z) \in [0.0, 3.0]$)**:
+2. **Epistemic Reflection Depth** ($Y = \mathrm{Im}(Z) \in [0.0, 3.0]$):
    Quantifies internal verification tokens, counterfactual simulation, test synthesis, and mathematical proof checking prior to file writes.
-3. **Polar State Metrics ($Z = R e^{i\theta}$)**:
-   - **Cognitive Energy Budget ($R = |Z| = \sqrt{X^2 + Y^2}$)**: The total attentional mass allocated to the prompt.
-   - **Attentional Phase Angle ($\theta = \arctan(Y/X)$)**:
+3. **Polar State Metrics** ($Z = R e^{i\theta}$):
+   - **Cognitive Energy Budget** $R = |Z| = \sqrt{X^2 + Y^2}$: The total attentional mass allocated to the prompt.
+   - **Attentional Phase Angle** $\theta = \arctan(Y/X)$:
      - $\theta < 20^\circ$: Action-dominant (heavy file refactoring, minimal reflection).
      - $20^\circ \le \theta \le 50^\circ$: Balanced cognitive flow (synchronized backend, frontend, and tests).
      - $\theta > 55^\circ$: Epistemic-dominant (formal mathematical proofs, protocol invariants).

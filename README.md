@@ -145,7 +145,7 @@ In a traditional single-pass execution:
 
 ### 2. The Solution: In-Situ "Is vs. Ought" Gap Analysis
 
-Instead of requiring human proofreading, Autopilot introduces an **autonomous self-correction trajectory** with a default depth of **$X=2$ (Double-Pass)**:
+Instead of requiring human proofreading, Autopilot introduces an **autonomous self-correction trajectory** with a default depth of **Double-Pass** ($X=2$):
 
 ```text
 [User Prompt: 15-20 Tasks]
@@ -182,10 +182,10 @@ Instead of requiring human proofreading, Autopilot introduces an **autonomous se
 
 | Passes ($X$) | Workload & Prompt Density | Operational Dynamics |
 |---|---|---|
-| **$X=1$ (Single-Pass)** | 1–5 focused tasks, simple bug fixes | Maximum velocity, minimal latency. Low probability of attention drop on narrow scopes. |
-| **$X=2$ (Double-Pass)** | **Standard Default**: 5–15 tasks, full PRs, UI + backend | **Gold Standard**. Recovers ~100% of dropped micro-requirements via "Is vs. Ought" delta audit. |
-| **$X=3$ (Triple-Pass)** | 15–25+ dense tasks, rating math + db + multi-page UI + CSS | Deep edge-case validation, boundary condition stress-testing (e.g. 0-game players), full WCAG styling audit. |
-| **$X \ge 4$** | *Not Recommended* | Diminishing returns. Risks circular refactoring or infinite micro-polishing. |
+| **Pass 1** (Single-Pass) | 1–5 focused tasks, simple bug fixes | Maximum velocity, minimal latency. Low probability of attention drop on narrow scopes. |
+| **Pass 2** (Double-Pass) | **Standard Default**: 5–15 tasks, full PRs, UI + backend | **Gold Standard**. Recovers ~100% of dropped micro-requirements via "Is vs. Ought" delta audit. |
+| **Pass 3** (Triple-Pass) | 15–25+ dense tasks, rating math + db + multi-page UI + CSS | Deep edge-case validation, boundary condition stress-testing (e.g. 0-game players), full WCAG styling audit. |
+| **Pass 4+** | *Not Recommended* | Diminishing returns. Risks circular refactoring or infinite micro-polishing. |
 
 ### 4. Configuring Pass Depth via CLI
 
@@ -236,25 +236,25 @@ $$
 
 | Component | Dimension | Physical Meaning in Agent Runtime |
 |---|---|---|
-| **Real: $X = \mathrm{Re}(Z) \in [1.0, 3.0]$** | **Action / Physical Mutation** | File creation, AST edits, refactoring passes, and in-situ delta repair loops. |
-| **Imaginary: $Y = \mathrm{Im}(Z) \in [0.0, 3.0]$** | **Epistemic / Cognitive Reflection** | Reasoning tokens, proof checking, counterfactual simulation, and test synthesis. |
+| **Real Component** ($X = \mathrm{Re}(Z) \in [1.0, 3.0]$) | **Action / Physical Mutation** | File creation, AST edits, refactoring passes, and in-situ delta repair loops. |
+| **Imaginary Component** ($Y = \mathrm{Im}(Z) \in [0.0, 3.0]$) | **Epistemic / Cognitive Reflection** | Reasoning tokens, proof checking, counterfactual simulation, and test synthesis. |
 
 #### Polar Coordinates: Energy and Phase
 In polar form $Z = R e^{i\theta}$:
-1. **Cognitive Energy Budget ($R = |Z| = \sqrt{X^2 + Y^2}$)**:
+1. **Cognitive Energy Budget** $R = |Z| = \sqrt{X^2 + Y^2}$:
    The total computational mass allocated to the prompt.
-2. **Attentional Phase Angle ($\theta = \arctan(Y/X)$)**:
-   - **$\theta < 20^\circ$ (Action-Dominant)**: High code churn, mechanical migrations, formatting (e.g. $Z = 2.0 + 0.2i$).
-   - **$20^\circ \le \theta \le 50^\circ$ (Balanced Cognitive Flow)**: Standard fullstack PRs with synchronized frontend, backend, and tests ($Z = 2.0 + 1.0i$).
-   - **$\theta > 55^\circ$ (Epistemic-Dominant)**: Complex algorithms, formal proofs, concurrency invariants ($Z = 1.0 + 2.5i$).
+2. **Attentional Phase Angle** $\theta = \arctan(Y/X)$:
+   - $\theta < 20^\circ$ **(Action-Dominant)**: High code churn, mechanical migrations, formatting (e.g. $Z = 2.0 + 0.2i$).
+   - $20^\circ \le \theta \le 50^\circ$ **(Balanced Cognitive Flow)**: Standard fullstack PRs with synchronized frontend, backend, and tests ($Z = 2.0 + 1.0i$).
+   - $\theta > 55^\circ$ **(Epistemic-Dominant)**: Complex algorithms, formal proofs, concurrency invariants ($Z = 1.0 + 2.5i$).
 
 ### 2. Continuous & Fractional Pass Execution ($X \in \mathbb{R}^+$)
 
 Pass depth is continuous rather than all-or-nothing:
-- **$X = 1.0$ (Direct Pass)**: Direct batch implementation without secondary audits.
-- **$X = 1.3$ (Scoped Sub-Pass)**: Pass 1 executes fully, followed by a targeted audit focused strictly on high-risk boundary constraints and negative exclusions.
-- **$X = 2.0$ (Gold Standard Double-Pass)**: Full 100% "Is vs. Ought" gap audit across every prompt requirement against modified files.
-- **$X = 3.0$ (Triple-Pass)**: Full double pass plus adversarial edge-case generation and cross-platform regression matrices.
+- $X = 1.0$ **(Direct Pass)**: Direct batch implementation without secondary audits.
+- $X = 1.3$ **(Scoped Sub-Pass)**: Pass 1 executes fully, followed by a targeted audit focused strictly on high-risk boundary constraints and negative exclusions.
+- $X = 2.0$ **(Gold Standard Double-Pass)**: Full 100% "Is vs. Ought" gap audit across every prompt requirement against modified files.
+- $X = 3.0$ **(Triple-Pass)**: Full double pass plus adversarial edge-case generation and cross-platform regression matrices.
 
 ### 3. Self-Learning Vocabulary via Feature Hashing (Zero Hardcoded Dictionaries)
 
@@ -377,7 +377,7 @@ Modern inference backends (Gemini and Claude) rely heavily on Prompt/KV Caching.
 ## ✨ Features
 
 - 🧠 **Dynamic 5-Tier Decision Matrix**: Classifies prompts in <50ms and routes to the exact model tier needed.
-- 🧬 **Complex Cognitive State Engine ($Z = X + iY \in \mathbb{C}$)**: Models execution on a continuous complex spectrum: physical file mutation ($X = \mathrm{Re}(Z) \in [1.0, 3.0]$) and epistemic reflection ($Y = \mathrm{Im}(Z) \in [0.0, 3.0]$) with polar energy and attentional phase metrics.
+- 🧬 **Complex Cognitive State Engine** ($Z = X + iY \in \mathbb{C}$): Models execution on a continuous complex spectrum: physical file mutation ($X = \mathrm{Re}(Z) \in [1.0, 3.0]$) and epistemic reflection ($Y = \mathrm{Im}(Z) \in [0.0, 3.0]$) with polar energy and attentional phase metrics.
 - 🎓 **Self-Learning Vocabulary via Feature Hashing**: Zero static keyword dictionaries. Uses character 3-gram feature hashing and online Stochastic Gradient Descent (SGD) to automatically learn which terms correlate with attention drops over time.
 - 📡 **Privacy-Preserving Telemetry & Local Buffer**: Stores purely anonymized numeric vectors and empirical outcomes locally (`samples.jsonl`) with zero prompt text, code, or filename exposure.
 - 🚀 **Proactive Autopilot Onboarding (Kickoff Discovery)**: When initiating a major feature or new project without explicitly requesting Autopilot, the agent proactively asks *once* if you want to activate Project Autopilot (starting cleanly with Collaborative Alignment & Planning before any execution).
