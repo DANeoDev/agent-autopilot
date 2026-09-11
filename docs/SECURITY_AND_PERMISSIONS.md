@@ -2,8 +2,9 @@
 
 > [!WARNING]
 > **DISCLAIMER & EXPERIMENTAL STATUS: USE AT YOUR OWN RISK!**
-> **Antigravity Autopilot is experimental software and has not been extensively tested across all environments, operating systems, and edge cases.**
+> **Agent Autopilot is experimental software and has not been extensively tested across all environments, operating systems, and edge cases.**
 > By using this software or enabling autopilot modes, you acknowledge that AI agents may execute arbitrary shell commands, install packages, and read/write local files without manual step-by-step review. **You assume full responsibility for any actions, changes, or data loss that may occur on your machine.**
+
 
 ---
 
@@ -59,7 +60,7 @@ Because Autopilot operates on the local machine, users should be aware of the fo
 
 ## 5. Safe Usage Guidelines
 
-To minimize risk when using Antigravity Autopilot:
+To minimize risk when using Agent Autopilot:
 
 1. **Work in Dedicated Git Branches**: Never run autopilot on `main` or uncommitted work. Ensure your repository is committed and clean before enabling autopilot so any unwanted changes can be reverted with `git checkout`.
 2. **Never Run Near Sensitive Data**: Do not run autopilot in directories containing `.env` files, production API keys, personal documents, or sensitive corporate intellectual property.

@@ -1,11 +1,12 @@
-# Antigravity Autopilot 🚀
+# Agent Autopilot 🚀
 
-> **Fully Automated Multi-Tier Model Routing, Intelligent Orchestration & Autonomous Project Execution for Google Antigravity.**
+> **Universal Multi-Tier Model Routing, Intelligent Orchestration & Autonomous Project Execution for Google Antigravity, Claude Code, Cursor, Windsurf & Codex.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Platform: Windows | macOS | Linux](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-0078D6.svg)](https://github.com/DANeoDev/antigravity-autopilot)
-[![Compatible: Google Antigravity 2.12.2+](https://img.shields.io/badge/Antigravity-v2.12.2%2B%20(2.0%2B)-4285F4.svg?logo=google)](https://antigravity.google)
+[![Platform: Windows | macOS | Linux](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-0078D6.svg)](https://github.com/DANeoDev/agent-autopilot)
+[![Compatible: Antigravity | Claude Code | Cursor | Codex](https://img.shields.io/badge/Compatible-Antigravity%20%7C%20Claude%20Code%20%7C%20Cursor%20%7C%20Codex-4285F4.svg)](https://github.com/DANeoDev/agent-autopilot)
 [![Python: 3.10+](https://img.shields.io/badge/Python-3.10%2B%20(Tested%203.13.5)-3776AB.svg?logo=python)](https://python.org)
+
 
 > [!WARNING]
 > **DISCLAIMER & EXPERIMENTAL STATUS: USE AT YOUR OWN RISK!**
@@ -254,8 +255,8 @@ The installer automatically detects installed agent environments (`.gemini`, `.c
 
 #### Option B: PowerShell
 ```powershell
-git clone https://github.com/DANeoDev/antigravity-autopilot.git
-cd antigravity-autopilot
+git clone https://github.com/DANeoDev/agent-autopilot.git
+cd agent-autopilot
 
 # Auto-detect and install to all active agents
 .\scripts\install.ps1
@@ -270,11 +271,12 @@ cd antigravity-autopilot
 
 Run the native POSIX installer:
 ```bash
-git clone https://github.com/DANeoDev/antigravity-autopilot.git
-cd antigravity-autopilot
+git clone https://github.com/DANeoDev/agent-autopilot.git
+cd agent-autopilot
 chmod +x scripts/install.sh
 ./scripts/install.sh
 ```
+
 *This auto-detects installed agent directories, installs rules to `~/.gemini`, `~/.claude`, and `~/AGENTS.md`, deploys executable wrappers (`agent-route`, `agent-autopilot`, `agy-route`, `agy-autopilot`) to `~/.gemini/antigravity/bin`, and adds the bin directory to your `~/.zshrc` / `~/.bashrc`.*
 
 
@@ -330,7 +332,7 @@ agent-autopilot --dir . --enable-autopilot
 ## 📁 Repository Structure
 
 ```text
-antigravity-autopilot/
+agent-autopilot/
 ├── bin/
 │   ├── agy_router.py              # Cross-platform CLI task classifier & decision engine
 │   ├── agy_project_manager.py     # Cross-platform project permissions & autopilot manager

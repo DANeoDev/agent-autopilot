@@ -82,9 +82,10 @@ Whenever the user enables Autopilot (either explicitly in a prompt e.g. *"enable
 
 ## 7. Repository-to-System Auto-Sync Protocol
 
-Whenever modifying `antigravity-autopilot` files in this repository (rules, skills, CLI binaries, or configs):
+Whenever modifying `agent-autopilot` files in this repository (rules, skills, CLI binaries, or configs):
 - The agent MUST ALWAYS immediately sync and install the updated files to the local user environment (`~/.gemini/config/` and `~/.gemini/antigravity/bin/`) via `.\scripts\install.ps1` (or `install.sh`).
 - Never leave the local installation stale after editing repository files.
+
 
 ---
 

@@ -8,7 +8,7 @@ Google Antigravity is an AI-first development platform built around an autonomou
 - The user selects an active LLM for that conversation turn (e.g., Gemini 3.8 Flash, Claude Sonnet 4.6 Thinking, Claude Opus 4.6).
 - The client UI dropdown cannot be mutated mid-turn by the agent itself.
 
-To overcome this limitation and provide **fully automated, hands-off model optimization**, Antigravity Autopilot implements **Hierarchical Multi-Agent Delegation**.
+To overcome this limitation and provide **fully automated, hands-off model optimization**, Agent Autopilot implements **Hierarchical Multi-Agent Delegation**.
 
 ```
                    ┌───────────────────────────────────────────────┐
@@ -64,7 +64,7 @@ Tasks are classified across three core dimensions:
 
 ## 3. Quota Optimization Protocol
 
-High-tier models (Claude Opus and Sonnet Thinking) have stricter hourly and daily token limits. Antigravity Autopilot actively protects these limits:
+High-tier models (Claude Opus and Sonnet Thinking) have stricter hourly and daily token limits. Agent Autopilot actively protects these limits:
 - **Downwards Delegation**: When running primary on Claude Opus, broad codebase scans and file searches are offloaded to `flash_lite` subagents.
 - **Kernel Partitioning**: Only the core mathematical algorithm is dispatched to high-tier models. Boilerplate, imports, and scaffolding remain on Flash.
 - **Fallback Grace**: If rate limit warnings are received, the router automatically downgrades Tier 4 tasks to Gemini 3.8 Flash, reserving Opus strictly for tasks where a drop in model tier would cause a substantial drop in quality.
@@ -73,7 +73,7 @@ High-tier models (Claude Opus and Sonnet Thinking) have stricter hourly and dail
 
 ## 4. The Two-Phase Autopilot Engine & Reflective Loop
 
-Autonomous development requires a strict boundary between strategic deliberation and uninterrupted execution. Antigravity Autopilot implements a stateful Two-Phase lifecycle:
+Autonomous development requires a strict boundary between strategic deliberation and uninterrupted execution. Agent Autopilot implements a stateful Two-Phase lifecycle:
 
 ```
 [Vision / Feature Prompt]
@@ -209,7 +209,7 @@ Modern model inference engines (such as Gemini and Anthropic Claude) maintain se
 
 ## 6. System Environment & Platform Compatibility
 
-Antigravity Autopilot is designed to run seamlessly across all primary developer operating systems and agent terminal environments.
+Agent Autopilot is designed to run seamlessly across all primary developer operating systems and agent terminal environments.
 
 ### 6.1 Multi-Agent Terminal Architecture
 
