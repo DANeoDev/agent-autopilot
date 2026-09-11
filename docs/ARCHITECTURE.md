@@ -103,6 +103,14 @@ Autonomous development requires a strict boundary between strategic deliberation
         └──────────────────────┬──────────────────────┘
                                │ (User Confirms)
                                ▼
+        ┌─────────────────────────────────────────────┐
+        │       PRE-EXECUTION PERMISSION ELEVATION    │
+        │ • Sets autoExecutionPolicy: EAGER           │
+        │ • Sets fileAccessPolicy: ALLOW              │
+        │ • Eliminates interactive popups completely  │
+        └──────────────────────┬──────────────────────┘
+                               │
+                               ▼
 ┌─────────────────────────────────────────────────────────────┐
 │  Phase 2: 100% Autonomous Execution (Hands-Off)             │
 │  • ZERO interruptions or conversational pauses              │

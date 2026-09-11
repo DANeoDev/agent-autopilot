@@ -92,6 +92,7 @@ Modern inference backends (Gemini and Claude) rely heavily on Prompt/KV Caching.
 - 🤖 **Two-Phase Autonomous Project Mode (`project-autopilot`)**:
   - **Phase 1: Collaborative Alignment**: The agent acts as an engineering sounding board to discuss architectural trade-offs, clarify domain rules, and align on a detailed implementation plan.
   - **The Launch Gate**: Prompts explicitly: *"The plan is aligned. Do you want me to engage full Autopilot execution now?"*
+  - **Pre-Execution Elevation**: Automatically configures the workspace project settings to eager mode *prior* to task execution, guaranteeing zero interactive "allow this action" permission stalls.
   - **Phase 2: Uninterrupted Hands-Off Execution**: ZERO stops or questions. Tactical choices ("consider approach X or Y") are decided autonomously via executive decision-making.
 - 🔍 **Reflective "Pseudo Self-Prompting"**: The agent continuously audits itself during execution:
   - *"Does this fulfill the original vision and constraints?"*

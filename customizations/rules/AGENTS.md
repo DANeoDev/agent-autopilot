@@ -72,9 +72,26 @@ At the start of a project or whenever the user presents a substantial multi-step
 
 ---
 
-## 6. Mandatory Model Attribution Footer
+## 6. Pre-Execution Workspace Autopilot Elevation
+
+Whenever the user enables Autopilot (either explicitly in a prompt e.g. *"enable autopilot and build X"*, or by approving the Phase 1 Launch Gate):
+- **Elevate First**: The agent MUST immediately apply eager execution to the project configuration (`agy-autopilot --dir . --enable-autopilot --yes` or updating the project config's `autoExecutionPolicy` to `CASCADE_COMMANDS_AUTO_EXECUTION_EAGER` and `fileAccessPolicy` to `AGENT_SETTING_POLICY_ALLOW`) **BEFORE executing any task commands or editing files**.
+- **Zero Permission Interruptions**: This ensures that subsequent shell commands, builds, test runs, and file edits proceed completely hands-off without repetitive UI permission prompts (*"allow this action once / always"*).
+
+---
+
+## 7. Repository-to-System Auto-Sync Protocol
+
+Whenever modifying `antigravity-autopilot` files in this repository (rules, skills, CLI binaries, or configs):
+- The agent MUST ALWAYS immediately sync and install the updated files to the local user environment (`~/.gemini/config/` and `~/.gemini/antigravity/bin/`) via `.\scripts\install.ps1` (or `install.sh`).
+- Never leave the local installation stale after editing repository files.
+
+---
+
+## 8. Mandatory Model Attribution Footer
 
 At the very end of EVERY response, you MUST include a clear attribution note indicating which model(s) performed the work. Use the following format:
 
 > 🤖 **Model Used**: [Primary Model Name] *(if subagents were invoked, add: `+ [Subagent Model / Tier] for [specific subtask]`)*
+
 

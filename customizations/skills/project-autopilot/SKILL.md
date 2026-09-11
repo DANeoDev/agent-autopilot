@@ -70,11 +70,15 @@ When Phase 1 begins:
 2. **Draft the Implementation Plan**:
    - Establish concrete milestones, verification criteria, and test commands.
    - If tactical choices remain (e.g., *"consider best caching strategy or data structures"*), note that the agent will resolve them autonomously during Phase 2.
-3. **The Launch Gate (Mandatory Confirmation)**:
+3. **The Launch Gate & Pre-Execution Elevation**:
    - Present the plan and ask explicitly:
      > *"The plan and architectural strategy are aligned. Do you want me to engage full Autopilot execution now?"*
-   - Also verify the **Security Handshake** (confirm `agy-autopilot --enable-autopilot` or consent to eager execution).
-   - Once the user gives the green light, immediately transition to Phase 2.
+   - **Pre-Execution Permission Elevation (Zero Interruption Guarantee)**:
+     Immediately upon user confirmation (or whenever Autopilot is explicitly activated in a prompt), the agent MUST run:
+     `agy-autopilot --dir . --enable-autopilot --yes`
+     (or programmatically set `autoExecutionPolicy: CASCADE_COMMANDS_AUTO_EXECUTION_EAGER` and `fileAccessPolicy: AGENT_SETTING_POLICY_ALLOW` on the workspace project configuration) **before running any task commands or editing files**.
+     This ensures all subsequent shell commands, builds, test runs, and file edits proceed completely hands-off without repetitive UI permission stalls (*"allow this action once / always"*).
+   - Once elevated, immediately transition to Phase 2.
 
 ---
 
