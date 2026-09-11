@@ -165,8 +165,20 @@ def main():
     parser.add_argument("--disable-autopilot", action="store_true", help="Revert to prompt-for-review mode")
     parser.add_argument("--passes", type=int, choices=[1, 2, 3], default=None, help="Set execution pass depth (1=Single-Pass, 2=Double-Pass default, 3=Triple-Pass deep audit)")
     parser.add_argument("--predict", type=str, default=None, help="Predict optimal complex pass state Z = X + iY for a prompt")
+    parser.add_argument("--explain", action="store_true", help="When using --predict, show semantic term breakdown")
+    parser.add_argument("--telemetry", choices=["explicit", "anonymous"], default=None, help="Configure telemetry mode (explicit: standard default, rich; anonymous: hashed only)")
     parser.add_argument("--yes", "-y", action="store_true", help="Bypass interactive security confirmation")
     args = parser.parse_args()
+
+    if args.telemetry:
+        from cognitive_engine import set_configured_telemetry_mode
+        set_configured_telemetry_mode(args.telemetry)
+        print(f"[SUCCESS] Telemetry mode set to: '{args.telemetry}'")
+        if args.telemetry == "explicit":
+            print("  (Explicit mode is the standard default: records prompt text & deltas for highest-accuracy learning).")
+        else:
+            print("  (Anonymous mode enabled: strips prompt text and records only numeric hashes).")
+        return
 
     if args.predict:
         from cognitive_engine import CognitiveEngine
@@ -180,7 +192,19 @@ def main():
         print(f"Epistemic Depth (Y) : {result['Y_continuous']} (Internal reflection & reasoning)")
         print(f"Cognitive Budget (R): {result['R_magnitude']} (Total attentional energy)")
         print(f"Phase Angle (theta) : {result['theta_degrees']} deg -> {result['orientation']}")
+        print(f"Telemetry Mode      : {result['telemetry_mode'].upper()} (Standard default)")
         print(f"Samples Trained     : {result['samples_trained']}")
+        print(f"Learned Vocabulary  : {result['total_learned_vocabulary_size']} custom terms discovered")
+
+        if args.explain and result.get("matched_terms"):
+            print("--------------------------------------------------------")
+            print("  CONTRIBUTING SEMANTIC TERMS:")
+            for m in result["matched_terms"]:
+                src = m["source"]
+                dx = m["delta_x"]
+                dy = m["delta_y"]
+                print(f"  * {m['term']:<15} [{src:<20}] : Delta-X = {dx:+.2f}, Delta-Y = {dy:+.2f}")
+
         print("========================================================\n")
         return
 

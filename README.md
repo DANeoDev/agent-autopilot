@@ -528,6 +528,18 @@ agent-autopilot --dir . --enable-autopilot
 
 ---
 
+## 📚 Documentation Deep Dives
+
+For exhaustive technical breakdowns of specific subsystems:
+
+- 🧠 **[docs/COGNITIVE_ENGINE.md](docs/COGNITIVE_ENGINE.md)**: Deep dive on the complex plane ($Z = X + iY$), polar energy & phase metrics, base concept priors, and unsupervised vocabulary learning.
+- 🔄 **[docs/MULTI_PASS_AUTOPILOT.md](docs/MULTI_PASS_AUTOPILOT.md)**: The Double-Pass ($X=2$) Gold Standard, the "Is vs. Ought" Gap Analysis Engine, and the 20-item tournament prompt benchmark.
+- 📡 **[docs/TELEMETRY_AND_LEARNING.md](docs/TELEMETRY_AND_LEARNING.md)**: Explicit (Default) vs. Anonymous telemetry modes, local sample buffers, and online Stochastic Gradient Descent (SGD) mechanics.
+- 🏗️ **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**: Overall system runtime architecture, velocity dynamics, and mathematical proofs defeating quadratic token inflation.
+- 🛡️ **[docs/SECURITY_AND_PERMISSIONS.md](docs/SECURITY_AND_PERMISSIONS.md)**: Permission elevation guidelines, experimental disclaimers, and security boundaries.
+
+---
+
 ## 📁 Repository Structure
 
 ```text
@@ -551,7 +563,10 @@ agent-autopilot/
 │       └── project-autopilot/     # Skill: Complex cognitive state execution & online learning
 │           └── SKILL.md
 ├── docs/
-│   ├── ARCHITECTURE.md            # Deep dive on complex plane Z=X+iY, runtime dynamics & token economics
+│   ├── ARCHITECTURE.md            # Overall system architecture, runtime dynamics & token economics
+│   ├── COGNITIVE_ENGINE.md        # Complex plane Z=X+iY, polar metrics & dynamic vocabulary learning
+│   ├── MULTI_PASS_AUTOPILOT.md    # Double-Pass (X=2) Gold Standard, "Is vs. Ought" gap analysis & case study
+│   ├── TELEMETRY_AND_LEARNING.md  # Explicit (Default) vs Anonymous modes, telemetry buffers & online SGD
 │   └── SECURITY_AND_PERMISSIONS.md # Security boundaries & permission guidelines
 ├── models/
 │   └── cognitive_weights.json     # Calibrated baseline & locally learned neural feature weights

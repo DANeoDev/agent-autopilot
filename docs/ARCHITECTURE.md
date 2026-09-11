@@ -371,5 +371,16 @@ While originally engineered for Google Antigravity, Autopilot's decision matrix,
 | **Linux & WSL2** | Ubuntu 22.04+, Debian 12+, Fedora 38+, Arch Linux | Native POSIX installer via `scripts/install.sh`. Pure Python standard-library CLI tools. |
 | **Python Runtime** | **Python 3.10+** (Tested on Python 3.13.5) | Standard library only (`os`, `sys`, `json`, `pathlib`, `argparse`). Zero third-party dependencies required. |
 
+---
+
+## 7. Subsystem Documentation Deep Dives
+
+For targeted, in-depth architectural and implementation guides:
+
+- 🧠 **[COGNITIVE_ENGINE.md](COGNITIVE_ENGINE.md)**: Mathematical modeling of the complex plane ($Z = X + iY$), polar coordinates ($R, \theta$), base meaning taxonomy, and dynamic subword vocabulary learning.
+- 🔄 **[MULTI_PASS_AUTOPILOT.md](MULTI_PASS_AUTOPILOT.md)**: Double-Pass ($X=2$) Gold Standard, the "Is vs. Ought" Gap Analysis Engine, and the 20-item tournament prompt case study.
+- 📡 **[TELEMETRY_AND_LEARNING.md](TELEMETRY_AND_LEARNING.md)**: Explicit (Default) vs. Anonymous telemetry modes, local sample buffers, online SGD mathematics, and privacy boundaries.
+- 🛡️ **[SECURITY_AND_PERMISSIONS.md](SECURITY_AND_PERMISSIONS.md)**: Security boundaries, permission elevations, and safety protocols.
+
 
 
