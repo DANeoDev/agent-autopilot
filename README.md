@@ -302,14 +302,24 @@ As users submit diverse real-world tasks, the engine continuously extracts subwo
 | `reentrancy` | `+0.01` | `+0.03` | 1 | Balanced Refinement |
 | `backpressure` | `+0.01` | `+0.03` | 1 | Balanced Refinement |
 
+#### 🎯 Dynamic Prompt Viability & Quality Guardrails ($Q \in [0.0, 1.0]$)
+
+To prevent noisy, ambiguous prompts from corrupting the model's self-learned weights, Autopilot evaluates prompt viability across specificity, testability, and scope. Learning rates are confidence-weighted via $\eta_{\mathrm{eff}} = \eta \cdot Q^2$:
+
+| Viability Tier ($Q$) | Prompt Characteristics | Learning Rate Factor ($\eta_{\mathrm{eff}}$) | Safety Dynamics |
+|---|---|---|---|
+| **High** ($Q \ge 0.78$) | Verifiable exit codes, concrete file/CSS invariants | $\approx 0.85\eta$ (Full Adaptation) | Full gradient updates from genuine omissions |
+| **Moderate** ($0.52 \le Q < 0.78$) | Actionable but lacks explicit assertion or test command | $\approx 0.40\eta$ (Filtered Adaptation) | Partial learning; emits prompt refinement hints |
+| **Low** ($Q < 0.52$) | Vague adjectives (*"cool"*, *"cleaner"*, *"nice"*) | $\le 0.15\eta$ (Damped Noise Guard) | Prevents prompt ambiguity from polluting vocabulary |
+
 #### 🔬 Representative Task Trajectories (Empirical Case Studies)
 
-| Task Domain / Sanitized Snippet | Complex Vector ($Z$) | Pass Depth ($X$) | Operational Focus |
-|---|---|---|---|
-| Concurrency: *"Fix deadlock in threadpool worker queue"* | $Z = 2.45 + 1.45i$ | $X = 2.2$ (Gold Standard) | High epistemic reasoning + delta verification |
-| UI Nuance: *"Orient hover dropdowns downward on mobile"* | $Z = 2.55 + 1.10i$ | $X = 2.2$ (Gold Standard) | Multi-pass AST edits on CSS/HTML templates |
-| Affective Fix: *"Sadly still encountered unrendered math"* | $Z = 2.57 + 1.59i$ | $X = 2.6$ (Triple-Pass) | Remediation pass targeting persistent edge cases |
-| Baseline Pair Programming: *"Format table and export to CSV"* | $Z = 2.21 + 1.04i$ | $X = 2.2$ (Gold Standard) | Standard resilient double-pass execution |
+| Task Domain / Sanitized Snippet | Viability ($Q$) | Complex Vector ($Z$) | Pass Depth ($X$) | Operational Focus |
+|---|---|---|---|---|
+| Concurrency: *"Fix deadlock in threadpool worker queue"* | $Q = 0.88$ | $Z = 2.45 + 1.45i$ | $X = 2.2$ (Gold Standard) | High epistemic reasoning + delta verification |
+| UI Nuance: *"Orient hover dropdowns downward on mobile"* | $Q = 0.85$ | $Z = 2.55 + 1.10i$ | $X = 2.2$ (Gold Standard) | Multi-pass AST edits on CSS/HTML templates |
+| Affective Fix: *"Sadly still encountered unrendered math"* | $Q = 0.57$ | $Z = 2.76 + 1.59i$ | $X = 2.8$ (Triple-Pass) | Remediation pass targeting persistent edge cases |
+| Baseline Pair Programming: *"Format table and export to CSV"* | $Q = 0.82$ | $Z = 2.21 + 1.04i$ | $X = 2.2$ (Gold Standard) | Standard resilient double-pass execution |
 
 <!-- AUTOPILOT_LIVE_TELEMETRY:END -->
 

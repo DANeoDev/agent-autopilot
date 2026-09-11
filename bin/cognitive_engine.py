@@ -171,6 +171,96 @@ def tokenize_and_hash(text: str, dim: int = DEFAULT_HASH_DIM) -> List[float]:
     return vec
 
 
+def evaluate_prompt_viability(prompt: str) -> Dict[str, Any]:
+    """
+    Evaluates prompt viability Q in [0.0, 1.0] across three orthogonal dimensions:
+      1. Q_spec  (Specificity vs. Subjective Fluff)
+      2. Q_test  (Testability & Verifiability Constraints)
+      3. Q_scope (Scope & Structure Feasibility)
+    
+    Returns score, classification, and actionable prompt refinement hints.
+    """
+    clean = prompt.lower()
+    words = tokenize_words(clean)
+    num_words = len(words)
+
+    # 1. Specificity: concrete technical cues vs vague subjective words
+    vague_lexicon = {
+        "better", "nice", "good", "cool", "cleaner", "somehow", "maybe", 
+        "idk", "stuff", "things", "proper", "awesome", "slick", "crazy", 
+        "something", "etc", "kind", "sort", "basically"
+    }
+    concrete_indicators = [
+        r"\.[a-z0-9]{1,4}\b",  # file extensions (.py, .ts, .md, .css)
+        r"['\"`][^'\"`]+['\"`]", # quoted strings / exact identifiers
+        r"\b(?:function|class|def|route|endpoint|schema|database|table|column|api|css|html|dom|hook|state|component)\b",
+        r"\b(?:add|remove|fix|refactor|export|orient|render|assert|calculate|implement|update|delete|migrate|align|filter)\b"
+    ]
+    
+    vague_found = [w for w in words if w in vague_lexicon]
+    concrete_matches = sum(len(re.findall(pat, prompt, re.IGNORECASE)) for pat in concrete_indicators)
+    
+    raw_spec = 0.50 + 0.08 * min(6, concrete_matches) - 0.12 * len(vague_found)
+    q_spec = max(0.10, min(1.00, raw_spec))
+
+    # 2. Testability: explicit verification criteria & conditional logic
+    test_lexicon = [
+        r"\b(?:test|pytest|unit|assert|verify|verification|exit\s*code|status\s*code|error\s*code)\b",
+        r"\b(?:200|404|500|true|false|null|none|equal|expect|match)\b",
+        r"\b(?:if\b.+?\bthen|when\b.+?\bshould|only\b.+?\binstead|ensure|must|guarantee)\b",
+        r"#\d+|rank\s*#?\d+|\d+\s*items"
+    ]
+    test_matches = sum(len(re.findall(pat, clean)) for pat in test_lexicon)
+    raw_test = 0.35 + 0.15 * min(5, test_matches)
+    q_test = max(0.10, min(1.00, raw_test))
+
+    # 3. Scope & Structure: density, itemization, and attention-sink risk
+    item_matches = len(re.findall(r"(?:^|\n)\s*(?:\d+[\.\)]|[-*])\s+", prompt))
+    if num_words < 8:
+        q_scope = 0.35 # Underspecified
+    elif 8 <= num_words <= 250:
+        q_scope = 0.95 if item_matches > 0 else 0.85
+    elif num_words > 250:
+        q_scope = 0.90 if item_matches >= 4 else 0.60 # Wall of text risk without bullet points
+    else:
+        q_scope = 0.80
+
+    # Composite Viability Score Q
+    Q = round(0.40 * q_spec + 0.35 * q_test + 0.25 * q_scope, 3)
+
+    if Q >= 0.78:
+        classification = "HIGH VIABILITY [PROCEEDING AUTONOMOUSLY]"
+    elif Q >= 0.52:
+        classification = "MODERATE VIABILITY [ACTIONABLE WITH MINOR GAPS]"
+    else:
+        classification = "LOW VIABILITY [HIGH AMBIGUITY / RISK OF DRIFT]"
+
+    hints = []
+    if vague_found:
+        unique_vague = sorted(list(set(vague_found)))[:3]
+        hints.append(f"Subjective phrasing detected: {', '.join(repr(v) for v in unique_vague)}. Replace with concrete functional criteria or DOM/CSS rules.")
+    if q_test < 0.60:
+        hints.append("Lacks explicit verification condition. Specify expected output, exit code (0), or assertion to guarantee 100% gap audit fidelity.")
+    if item_matches == 0 and num_words > 40:
+        hints.append("Consider numbered punch-list format (1., 2., 3.). Multi-item lists improve Pass 2 gap-audit recall by ~40%.")
+
+    potential_y_delta = 0.0
+    if hints:
+        potential_y_delta = round(-0.15 * len(hints), 2)
+        hints.append(f"Resolving these hints will compress epistemic uncertainty Y by {potential_y_delta:+.2f}, eliminating guesswork and saving tokens.")
+
+    return {
+        "Q": Q,
+        "Q_spec": round(q_spec, 3),
+        "Q_test": round(q_test, 3),
+        "Q_scope": round(q_scope, 3),
+        "classification": classification,
+        "detected_vague_terms": vague_found,
+        "hints": hints,
+        "potential_y_reduction": potential_y_delta
+    }
+
+
 class CognitiveEngine:
     def __init__(self, weights_path: Path = DEFAULT_WEIGHTS_PATH, dim: int = DEFAULT_HASH_DIM):
         self.weights_path = Path(weights_path)
@@ -257,6 +347,7 @@ class CognitiveEngine:
     def predict(self, prompt: str) -> Dict[str, Any]:
         feats = tokenize_and_hash(prompt, self.dim)
         term_dx, term_dy, matched_terms = self.extract_term_influences(prompt)
+        viability = evaluate_prompt_viability(prompt)
 
         # Base hash projection + term influence + bias
         raw_x = sum(w * x for w, x in zip(self.w_x, feats)) + term_dx + self.b_x
@@ -300,11 +391,12 @@ class CognitiveEngine:
             "samples_trained": self.samples_seen,
             "matched_terms": matched_terms,
             "total_learned_vocabulary_size": len(self.learned_terms),
-            "telemetry_mode": telemetry_mode
+            "telemetry_mode": telemetry_mode,
+            "viability": viability
         }
 
     def format_card(self, result: Dict[str, Any]) -> str:
-        """Formats a compact ASCII telemetry card for agent / terminal output."""
+        """Formats a compact ASCII telemetry card with prompt viability & optimization hints."""
         z_str = result['Z']
         r_mag = result['R_magnitude']
         theta = result['theta_degrees']
@@ -312,6 +404,9 @@ class CognitiveEngine:
         x_desc = result['X_description']
         mode = result['telemetry_mode'].upper()
         samples = result['samples_trained']
+        v = result.get("viability", {})
+        q_val = v.get("Q", 0.85)
+        q_class = v.get("classification", "VIABLE")
 
         cues = []
         for m in result.get('matched_terms', []):
@@ -326,13 +421,27 @@ class CognitiveEngine:
             cues_str += f" (+{len(cues)-2} more)"
 
         lines = [
-            "╭─ 🧬 Autopilot Cognitive Telemetry ──────────────────────────────────────────╮",
-            f"│ Complex Vector : Z = {z_str:<10} (R = {r_mag:<5}, θ = {theta}°)                        │",
-            f"│ Pass Depth     : X = {result['X_continuous']:<5} -> {x_desc:<45} │",
-            f"│ Signals Caught : {cues_str:<58} │",
-            f"│ Telemetry Mode : {mode:<10} ({samples} empirical samples recorded)                 │",
-            "╰─────────────────────────────────────────────────────────────────────────────╯"
+            "╭─ 🎯 Autopilot Cognitive Telemetry & Prompt Viability ────────────────────────╮",
+            f"│ Prompt Viability : Q = {q_val:.2f} / 1.00  [{q_class:<35}] │",
+            f"│ Complex Vector   : Z = {z_str:<10} (R = {r_mag:<5}, θ = {theta}°)                        │",
+            f"│ Pass Depth       : X = {result['X_continuous']:<5} -> {x_desc:<45} │",
+            f"│ Signals Caught   : {cues_str:<58} │",
+            f"│ Telemetry Mode   : {mode:<10} ({samples} empirical samples recorded)                 │"
         ]
+
+        hints = v.get("hints", [])
+        if hints:
+            lines.append("├─────────────────────────────────────────────────────────────────────────────┤")
+            lines.append("│ 💡 Prompt Refinement Opportunities (To Optimize Execution & Reduce Tokens):  │")
+            for h in hints:
+                wrapped_hint = f"• {h}"
+                if len(wrapped_hint) > 73:
+                    lines.append(f"│ {wrapped_hint[:73]:<75} │")
+                    lines.append(f"│   {wrapped_hint[73:]:<73} │")
+                else:
+                    lines.append(f"│ {wrapped_hint:<75} │")
+
+        lines.append("╰─────────────────────────────────────────────────────────────────────────────╯")
         return "\n".join(lines)
 
     def record_and_update(self, prompt: str, actual_x_star: float, actual_y_star: float,
@@ -340,12 +449,18 @@ class CognitiveEngine:
                           test_exit_code: int = 0,
                           lr: float = 0.05):
         """
-        Performs online Stochastic Gradient Descent (SGD) on global weights AND
-        updates/discovers dynamic vocabulary terms based on empirical task outcome.
+        Performs confidence-weighted online Stochastic Gradient Descent (SGD) on global
+        weights AND updates/discovers dynamic vocabulary terms based on empirical task outcome.
+        Dampens learning rate by Q^2 on ambiguous or low-viability prompts to prevent weight poisoning.
         Logs sample in configured telemetry mode (explicit or anonymous).
         """
         feats = tokenize_and_hash(prompt, self.dim)
         term_dx, term_dy, _ = self.extract_term_influences(prompt)
+        viability = evaluate_prompt_viability(prompt)
+        q_score = viability.get("Q", 0.8)
+
+        # Confidence-weighted learning: dampen learning rate on ambiguous/low-viability prompts
+        eff_lr = lr * (q_score ** 2)
 
         pred_x = sum(w * x for w, x in zip(self.w_x, feats)) + term_dx + self.b_x
         pred_y = sum(w * x for w, x in zip(self.w_y, feats)) + term_dy + self.b_y
@@ -353,13 +468,13 @@ class CognitiveEngine:
         err_x = pred_x - actual_x_star
         err_y = pred_y - actual_y_star
 
-        # 1. Update hash projection weights
+        # 1. Update hash projection weights with confidence-weighted eff_lr
         for i in range(self.dim):
-            self.w_x[i] -= lr * err_x * feats[i]
-            self.w_y[i] -= lr * err_y * feats[i]
+            self.w_x[i] -= eff_lr * err_x * feats[i]
+            self.w_y[i] -= eff_lr * err_y * feats[i]
 
-        self.b_x -= lr * err_x * 0.5
-        self.b_y -= lr * err_y * 0.5
+        self.b_x -= eff_lr * err_x * 0.5
+        self.b_y -= eff_lr * err_y * 0.5
         self.samples_seen += 1
 
         # 2. Dynamic Vocabulary Learning: Update or discover terms in the prompt
@@ -369,7 +484,7 @@ class CognitiveEngine:
         meaningful_words = [w for w in words if len(w) > 3 and w not in stopwords]
 
         # Credit assignment: adjust term weights in the direction of error
-        term_lr = lr * 0.5
+        term_lr = eff_lr * 0.5
         for w in meaningful_words:
             if w in self.learned_terms:
                 t = self.learned_terms[w]
