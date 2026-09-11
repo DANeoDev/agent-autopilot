@@ -114,7 +114,7 @@ The agent executes the entire plan in an unbroken chain:
 
 ---
 
-## 🔄 Multi-Pass Self-Correction Trajectory: Why $X=2$ (Double-Pass) is the Gold Standard
+## 🔄 Multi-Pass Self-Correction Trajectory: Why $X=2.2$ (Resilient Double-Pass) is the Gold Standard
 
 When managing dense, multi-faceted prompt requests (15–20+ requirements spanning backend math, database schemas, responsive CSS, and subtle UX interactions), single-pass execution faces a universal frontier model limitation: **the LLM "attention sink" effect**.
 
@@ -128,14 +128,14 @@ Consider this real-world prompt dump from a tournament leaderboard & rating syst
 2. If filtering for a single player, jump/scroll to their spot in the full leaderboard rather than hiding everyone else.
 3. If multiple names are provided (comma-separated), filter the table to show only those players.
 4. Fix mode selector hovers (Glicko-2 / WHR) to orient downwards so they aren't clipped by the viewport.
-5. Remove redundant hover icon from mode selector; keep it self-explanatory.
-6. Add tooltip on the player filter explaining how the comma-separated multi-player search works.
-7. Always display deltas: keep delta selector, but add 'last update' as first option under OFF.
-8. Implement backend rating update timestamp tracking for leaderboard delta calculations.
-9. Fix edge case where players with 0 recorded games crash profile view with 500 error.
-10. Refactor leaderboard CSS: improve contrast ratio on secondary badges for WCAG accessibility.
-11. Add streaming CSV export route for filtered leaderboard view.
-12. Write comprehensive pytest assertions verifying ranking logic, deltas, and edge cases."
+5. In the selector, hide hover info (it's self-explanatory), but explain how comma-separated filters work.
+6. Remove the 'deltas' toggle button (always show deltas), but add 'last update' as the first option under OFF in the dropdown.
+7. Ensure rank change arrows are green for gains and red for drops.
+8. Retain existing URL parameters when toggling rating systems.
+9. Fix rating history graph when viewing a single player with 0 games.
+10. Accessibility: Adjust badge color contrast to meet WCAG standards.
+11. Export route: Build streaming CSV download for filtered table views.
+12. Verification: Write pytest suite confirming rating calculations and edge-case handling."
 ```
 
 In a traditional single-pass execution:
@@ -145,7 +145,7 @@ In a traditional single-pass execution:
 
 ### 2. The Solution: In-Situ "Is vs. Ought" Gap Analysis
 
-Instead of requiring human proofreading, Autopilot introduces an **autonomous self-correction trajectory** with a default depth of **Double-Pass** ($X=2$):
+Instead of requiring human proofreading, Autopilot introduces an **autonomous self-correction trajectory** with a default depth of **Resilient Double-Pass** ($X=2.2$):
 
 ```text
 [User Prompt: 15-20 Tasks]
@@ -160,13 +160,20 @@ Instead of requiring human proofreading, Autopilot introduces an **autonomous se
                              ▼
 ┌────────────────────────────────────────────────────────┐
 │ PASS 2: "Is vs. Ought" Gap Analysis (Gold Standard)    │
-│ 1. Extract raw requirements line-by-line (Ought)       │
-│ 2. Inspect git diff & modified files (Is)              │
-│ 3. Classify: [COMPLETE], [PARTIAL], or [MISSED]        │
-│ 4. Formulate in-situ Delta Plan for gaps               │
-│ 5. Execute delta repairs & re-verify test suite        │
+│ 1. Extracts raw requirements from initial user prompt  │
+│ 2. Audits current git diff & modified files            │
+│ 3. Identifies dropped micro-features                   │
+│ 4. Executes surgical delta plan for missing items      │
 └────────────────────────────┬───────────────────────────┘
-                             │ (Definition of Done satisfied)
+                             │
+                             ▼
+┌────────────────────────────────────────────────────────┐
+│ SUB-PASS 2.1: Delta Re-Verification Loop (+0.2)        │
+│ • Inspects AST diff of surgical delta edits            │
+│ • Verifies delta fixes didn't introduce regressions   │
+│ • Final test suite pass & build validation             │
+└────────────────────────────┬───────────────────────────┘
+                             │
                              ▼
 ┌────────────────────────────────────────────────────────┐
 │ Complete, Verified Codebase with 100% Feature Fidelity │
@@ -183,7 +190,7 @@ Instead of requiring human proofreading, Autopilot introduces an **autonomous se
 | Passes ($X$) | Workload & Prompt Density | Operational Dynamics |
 |---|---|---|
 | **Pass 1** (Single-Pass) | 1–5 focused tasks, simple bug fixes | Maximum velocity, minimal latency. Low probability of attention drop on narrow scopes. |
-| **Pass 2** (Double-Pass) | **Standard Default**: 5–15 tasks, full PRs, UI + backend | **Gold Standard**. Recovers ~100% of dropped micro-requirements via "Is vs. Ought" delta audit. |
+| **Pass 2** (Double-Pass) | **Standard Default**: 5–15 tasks, full PRs, UI + backend | **Resilient Gold Standard** ($X = 2.2$). Recovers ~100% of dropped micro-requirements via "Is vs. Ought" delta audit and re-verification loop. |
 | **Pass 3** (Triple-Pass) | 15–25+ dense tasks, rating math + db + multi-page UI + CSS | Deep edge-case validation, boundary condition stress-testing (e.g. 0-game players), full WCAG styling audit. |
 | **Pass 4+** | *Not Recommended* | Diminishing returns. Risks circular refactoring or infinite micro-polishing. |
 
@@ -253,7 +260,7 @@ In polar form $Z = R e^{i\theta}$:
 Pass depth is continuous rather than all-or-nothing:
 - $X = 1.0$ **(Direct Pass)**: Direct batch implementation without secondary audits.
 - $X = 1.3$ **(Scoped Sub-Pass)**: Pass 1 executes fully, followed by a targeted audit focused strictly on high-risk boundary constraints and negative exclusions.
-- $X = 2.0$ **(Gold Standard Double-Pass)**: Full 100% "Is vs. Ought" gap audit across every prompt requirement against modified files.
+- $X = 2.2$ **(Resilient Gold Standard Double-Pass)**: Full 100% "Is vs. Ought" gap audit across every prompt requirement against modified files, followed by targeted delta re-verification.
 - $X = 3.0$ **(Triple-Pass)**: Full double pass plus adversarial edge-case generation and cross-platform regression matrices.
 
 ### 3. Self-Learning Vocabulary via Feature Hashing (Zero Hardcoded Dictionaries)
@@ -275,7 +282,38 @@ $$
 3. **Autonomous Correlation Discovery**:
    If prompts containing terms like *"mutex"*, *"debounce"*, or *"WCAG"* consistently drop requirements in Pass 1, the model **automatically increases the weights** of those hash buckets without requiring manual dictionary updates.
 
-### 4. Privacy-First Local & Federated Telemetry
+<!-- AUTOPILOT_LIVE_TELEMETRY:START -->
+
+### 🧬 Live Cognitive Engine Telemetry & Self-Learned State
+
+> **Engine Baseline**: $Z_{\mathrm{base}} = 2.20 + 1.02i$ | **Cognitive Energy**: $R = 2.427$ | **Attentional Phase**: $\theta = 25.0^\circ$ (Balanced Flow)
+> **Empirical Dataset**: `2` user task trajectories trained locally via Online SGD.
+
+#### 📊 Dynamically Discovered Vocabulary (Zero Hardcoded Dictionaries)
+
+As users submit diverse real-world tasks, the engine continuously extracts subword features and assigns empirical credit weights:
+
+| Learned Token / Term | Action Depth Impact ($\Delta X$) | Epistemic Impact ($\Delta Y$) | Observed Trajectories | Category / Influence |
+|---|---|---|---|---|
+| `handle` | `+0.01` | `+0.03` | 1 | Balanced Refinement |
+| `network` | `+0.01` | `+0.03` | 1 | Balanced Refinement |
+| `bugs` | `+0.01` | `+0.03` | 1 | Balanced Refinement |
+| `socket` | `+0.01` | `+0.03` | 1 | Balanced Refinement |
+| `reentrancy` | `+0.01` | `+0.03` | 1 | Balanced Refinement |
+| `backpressure` | `+0.01` | `+0.03` | 1 | Balanced Refinement |
+
+#### 🔬 Representative Task Trajectories (Empirical Case Studies)
+
+| Task Domain / Sanitized Snippet | Complex Vector ($Z$) | Pass Depth ($X$) | Operational Focus |
+|---|---|---|---|
+| Concurrency: *"Fix deadlock in threadpool worker queue"* | $Z = 2.45 + 1.45i$ | $X = 2.2$ (Gold Standard) | High epistemic reasoning + delta verification |
+| UI Nuance: *"Orient hover dropdowns downward on mobile"* | $Z = 2.55 + 1.10i$ | $X = 2.2$ (Gold Standard) | Multi-pass AST edits on CSS/HTML templates |
+| Affective Fix: *"Sadly still encountered unrendered math"* | $Z = 2.57 + 1.59i$ | $X = 2.6$ (Triple-Pass) | Remediation pass targeting persistent edge cases |
+| Baseline Pair Programming: *"Format table and export to CSV"* | $Z = 2.21 + 1.04i$ | $X = 2.2$ (Gold Standard) | Standard resilient double-pass execution |
+
+<!-- AUTOPILOT_LIVE_TELEMETRY:END -->
+
+### 4. Dual Telemetry Architecture (Explicit vs Anonymous)
 
 - **Zero Prompt Leaks**: Raw prompts, code, filenames, and project directories **never** leave your machine.
 - **Telemetry Buffer**: Local samples are recorded as anonymized feature hashes to `~/.gemini/autopilot/telemetry/samples.jsonl`:

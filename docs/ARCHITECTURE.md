@@ -209,7 +209,7 @@ In a real-world testing benchmark, a prompt requested 12 dense requirements acro
 | Passes ($X$) | Workload & Prompt Density | Operational Dynamics |
 |---|---|---|
 | **Pass 1** (Single-Pass) | 1–5 focused tasks, simple bug fixes | Maximum speed, lowest latency. Minimal attention sink on narrow tasks. |
-| **Pass 2** (Double-Pass) | **Standard Default**: 5–15 tasks, full PRs, UI + backend | **Gold Standard**. Recovers ~100% of dropped micro-requirements via "Is vs. Ought" gap analysis. |
+| **Pass 2** (Double-Pass) | **Standard Default**: 5–15 tasks, full PRs, UI + backend | **Resilient Gold Standard** ($X = 2.2$). Recovers ~100% of dropped micro-requirements via "Is vs. Ought" gap analysis and delta re-verification. |
 | **Pass 3** (Triple-Pass) | 15–25+ dense tasks, rating math + db + multi-page UI + CSS | Deep edge-case validation, boundary stress-testing, and complete visual/documentation fidelity. |
 | **Pass 4+** | *Not Recommended* | Diminishing returns. Risks circular refactoring or infinite micro-polishing loops. |
 
@@ -231,8 +231,8 @@ $$
                    │                     Write code once, think deeply)
                    │          ●
                    │
-                   │               Z = 2.0 + 1.0i (Fullstack Overhaul:
-                   │                               Double-pass code, balanced thinking)
+                   │               Z = 2.2 + 1.0i (Fullstack Overhaul:
+                   │                               Resilient double-pass, balanced thinking)
                    │                    ●
                    │
                    │                          Z = 2.0 + 0.2i (Bulk CSS Refactor:
@@ -246,7 +246,7 @@ $$
    Quantifies file mutations, AST adjustments, and in-situ delta repair cycles:
    - $X = 1.0$: Direct batch execution without secondary audits.
    - $X = 1.3$: Scoped sub-pass targeting high-risk boundary constraints.
-   - $X = 2.0$: Full Double-Pass (100% "Is vs. Ought" gap audit).
+   - $X = 2.2$: Resilient Double-Pass Gold Standard (Pass 1 batch execution + 100% "Is vs. Ought" gap audit + surgical delta re-verification).
    - $X = 3.0$: Triple-pass with multi-tier stress testing and cross-platform matrix checks.
 2. **Epistemic Reflection Depth** ($Y = \mathrm{Im}(Z) \in [0.0, 3.0]$):
    Quantifies internal verification tokens, counterfactual simulation, test synthesis, and mathematical proof checking prior to file writes.

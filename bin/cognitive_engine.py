@@ -84,7 +84,18 @@ BASE_MEANING_PRIORS: Dict[str, Dict[str, float]] = {
     "null": {"delta_x": 0.20, "delta_y": 0.25, "concept": "edge_case"},
     "overflow": {"delta_x": 0.25, "delta_y": 0.35, "concept": "edge_case"},
     "exception": {"delta_x": 0.20, "delta_y": 0.25, "concept": "edge_case"},
-    "retry": {"delta_x": 0.25, "delta_y": 0.25, "concept": "resilience"}
+    "retry": {"delta_x": 0.25, "delta_y": 0.25, "concept": "resilience"},
+
+    # Affective, Corrective & Regression Signals (Meta-Feedback)
+    "sadly": {"delta_x": 0.25, "delta_y": 0.35, "concept": "correction_affect"},
+    "still": {"delta_x": 0.30, "delta_y": 0.20, "concept": "regression_signal"},
+    "again": {"delta_x": 0.25, "delta_y": 0.20, "concept": "regression_signal"},
+    "forgot": {"delta_x": 0.35, "delta_y": 0.15, "concept": "dropped_item"},
+    "missed": {"delta_x": 0.35, "delta_y": 0.15, "concept": "dropped_item"},
+    "broken": {"delta_x": 0.35, "delta_y": 0.25, "concept": "regression_signal"},
+    "reverted": {"delta_x": 0.30, "delta_y": 0.25, "concept": "regression_signal"},
+    "regress": {"delta_x": 0.30, "delta_y": 0.30, "concept": "regression_signal"},
+    "regression": {"delta_x": 0.30, "delta_y": 0.30, "concept": "regression_signal"}
 }
 
 
@@ -166,7 +177,7 @@ class CognitiveEngine:
         self.dim = dim
         self.w_x = [0.0] * dim
         self.w_y = [0.0] * dim
-        self.b_x = 2.0  # Default prior: X = 2.0 (Double-Pass)
+        self.b_x = 2.2  # Default prior: X = 2.2 (Resilient Gold Standard: Double-Pass + Delta Re-Verification)
         self.b_y = 1.0  # Default prior: Y = 1.0 (Standard reflection)
         self.samples_seen = 0
         self.learned_terms: Dict[str, Dict[str, Any]] = {}
@@ -179,7 +190,7 @@ class CognitiveEngine:
                     data = json.load(f)
                     self.w_x = data.get("w_x", [0.0] * self.dim)
                     self.w_y = data.get("w_y", [0.0] * self.dim)
-                    self.b_x = data.get("b_x", 2.0)
+                    self.b_x = data.get("b_x", 2.2)
                     self.b_y = data.get("b_y", 1.0)
                     self.samples_seen = data.get("samples_seen", 0)
                     self.learned_terms = data.get("learned_terms", {})
@@ -261,9 +272,9 @@ class CognitiveEngine:
         if X < 1.4:
             discrete_x = 1
             x_desc = "Single-Pass (Direct Batch Execution)"
-        elif X <= 2.3:
+        elif X <= 2.4:
             discrete_x = 2
-            x_desc = "Double-Pass (Gold Standard: In-Situ Gap Audit)"
+            x_desc = "Resilient Double-Pass (Gold Standard: In-Situ Gap Audit + Delta Re-Verification)"
         else:
             discrete_x = 3
             x_desc = "Triple-Pass (Deep Edge-Case & Regression Matrix)"
@@ -291,6 +302,38 @@ class CognitiveEngine:
             "total_learned_vocabulary_size": len(self.learned_terms),
             "telemetry_mode": telemetry_mode
         }
+
+    def format_card(self, result: Dict[str, Any]) -> str:
+        """Formats a compact ASCII telemetry card for agent / terminal output."""
+        z_str = result['Z']
+        r_mag = result['R_magnitude']
+        theta = result['theta_degrees']
+        x_rec = result['X_recommended']
+        x_desc = result['X_description']
+        mode = result['telemetry_mode'].upper()
+        samples = result['samples_trained']
+
+        cues = []
+        for m in result.get('matched_terms', []):
+            term = m['term']
+            dx = m['delta_x']
+            dy = m['delta_y']
+            concept = m.get('concept', 'general')
+            cues.append(f'"{term}" ({concept}, ΔX={dx:+.2f}, ΔY={dy:+.2f})')
+
+        cues_str = ", ".join(cues[:2]) if cues else "Baseline priors"
+        if len(cues) > 2:
+            cues_str += f" (+{len(cues)-2} more)"
+
+        lines = [
+            "╭─ 🧬 Autopilot Cognitive Telemetry ──────────────────────────────────────────╮",
+            f"│ Complex Vector : Z = {z_str:<10} (R = {r_mag:<5}, θ = {theta}°)                        │",
+            f"│ Pass Depth     : X = {result['X_continuous']:<5} -> {x_desc:<45} │",
+            f"│ Signals Caught : {cues_str:<58} │",
+            f"│ Telemetry Mode : {mode:<10} ({samples} empirical samples recorded)                 │",
+            "╰─────────────────────────────────────────────────────────────────────────────╯"
+        ]
+        return "\n".join(lines)
 
     def record_and_update(self, prompt: str, actual_x_star: float, actual_y_star: float,
                           delta_items: Optional[List[str]] = None,
@@ -408,6 +451,7 @@ def main():
     parser.add_argument("--learned-terms", action="store_true", help="Show top dynamically learned vocabulary terms")
     parser.add_argument("--telemetry-mode", choices=["explicit", "anonymous"], help="Set or switch telemetry logging mode (standard: explicit)")
     parser.add_argument("--json", action="store_true", help="Output prediction in raw JSON format")
+    parser.add_argument("--card", action="store_true", help="Output prediction as a compact ASCII telemetry card")
     args = parser.parse_args()
 
     if args.telemetry_mode:
@@ -452,6 +496,8 @@ def main():
         result = engine.predict(args.prompt)
         if args.json:
             print(json.dumps(result, indent=2))
+        elif args.card:
+            print(engine.format_card(result))
         else:
             print("\n========================================================")
             print("  AUTOPILOT COGNITIVE COMPLEX STATE ENGINE (Z = X + iY)")

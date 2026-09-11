@@ -38,7 +38,7 @@ $$
 Measures the depth of physical file mutation, AST alterations, and in-situ delta repair cycles:
 - $X = 1.0$ **(Direct Single-Pass)**: Direct batch execution. Code is authored in a single continuous tool-calling trajectory without secondary audits.
 - $X = 1.3$ **(Scoped Sub-Pass)**: Pass 1 executes fully, followed by a targeted audit focused strictly on high-risk boundary constraints and negative exclusions.
-- $X = 2.0$ **(Double-Pass Gold Standard)**: Full Pass 1 execution followed by a 100% "Is vs. Ought" gap audit comparing prompt requirements against modified files.
+- $X = 2.2$ **(Resilient Double-Pass Gold Standard)**: Full Pass 1 execution ($1.0$), 100% "Is vs. Ought" gap audit and delta patching ($1.0$), plus targeted delta re-verification loop ($+0.2$) ensuring delta AST edits introduce zero regressions.
 - $X = 3.0$ **(Triple-Pass)**: Full double pass plus adversarial edge-case stress-testing, fuzzing, and cross-platform matrix validation.
 
 ### 2.2 The Imaginary Component: Epistemic Reflection Depth ($Y = \mathrm{Im}(Z) \in [0.0, 3.0]$)

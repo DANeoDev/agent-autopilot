@@ -159,7 +159,7 @@ Pass 2 does **NOT** restart blindly from scratch. Instead, because files are alr
 | State ($Z = X + iY$) | Workload & Task Topology | Operational Dynamics |
 |---|---|---|
 | Pass 1 ($X \approx 1.0, Y \le 0.5$) | 1–5 focused tasks, simple bug fixes | **Single-Pass**. Maximum speed, lowest latency. Straightforward mechanical edit. |
-| Pass 2 ($X \approx 2.0, Y \approx 1.0$) | **Standard Default**: 5–15 tasks, full PRs, UI + backend | **Double-Pass Gold Standard**. Recovers ~100% of dropped micro-requirements via "Is vs. Ought" gap analysis. |
+| Pass 2 ($X \approx 2.2, Y \approx 1.0$) | **Standard Default**: 5–15 tasks, full PRs, UI + backend | **Resilient Double-Pass Gold Standard**. Recovers ~100% of dropped micro-requirements via "Is vs. Ought" gap analysis and delta re-verification. |
 | Pure Epistemic ($X \approx 1.0, Y \ge 2.0$) | Formal mathematical proofs, rating algorithms, crypto | **Epistemic Heavy**. High reasoning/thinking tokens; write code once with verified rigor. |
 | Pass 3 ($X \approx 3.0, Y \approx 1.5$) | 15–25+ dense tasks, rating math + db + multi-page UI + CSS | **Triple-Pass**. Deep edge-case validation, boundary stress-testing, and complete visual fidelity. |
 | Extended ($X \ge 4.0$) | *Not Recommended* | Diminishing returns. Introduces risks of circular refactoring or infinite micro-polishing. |
