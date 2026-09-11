@@ -217,7 +217,19 @@ Modern inference backends (Gemini and Claude) rely heavily on Prompt/KV Caching.
 
 ## 💻 System & Platform Compatibility
 
-Antigravity Autopilot is engineered to integrate cleanly into Google Antigravity's machine configuration directory (`~/.gemini/config`).
+Antigravity Autopilot is engineered as a **Universal Multi-Agent Orchestration Layer**. It integrates cleanly into Google Antigravity as well as prominent CLI and IDE agent terminals:
+
+### 🤖 Supported Agent Terminals & Environments
+
+| Terminal / Agent | Configuration Path | How Autopilot Integrates |
+|---|---|---|
+| **Google Antigravity** | `~/.gemini/config/AGENTS.md` + `skills/` | Full two-phase autopilot skill, model router, and permission manager. |
+| **Anthropic Claude Code (`claude`)** | `~/.claude/CLAUDE.md` | Machine-wide user memory for unbroken PR checklists & reflective loops. |
+| **Cursor AI Agent** | `~/.cursorrules` | System-wide agent rules and 4-point Definition of Done heuristics. |
+| **Windsurf Cascade** | `~/.windsurfrules` | Cascade global autonomous rules & cognitive momentum protocol. |
+| **OpenAI Codex & Universal Agents** | `~/AGENTS.md` & `~/.config/agents/AGENTS.md` | Universal agent convention (Aider, OpenHands, Cline, Roo Code). |
+
+### 🖥️ Operating Systems & Runtimes
 
 | Component | Target / Verified Specification | Status |
 |---|---|---|
@@ -229,22 +241,29 @@ Antigravity Autopilot is engineered to integrate cleanly into Google Antigravity
 
 ---
 
-## 🚀 Quickstart & Installation
+## 🚀 Quickstart & Universal Installation
 
-Antigravity Autopilot provides dedicated, platform-specific installers for **Windows**, **macOS**, and **Linux**.
+The installer automatically detects installed agent environments (`.gemini`, `.claude`, `.cursor`, `.codeium`) and installs the appropriate configuration across all of them in a single step.
 
-### 🪟 Windows (1-Click Install)
+### 🪟 Windows (1-Click Multi-Agent Install)
 
 #### Option A: Double-Click Installer (Zero Command Line)
 1. Clone or download this repository.
 2. Double-click **`install.bat`** in the repository root.
-3. Done! Machine-wide rules, skills, and CLI binaries are instantly installed and configured on your User `PATH`.
+3. Done! Machine-wide rules, skills, and CLI binaries are instantly deployed to Antigravity, Claude Code, and your User `PATH`.
 
 #### Option B: PowerShell
 ```powershell
 git clone https://github.com/DANeoDev/antigravity-autopilot.git
 cd antigravity-autopilot
+
+# Auto-detect and install to all active agents
 .\scripts\install.ps1
+
+# Or target specific agents:
+.\scripts\install.ps1 -Target all           # Install to Antigravity, Claude, Cursor, Windsurf, Codex
+.\scripts\install.ps1 -Target claude        # Install strictly for Claude Code
+.\scripts\install.ps1 -Target antigravity   # Install strictly for Antigravity
 ```
 
 ### 🍎 macOS & 🐧 Linux (1-Line Shell Install)
@@ -256,7 +275,8 @@ cd antigravity-autopilot
 chmod +x scripts/install.sh
 ./scripts/install.sh
 ```
-*This installs global skills to `~/.gemini/config/skills/`, configures `~/.gemini/config/AGENTS.md`, deploys executable wrappers to `~/.gemini/antigravity/bin`, and adds the bin directory to your `~/.zshrc` / `~/.bashrc`.*
+*This auto-detects installed agent directories, installs rules to `~/.gemini`, `~/.claude`, and `~/AGENTS.md`, deploys executable wrappers (`agent-route`, `agent-autopilot`, `agy-route`, `agy-autopilot`) to `~/.gemini/antigravity/bin`, and adds the bin directory to your `~/.zshrc` / `~/.bashrc`.*
+
 
 ---
 
@@ -292,17 +312,17 @@ Re-use our existing foundation, but use standard time-based Glicko/WHR (no match
 
 ### 4. From Any Command Line (CLI Tools)
 ```bash
-# Instant model recommendation for any prompt
-agy-route "Design a new Glicko rating volatility algorithm"
+# Instant model recommendation for any prompt (use agent-route or agy-route)
+agent-route "Design a new Glicko rating volatility algorithm"
 
-# JSON output for build scripts and pipelines
-agy-route --json "Fix typo in variable name"
+# JSON output for automated agent pipelines and scripts
+agent-route --json "Fix typo in variable name"
 
 # Inspect active project settings
-agy-autopilot --dir . --status
+agent-autopilot --dir . --status
 
 # Enable autonomous execution permissions for current workspace
-agy-autopilot --dir . --enable-autopilot
+agent-autopilot --dir . --enable-autopilot
 ```
 
 ---
@@ -317,7 +337,11 @@ antigravity-autopilot/
 │   ├── agy-route.bat              # Windows launcher for agy-route
 │   ├── agy-autopilot.bat          # Windows launcher for agy-autopilot
 │   ├── agy-route                  # macOS & Linux launcher for agy-route
-│   └── agy-autopilot              # macOS & Linux launcher for agy-autopilot
+│   ├── agy-autopilot              # macOS & Linux launcher for agy-autopilot
+│   ├── agent-route.bat            # Universal Windows launcher for agent-route
+│   ├── agent-autopilot.bat        # Universal Windows launcher for agent-autopilot
+│   ├── agent-route                # Universal macOS & Linux launcher for agent-route
+│   └── agent-autopilot            # Universal macOS & Linux launcher for agent-autopilot
 ├── customizations/
 │   ├── rules/
 │   │   └── AGENTS.md              # Machine-wide model orchestration rules
@@ -331,8 +355,8 @@ antigravity-autopilot/
 │   └── SECURITY_AND_PERMISSIONS.md # Security boundaries & permission guidelines
 ├── scripts/
 │   ├── install.bat                # Windows batch bootstrap runner
-│   ├── install.ps1                # Windows PowerShell installer
-│   ├── install.sh                 # macOS & Linux Bash installer
+│   ├── install.ps1                # Multi-agent Windows PowerShell installer
+│   ├── install.sh                 # Multi-agent macOS & Linux Bash installer
 │   ├── uninstall.ps1              # Windows uninstaller
 │   ├── uninstall.sh               # macOS & Linux uninstaller
 │   └── verify.ps1                 # Windows health check script

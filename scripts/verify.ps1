@@ -1,4 +1,4 @@
-﻿Write-Host "Running Antigravity Autopilot Health Check..." -ForegroundColor Cyan
+Write-Host "Running Antigravity Autopilot Health Check..." -ForegroundColor Cyan
 
 $configDir = Join-Path $HOME ".gemini\config"
 $binDir = Join-Path $HOME ".gemini\antigravity\bin"
@@ -10,8 +10,11 @@ $checks = @(
     @{ Name = "Router Binary"; Path = Join-Path $binDir "agy_router.py" },
     @{ Name = "Project Manager Binary"; Path = Join-Path $binDir "agy_project_manager.py" },
     @{ Name = "CLI Launcher (agy-route)"; Path = Join-Path $binDir "agy-route.bat" },
-    @{ Name = "CLI Launcher (agy-autopilot)"; Path = Join-Path $binDir "agy-autopilot.bat" }
+    @{ Name = "CLI Launcher (agy-autopilot)"; Path = Join-Path $binDir "agy-autopilot.bat" },
+    @{ Name = "Universal Launcher (agent-route)"; Path = Join-Path $binDir "agent-route.bat" },
+    @{ Name = "Universal Launcher (agent-autopilot)"; Path = Join-Path $binDir "agent-autopilot.bat" }
 )
+
 
 $allPassed = $true
 foreach ($c in $checks) {

@@ -209,7 +209,21 @@ Modern model inference engines (such as Gemini and Anthropic Claude) maintain se
 
 ## 6. System Environment & Platform Compatibility
 
-Antigravity Autopilot is designed to run seamlessly across all primary developer operating systems.
+Antigravity Autopilot is designed to run seamlessly across all primary developer operating systems and agent terminal environments.
+
+### 6.1 Multi-Agent Terminal Architecture
+
+While originally engineered for Google Antigravity, Autopilot's decision matrix, two-phase lifecycle, and execution heuristics are **terminal-agnostic**. The installer automatically provisions guidelines and CLI tools across all prominent AI development terminals:
+
+| Agent Terminal | User Configuration Target | Behavioral Effect |
+|---|---|---|
+| **Google Antigravity** | `~/.gemini/config/AGENTS.md`<br>`~/.gemini/config/skills/` | Machine-wide rules, hierarchical subagent dispatch, and eager project permission manager. |
+| **Anthropic Claude Code (`claude`)** | `~/.claude/CLAUDE.md` | Injects Two-Phase Autopilot and Definition of Done into Claude's persistent user memory. |
+| **Cursor AI Agent** | `~/.cursorrules` | Provides global instructions for unbroken PR execution, self-healing, and GFM math safety. |
+| **Windsurf Cascade** | `~/.windsurfrules` | Equips Cascade with cognitive momentum batching and pre-execution elevation protocols. |
+| **OpenAI Codex & Universal** | `~/AGENTS.md`<br>`~/.config/agents/AGENTS.md` | Standard markdown agent instructions recognized by Aider, OpenHands, Cline, and Roo Code. |
+
+### 6.2 Operating Systems & Runtimes
 
 | Component | Target / Verified Specification | Details |
 |---|---|---|
@@ -218,5 +232,6 @@ Antigravity Autopilot is designed to run seamlessly across all primary developer
 | **macOS Support** | macOS 13+ (Ventura, Sonoma, Sequoia - Apple Silicon & Intel) | Native POSIX installer via `scripts/install.sh`. Configures `~/.gemini/config/` and shell rc (`~/.zshrc` / `~/.bashrc`). |
 | **Linux & WSL2** | Ubuntu 22.04+, Debian 12+, Fedora 38+, Arch Linux | Native POSIX installer via `scripts/install.sh`. Pure Python standard-library CLI tools. |
 | **Python Runtime** | **Python 3.10+** (Tested on Python 3.13.5) | Standard library only (`os`, `sys`, `json`, `pathlib`, `argparse`). Zero third-party dependencies required. |
+
 
 

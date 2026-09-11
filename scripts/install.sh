@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Antigravity Autopilot - One-Line macOS & Linux Installer
-# Installs intelligent model routing, autonomous project mode, and CLI tools machine-wide.
+# Autopilot - Universal Multi-Agent Terminal Installer
+# Installs intelligent model routing, autonomous project mode, and CLI tools across:
+# Google Antigravity, Anthropic Claude Code, Cursor, Windsurf, OpenAI Codex & Universal Agents.
 
 set -e
 
@@ -11,52 +12,55 @@ GRAY='\033[0;90m'
 NC='\033[0m'
 
 echo -e "${CYAN}========================================================${NC}"
-echo -e "${CYAN}  ANTIGRAVITY AUTOPILOT - MACOS & LINUX INSTALLER      ${NC}"
+echo -e "${CYAN}  AUTOPILOT - UNIVERSAL MULTI-AGENT INSTALLER          ${NC}"
+echo -e "${NC}  Supporting: Antigravity, Claude Code, Cursor, Windsurf, Codex${NC}"
 echo -e "${YELLOW}  (Experimental Tooling - Use At Your Own Risk)        ${NC}"
 echo -e "${CYAN}========================================================${NC}"
 echo ""
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-CONFIG_DIR="$HOME/.gemini/config"
-SKILLS_DIR="$CONFIG_DIR/skills"
+AGENTS_SRC="$ROOT_DIR/customizations/rules/AGENTS.md"
+SKILLS_SRC="$ROOT_DIR/customizations/skills"
+BIN_SRC="$ROOT_DIR/bin"
 BIN_TARGET="$HOME/.gemini/antigravity/bin"
 
-# 1. Verify / Create Directories
-echo -e "${YELLOW}[1/5] Checking Antigravity environment...${NC}"
-mkdir -p "$CONFIG_DIR" "$SKILLS_DIR" "$BIN_TARGET"
-echo -e "${GRAY}  Ensured directories: $CONFIG_DIR, $SKILLS_DIR, $BIN_TARGET${NC}"
+install_rules() {
+    local target_file="$1"
+    local agent_name="$2"
+    local target_dir
+    target_dir="$(dirname "$target_file")"
+    mkdir -p "$target_dir"
 
-# 2. Install Global Orchestration Rules (AGENTS.md)
-echo -e "${YELLOW}[2/5] Installing Global Orchestration Guidelines...${NC}"
-AGENTS_SRC="$ROOT_DIR/customizations/rules/AGENTS.md"
-AGENTS_DST="$CONFIG_DIR/AGENTS.md"
-
-if [ -f "$AGENTS_DST" ]; then
-    if grep -q "Antigravity Global Model Orchestration Guidelines" "$AGENTS_DST"; then
-        echo -e "${GRAY}  Updating existing Antigravity orchestration rules...${NC}"
-        cp -f "$AGENTS_SRC" "$AGENTS_DST"
+    if [ -f "$target_file" ]; then
+        if grep -q "Antigravity Global Model Orchestration Guidelines" "$target_file"; then
+            echo -e "${GRAY}  [$agent_name] Updating existing Autopilot guidelines...${NC}"
+            cp -f "$AGENTS_SRC" "$target_file"
+        else
+            echo -e "${GRAY}  [$agent_name] Appending guidelines to existing config...${NC}"
+            printf "\n\n" >> "$target_file"
+            cat "$AGENTS_SRC" >> "$target_file"
+        fi
     else
-        echo -e "${GRAY}  Existing AGENTS.md detected; merging guidelines...${NC}"
-        printf "\n\n" >> "$AGENTS_DST"
-        cat "$AGENTS_SRC" >> "$AGENTS_DST"
+        cp -f "$AGENTS_SRC" "$target_file"
     fi
-else
-    cp -f "$AGENTS_SRC" "$AGENTS_DST"
-fi
-echo -e "${GREEN}  Installed: $AGENTS_DST${NC}"
+    echo -e "${GREEN}  [$agent_name] Installed: $target_file${NC}"
+}
 
-# 3. Install Custom Skills
-echo -e "${YELLOW}[3/5] Installing Global Skills (model-router, project-autopilot)...${NC}"
-SKILLS_SRC="$ROOT_DIR/customizations/skills"
+# 1. Target: Google Antigravity
+echo -e "${YELLOW}[1/6] Configuring Google Antigravity...${NC}"
+CONFIG_DIR="$HOME/.gemini/config"
+SKILLS_DIR="$CONFIG_DIR/skills"
+mkdir -p "$CONFIG_DIR" "$SKILLS_DIR" "$BIN_TARGET"
+
+install_rules "$CONFIG_DIR/AGENTS.md" "Antigravity"
 
 for skill in "model-router" "project-autopilot"; do
     mkdir -p "$SKILLS_DIR/$skill"
     cp -rf "$SKILLS_SRC/$skill/"* "$SKILLS_DIR/$skill/"
-    echo -e "${GRAY}  Installed Skill: $skill -> $SKILLS_DIR/$skill${NC}"
+    echo -e "${GRAY}  [Antigravity] Installed Skill: $skill${NC}"
 done
 
-# Register in skills.json
 SKILLS_JSON="$CONFIG_DIR/skills.json"
 cat << 'EOF' > "$SKILLS_JSON"
 {
@@ -67,27 +71,48 @@ cat << 'EOF' > "$SKILLS_JSON"
   ]
 }
 EOF
-echo -e "${GREEN}  Configured: $SKILLS_JSON${NC}"
 
-# 4. Install Binaries and CLI Tools
-echo -e "${YELLOW}[4/5] Installing CLI Tools & Python Runners...${NC}"
-cp -rf "$ROOT_DIR/bin/"* "$BIN_TARGET/"
-chmod +x "$BIN_TARGET/agy-route" "$BIN_TARGET/agy-autopilot" 2>/dev/null || true
+# 2. Target: Anthropic Claude Code
+if [ -d "$HOME/.claude" ] || [ "${TARGET:-auto}" = "all" ] || [ "${TARGET:-auto}" = "claude" ]; then
+    echo -e "${YELLOW}[2/6] Configuring Anthropic Claude Code...${NC}"
+    install_rules "$HOME/.claude/CLAUDE.md" "Claude Code"
+fi
 
-# Add to PATH in shell profile if missing
+# 3. Target: Cursor AI Agent
+if [ -d "$HOME/.cursor" ] || [ -d "$HOME/Library/Application Support/Cursor" ] || [ "${TARGET:-auto}" = "all" ] || [ "${TARGET:-auto}" = "cursor" ]; then
+    echo -e "${YELLOW}[3/6] Configuring Cursor AI Agent...${NC}"
+    install_rules "$HOME/.cursorrules" "Cursor"
+fi
+
+# 4. Target: Windsurf Cascade
+if [ -d "$HOME/.codeium" ] || [ -d "$HOME/.windsurf" ] || [ "${TARGET:-auto}" = "all" ] || [ "${TARGET:-auto}" = "windsurf" ]; then
+    echo -e "${YELLOW}[4/6] Configuring Windsurf Cascade...${NC}"
+    install_rules "$HOME/.windsurfrules" "Windsurf"
+fi
+
+# 5. Target: Universal Agent Standards & OpenAI Codex
+echo -e "${YELLOW}[5/6] Configuring Universal Agent Standards (Codex, Aider, OpenHands)...${NC}"
+install_rules "$HOME/AGENTS.md" "Universal Home"
+install_rules "$HOME/.config/agents/AGENTS.md" "Universal Config"
+
+# 6. Install CLI Tools & Configure PATH
+echo -e "${YELLOW}[6/6] Installing CLI Tools & Configuring PATH...${NC}"
+mkdir -p "$BIN_TARGET"
+cp -rf "$BIN_SRC/"* "$BIN_TARGET/"
+chmod +x "$BIN_TARGET/agy-route" "$BIN_TARGET/agy-autopilot" "$BIN_TARGET/agent-route" "$BIN_TARGET/agent-autopilot" 2>/dev/null || true
+
 PATH_LINE="export PATH=\"\$HOME/.gemini/antigravity/bin:\$PATH\""
-
 for rc_file in "$HOME/.zshrc" "$HOME/.bashrc" "$HOME/.profile"; do
     if [ -f "$rc_file" ]; then
         if ! grep -q ".gemini/antigravity/bin" "$rc_file"; then
-            printf "\n# Antigravity Autopilot CLI\n%s\n" "$PATH_LINE" >> "$rc_file"
-            echo -e "${GREEN}  Added Antigravity bin to $rc_file${NC}"
+            printf "\n# Autopilot Multi-Agent CLI\n%s\n" "$PATH_LINE" >> "$rc_file"
+            echo -e "${GREEN}  Added Autopilot bin to $rc_file${NC}"
         fi
     fi
 done
 
-# 5. Verify Installation
-echo -e "${YELLOW}[5/5] Running Self-Verification Test...${NC}"
+# Self-Verification Test
+echo -e "${YELLOW}Running Self-Verification Test...${NC}"
 python3 "$BIN_TARGET/agy_router.py" "Write unit test for user service" >/dev/null 2>&1 && {
     echo -e "${GREEN}  Verification passed!${NC}"
 } || {
@@ -98,8 +123,8 @@ echo ""
 echo -e "${CYAN}========================================================${NC}"
 echo -e "${CYAN}  INSTALLATION COMPLETED SUCCESSFULLY!                 ${NC}"
 echo -e "${CYAN}========================================================${NC}"
-echo "Available CLI commands from your terminal (after restarting shell):"
-echo "  * agy-route <prompt>      : Classify and select optimal model"
-echo "  * agy-autopilot --status  : Inspect current project settings"
-echo "  * agy-autopilot --enable-autopilot : Enable autonomous permissions"
+echo "Available CLI commands across all agent terminals:"
+echo "  * agy-route / agent-route       : Classify and select optimal model"
+echo "  * agy-autopilot / agent-autopilot : Inspect or enable autonomous mode"
 echo ""
+
