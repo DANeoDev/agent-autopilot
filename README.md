@@ -33,7 +33,19 @@ Google Antigravity is a groundbreaking agentic development environment, but choo
 
 - 🧠 **Dynamic 5-Tier Decision Matrix**: Classifies prompts in <50ms and routes to the exact model tier needed.
 - ⚡ **1-Click Windows Installer**: Double-click `install.bat` and the entire machine-wide configuration is installed in seconds.
-- 🤖 **Autonomous Project Mode (`project-autopilot`)**: Allows the agent to work continuously through an entire implementation plan, running tests, fixing bugs, and iterating until all criteria are satisfied.
+- 🤖 **Two-Phase Autonomous Project Mode (`project-autopilot`)**:
+  - **Phase 1: Collaborative Alignment**: The agent acts as an engineering sounding board to discuss architectural trade-offs, clarify domain rules, and align on a detailed implementation plan.
+  - **The Launch Gate**: Prompts explicitly: *"The plan is aligned. Do you want me to engage full Autopilot execution now?"*
+  - **Phase 2: Uninterrupted Hands-Off Execution**: ZERO stops or questions. Tactical choices ("consider approach X or Y") are decided autonomously via executive decision-making.
+- 🔍 **Reflective "Pseudo Self-Prompting"**: The agent continuously audits itself during execution:
+  - *"Does this fulfill the original vision and constraints?"*
+  - *"What sensible features belong 100% in this vision without overstepping?"* (graceful error handling, input validation, clean CLI defaults).
+- 🎯 **Objective 4-Point Definition of Done ("Satisfactory" Threshold)**:
+  1. *Plan Completeness*: All agreed milestones implemented (zero `TODO` stubs).
+  2. *Empirical Verification*: Real tests and builds pass with exit code `0`.
+  3. *Vision Fidelity*: Strict adherence to domain constraints.
+  4. *Sensible Usability*: Clean error handling, sensible defaults, ready out-of-the-box.
+- 🔮 **End-of-Session Coherent Enhancements Roadmap**: Concludes with test verification evidence and 3–5 high-value, logical next-step proposals that naturally expand the completed vision.
 - 🛡️ **Explicit Security Handshake**: Never elevates project permissions silently. Shows clear warnings and requires explicit user consent before enabling eager execution.
 - 🔒 **100% Strict User Override**: Say `"use currently selected model"` or `"no subagents"`, and the agent strictly executes directly without delegating.
 - 📉 **Quota & Rate Limit Awareness**: Actively protects Claude Opus and Sonnet token caps. Partitions tasks and falls back to capable models when quota pressure is detected.
@@ -76,16 +88,24 @@ Keep your primary model set to **Gemini 3.8 Flash (Medium)**.
 - For everyday tasks: The agent responds instantly.
 - For deep tasks: *"Design a Glicko rating volatility formula"* ➔ The agent automatically detects Tier 5 complexity and delegates the algorithmic design to a `pro` subagent in the background.
 
-### 2. Full Project Autopilot (Hands-Off Feature Delivery)
-When you have a feature list, vision, or implementation plan and want the agent to execute, test, and polish it without stopping:
+### 2. Full Project Autopilot (Two-Phase Execution)
+Paste your project vision, requirements, or discussion points:
 ```text
-"Engage autopilot on this project. Implement the user authentication module,
-write tests, and continue working until all tests pass."
+"TTA - New Project pipeline
+I added a folder with tournament match results. Matches in 3p/4p games are handled as individual 1on1s.
+Discuss if it is possible to adjust this model. Build a clean stats page, player profiles, and model analysis.
+Re-use our existing foundation, but use standard time-based Glicko/WHR (no matchday, no team logic)."
 ```
-1. The agent inspects your project settings and presents the **Security Handshake**:
-   - Elevated execution: `autoExecutionPolicy: CASCADE_COMMANDS_AUTO_EXECUTION_EAGER`
-   - File access: `AGENT_SETTING_POLICY_ALLOW`
-2. Once approved, the agent executes milestones, auto-routes subagents for math/architecture, runs your test suites (`pytest`, `npm test`), and self-heals any test failures autonomously until complete.
+1. **Phase 1 (Collaborative Alignment)**:
+   - The agent discusses architectural forks with you (e.g. scaffolding fresh vs copying files).
+   - Explores domain nuances and agrees on scope.
+   - Formulates the Implementation Plan with verification milestones.
+   - Triggers the **Launch Gate**: *"The strategy is aligned. Do you want me to engage full Autopilot execution now?"*
+2. **Phase 2 (100% Autonomous Hands-Off Execution)**:
+   - Evaluates tactical choices autonomously without pausing.
+   - Executes implementation, tests, and self-heals code until the **4-point Definition of Done** is satisfied.
+   - Performs reflective "pseudo self-prompting" to ensure vision fidelity and sensible gap-filling (clean error handling, sensible defaults).
+   - Concludes with a **Verification Walkthrough** and a **Coherent Enhancements Roadmap** for future iterations.
 
 ### 3. User Overrides & Quota Conservation
 - **Force current model**: *"Refactor the auth controller, use currently selected model"* ➔ Skips all subagents.
