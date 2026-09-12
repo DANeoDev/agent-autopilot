@@ -287,7 +287,7 @@ $$
 ### 🧬 Live Cognitive Engine Telemetry & Self-Learned State
 
 > **Engine Baseline**: $Z_{\mathrm{base}} = 2.20 + 1.03i$ | **Cognitive Energy**: $R = 2.429$ | **Attentional Phase**: $\theta = 25.0^\circ$ (Balanced Flow)
-> **Empirical Dataset**: `25` user task trajectories trained locally via Online SGD.
+> **Empirical Dataset**: `27` user task trajectories trained locally via Online SGD.
 
 #### 📊 Dynamically Discovered Vocabulary (Zero Hardcoded Dictionaries)
 
@@ -561,33 +561,36 @@ Re-use our existing foundation, but use standard time-based Glicko/WHR (no match
 - **Force current model**: *"Refactor the auth controller, use currently selected model"* ➔ Skips all subagents.
 - **Quota conservation**: *"Conserve Claude tokens for now"* ➔ Diverts Tier 4 tasks to Flash/GPT-OSS.
 
-### 4. From Any Command Line (Universal CLI Tools)
+### 4. From Any Command Line (Universal CLI & Desktop GUI)
 
-Agent Autopilot ships with 6 native CLI commands available globally across all terminals:
+Agent Autopilot ships with 7 native tools (including a standalone desktop GUI HUD) available globally across all terminals:
 
 ```bash
-# 1. Model Routing: Instant model recommendation for any prompt
+# 1. Desktop HUD: Standalone dual-mode floating sidebar & multi-tab dashboard
+agent-gui           # or double-click "Antigravity Autopilot HUD" on your Desktop!
+
+# 2. Model Routing: Instant model recommendation for any prompt
 agent-route "Design a new Glicko rating volatility algorithm"
 agent-route --json "Fix typo in variable name"
 
-# 2. Project Permissions: Enable autonomous permissions for current workspace
+# 3. Project Permissions: Enable autonomous permissions for current workspace
 agent-autopilot --dir . --enable-autopilot
 agent-autopilot --dir . --status
 
-# 3. Cognitive Engine: Predict complex pass depth (Z = X + iY) and prompt viability (Q)
+# 4. Cognitive Engine: Predict complex pass depth (Z = X + iY) and prompt viability (Q)
 agent-predict "Refactor websocket connection and handle network timeouts"
 agent-predict --footer "Implement visual HUD and automated PR generator"
 
-# 4. Visual HUD: Interactive terminal telemetry dashboard & HTML exporter
+# 5. Visual HUD: Interactive terminal telemetry dashboard & HTML exporter
 agent-status
 agent-status --html dashboard.html
 agent-status --watch
 
-# 5. In-Situ Gap Audit & PR Generator: Verify requirement fidelity and generate PR
+# 6. In-Situ Gap Audit & PR Generator: Verify requirement fidelity and generate PR
 agent-audit --gap-matrix "Implement interactive HUD, PR generator, and memory"
 agent-audit --pr --save PULL_REQUEST.md
 
-# 6. Dual-Tier Epistemic Memory: Record invariants (skeleton) and learnings (adaptive)
+# 7. Dual-Tier Epistemic Memory: Record invariants (skeleton) and learnings (adaptive)
 agent-memory record "Empirical Grounding" "No fabricated verification; exit code 0" --tier skeleton
 agent-memory record "Glicko-2 Volatility" "Default tau=0.5 for fast volatility convergence"
 agent-memory list --tier skeleton

@@ -140,6 +140,23 @@ if ($userPath -notlike "*$binTarget*") {
     Write-Host "  PATH already configured." -ForegroundColor Gray
 }
 
+# Create Desktop Shortcut for Desktop HUD
+try {
+    $desktopPath = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::Desktop)
+    if (Test-Path $desktopPath) {
+        $wshShell = New-Object -ComObject WScript.Shell
+        $shortcutPath = Join-Path $desktopPath "Antigravity Autopilot HUD.lnk"
+        $shortcut = $wshShell.CreateShortcut($shortcutPath)
+        $shortcut.TargetPath = Join-Path $binTarget "agy-gui.bat"
+        $shortcut.WorkingDirectory = $binTarget
+        $shortcut.Description = "Antigravity Autopilot Live Cognitive HUD & Prompt Viability"
+        $shortcut.Save()
+        Write-Host "  Created Desktop Shortcut: $shortcutPath" -ForegroundColor Green
+    }
+} catch {
+    Write-Host "  Note: Could not create desktop shortcut ($_)" -ForegroundColor Gray
+}
+
 # Self-Verification Test
 Write-Host "Running Self-Verification Test..." -ForegroundColor Yellow
 $testOutput = & python (Join-Path $binTarget "agy_router.py") "Write unit test for user service"
@@ -154,6 +171,7 @@ Write-Host "========================================================" -Foregroun
 Write-Host "  INSTALLATION COMPLETED SUCCESSFULLY!" -ForegroundColor Cyan
 Write-Host "========================================================" -ForegroundColor Cyan
 Write-Host "Available CLI commands across all agent terminals:" -ForegroundColor White
+Write-Host "  * agy-gui / agent-gui             : Standalone Desktop HUD (Dual-mode floating sidebar & dashboard)" -ForegroundColor Green
 Write-Host "  * agy-route / agent-route         : Classify and select optimal model" -ForegroundColor White
 Write-Host "  * agy-autopilot / agent-autopilot : Inspect or enable autonomous mode" -ForegroundColor White
 Write-Host "  * agy-predict / agent-predict     : Predict continuous complex pass depth (Z = X + iY)" -ForegroundColor White

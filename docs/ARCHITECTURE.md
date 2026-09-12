@@ -316,6 +316,48 @@ $$
 
 This guarantees that as a system accumulates protected architectural bedrock, the agent allocates proportionately higher reasoning and proof-verification tokens before modifying code.
 
+### 4.6 Desktop GUI Telemetry Architecture (`agy-gui` / `agent-gui`)
+
+To eliminate reliance on terminal commands and provide ambient visibility into the agent's internal state during complex engineering tasks, Autopilot includes a native desktop application:
+
+```text
+┌─────────────────────────────────────────────────────────────┐
+│                 Antigravity Autopilot HUD                   │
+│                                                             │
+│  [● LIVE]  Z = 2.20 + 1.00i         Q = 0.85 (High)  [⤢]    │
+│  Action (X)   : [███████████░░░░░] 2.20 / 3.00              │
+│  Epistemic (Y): [█████░░░░░░░░░░░] 1.00 / 3.00              │
+│  Energy R=2.41 | θ=24.5° (Balanced Flow)                    │
+│                                                             │
+│  Latest Ingested Prompt:                                    │
+│  "Implement websocket reconnect logic and tests..."         │
+│  💡 Tip: Prompt is clear & well-anchored.                   │
+│                                                             │
+│  [📌 Always on Top]                       [🔄 Re-evaluate]  │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ (Click "Expand ⤢")
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│  EXPANDED MULTI-TAB DASHBOARD (880 × 700px)                 │
+│  [🎯 Sandbox] [🧠 Vector Z] [⚓ Memory] [📊 Vocab] [📡 Log]   │
+│  • Interactive Prompt Sandbox: Draft and test prompts live  │
+│  • Epistemic Memory: Filter Skeleton Bedrock vs Adaptive    │
+│  • Dynamic Vocabulary: Live subword weights (ΔX, ΔY)        │
+│  • Rolling Trajectory Stream: Event history of user turns   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### Key Design Principles:
+1. **Zero-Dependency Native Execution**: Built strictly with Python standard library (`tkinter` + `ttk`) with a dark palette matching modern developer IDEs.
+2. **Dual Form Factor**:
+   - **Compact Floating Sidebar (Default, ~380px wide)**: Minimal desktop footprint designed to float docked next to the IDE, with an "Always on Top 📌" toggle.
+   - **Expanded Dashboard Mode (~880px wide)**: Unfolds a multi-tab view for sandbox prompt experimentation, memory inspection, vocabulary impact weights, and telemetry logs.
+3. **Real-Time Active Transcript Watcher**:
+   - A dedicated daemon thread monitors the active Antigravity session log (`~/.gemini/antigravity/brain/*/transcript.jsonl`).
+   - Automatically detects incoming `USER_INPUT` turns, parses user directives, passes them to `cognitive_engine.py`, and updates the GUI on the main UI thread via asynchronous event scheduling.
+4. **Windowless Launch**:
+   - Executed through `pythonw.exe` via `agent-gui.bat` / `agy-gui.bat`, leaving zero orphaned console windows on the developer's desktop.
+
 ---
 
 ## 5. Theoretical Foundations: Velocity Dynamics & Token Economics
