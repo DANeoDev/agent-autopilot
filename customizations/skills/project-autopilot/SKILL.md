@@ -201,5 +201,5 @@ When the 4-Point Satisfactory threshold is reached, conclude the session with:
 2. **Coherent Enhancements Roadmap**:
    - 3 to 5 high-value, logical proposals that naturally build upon the fulfilled vision without conflicting with its core identity.
    - Examples: Advanced mathematical models (e.g., Plackett-Luce multi-way adjustments), interactive visualization dashboards, caching/performance optimizations.
-3. **Mandatory Model Attribution Footer**:
-   - Report the models utilized throughout the run.
+3. **Mandatory Model Attribution & Input Viability Footer**:
+   - Report the models utilized throughout the run, along with input viability score $Q$, cognitive vector $Z = X + iY$, and prompt refinement hints.

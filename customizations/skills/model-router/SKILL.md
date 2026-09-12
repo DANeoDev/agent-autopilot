@@ -1,4 +1,4 @@
-﻿---
+---
 name: model-router
 description: Automatically evaluates user tasks and orchestrates execution across available Antigravity models (Gemini 3.5 Flash-Lite, Gemini 3.8 Flash, GPT-OSS 120B, Claude Sonnet 4.6 Thinking, Claude Opus 4.6) with strict user overrides, quota conservation, and model attribution.
 ---
@@ -43,7 +43,9 @@ When the user specifies `"use currently selected model"`, `"use current model"`,
 
 ---
 
-## 5. Mandatory Attribution
+## 5. Mandatory Attribution & Input Viability Footer
 
 Always conclude with:
-`> 🤖 **Model Used**: [Model Name(s)]`
+`> 🤖 **Model Used**: [Model Name(s)]`  
+`> 🎯 **Input Viability**: $Q = [0.00-1.00]$ ([High / Moderate / Low]) | **Cognitive Vector**: $Z = [X + Yi]$ ($X = [X_{\text{rec}}]$, $\theta = [\text{deg}]^\circ$)`  
+*(if $Q < 0.78$, add: `> 💡 **Input Refinement**: [1-line actionable advice]`)*

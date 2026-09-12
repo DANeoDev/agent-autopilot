@@ -444,6 +444,32 @@ class CognitiveEngine:
         lines.append("╰─────────────────────────────────────────────────────────────────────────────╯")
         return "\n".join(lines)
 
+    def format_footer(self, result: Dict[str, Any], model_name: str = "Claude Sonnet 4.6 (Thinking)") -> str:
+        """Formats a standard GitHub-compliant attribution and cognitive viability footer."""
+        z_str = result['Z']
+        x_rec = result['X_continuous']
+        theta = result['theta_degrees']
+        v = result.get("viability", {})
+        q_val = v.get("Q", 0.85)
+
+        if q_val >= 0.78:
+            tier = "High"
+        elif q_val >= 0.52:
+            tier = "Moderate"
+        else:
+            tier = "Low"
+
+        lines = [
+            f"> 🤖 **Model Used**: {model_name}",
+            f"> 🎯 **Input Viability**: $Q = {q_val:.2f}$ ({tier}) | **Cognitive Vector**: $Z = {z_str}$ ($X = {x_rec:.1f}$, $\\theta = {theta:.1f}^\\circ$)"
+        ]
+
+        hints = v.get("hints", [])
+        if hints and q_val < 0.78:
+            lines.append(f"> 💡 **Input Refinement**: {hints[0]}")
+
+        return "\n".join(lines)
+
     def record_and_update(self, prompt: str, actual_x_star: float, actual_y_star: float,
                           delta_items: Optional[List[str]] = None,
                           test_exit_code: int = 0,
@@ -567,6 +593,7 @@ def main():
     parser.add_argument("--telemetry-mode", choices=["explicit", "anonymous"], help="Set or switch telemetry logging mode (standard: explicit)")
     parser.add_argument("--json", action="store_true", help="Output prediction in raw JSON format")
     parser.add_argument("--card", action="store_true", help="Output prediction as a compact ASCII telemetry card")
+    parser.add_argument("--footer", action="store_true", help="Output prediction as a GitHub-compliant markdown footer")
     args = parser.parse_args()
 
     if args.telemetry_mode:
@@ -613,6 +640,8 @@ def main():
             print(json.dumps(result, indent=2))
         elif args.card:
             print(engine.format_card(result))
+        elif args.footer:
+            print(engine.format_footer(result))
         else:
             print("\n========================================================")
             print("  AUTOPILOT COGNITIVE COMPLEX STATE ENGINE (Z = X + iY)")

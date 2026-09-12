@@ -126,8 +126,10 @@ $$
 
 ---
 
-## 10. Mandatory Model Attribution Footer
+## 10. Mandatory Model Attribution & Input Viability Footer
 
-At the very end of EVERY response, you MUST include a clear attribution note indicating which model(s) performed the work. Use the following format:
+At the very end of EVERY response, you MUST include a clear attribution note indicating which model(s) performed the work, accompanied by the real-time prompt viability score ($Q$) and complex cognitive state ($Z = X + iY$). Use the following format:
 
-> 🤖 **Model Used**: [Primary Model Name] *(if subagents were invoked, add: `+ [Subagent Model / Tier] for [specific subtask]`)*
+> 🤖 **Model Used**: [Primary Model Name] *(if subagents were invoked, add: `+ [Subagent Model / Tier] for [specific subtask]`)*  
+> 🎯 **Input Viability**: $Q = [0.00-1.00]$ ([High / Moderate / Low]) | **Cognitive Vector**: $Z = [X + Yi]$ ($X = [X_{\text{rec}}]$, $\theta = [\text{deg}]^\circ$)  
+*(if $Q < 0.78$, optionally append: `> 💡 **Input Refinement**: [1-line actionable advice to raise Q and compress Y]`)*
