@@ -16,18 +16,15 @@ from bin.agy_gui import AutopilotGUI, SIDEBAR_WIDTH, DASHBOARD_WIDTH
 
 
 class TestAutopilotGUI(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        # Create hidden root
-        cls.root = tk.Tk()
-        cls.root.withdraw()
-        cls.app = AutopilotGUI(cls.root)
-        cls.app.running = False  # Disable background thread loop in tests
+    def setUp(self):
+        # Create hidden root per test
+        self.root = tk.Tk()
+        self.root.withdraw()
+        self.app = AutopilotGUI(self.root, start_watcher=False)
 
-    @classmethod
-    def tearDownClass(cls):
+    def tearDown(self):
         try:
-            cls.root.destroy()
+            self.root.destroy()
         except Exception:
             pass
 
@@ -76,6 +73,25 @@ class TestAutopilotGUI(unittest.TestCase):
         # Collapse back
         self.app._toggle_expand()
         self.assertFalse(self.app.is_expanded)
+
+    def test_full_prompt_and_sandbox_sync(self):
+        """Test that full prompt is preserved without truncation and synced to sandbox."""
+        long_prompt = "Line 1: Requirement A\nLine 2: Requirement B with very long text describing architecture and invariants\nLine 3: Requirement C"
+        self.app._on_new_prompt_detected(long_prompt)
+        self.app._send_active_to_sandbox()
+
+        # Check sidebar text widget contains full prompt
+        sidebar_text = self.app.txt_prompt_snippet.get("1.0", tk.END).strip()
+        self.assertEqual(sidebar_text, long_prompt)
+
+        # Check sandbox text widget contains full prompt
+        sandbox_text = self.app.sandbox_input.get("1.0", tk.END).strip()
+        self.assertEqual(sandbox_text, long_prompt)
+
+        # Test clipboard copy
+        self.app._copy_prompt_to_clipboard()
+        self.assertEqual(self.root.clipboard_get(), long_prompt)
+
 
 
 if __name__ == "__main__":

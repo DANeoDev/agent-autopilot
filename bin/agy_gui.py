@@ -84,7 +84,7 @@ def apply_dark_title_bar(window: tk.Tk):
 
 
 class AutopilotGUI:
-    def __init__(self, root: tk.Tk):
+    def __init__(self, root: tk.Tk, start_watcher: bool = True):
         self.root = root
         self.root.title("Antigravity Autopilot HUD")
         self.root.geometry(f"{SIDEBAR_WIDTH}x{SIDEBAR_HEIGHT}")
@@ -111,9 +111,10 @@ class AutopilotGUI:
         self._build_ui()
         self._load_initial_state()
 
-        # Start live watcher thread
-        self.watcher_thread = threading.Thread(target=self._live_watcher_loop, daemon=True)
-        self.watcher_thread.start()
+        # Start live watcher thread if enabled
+        if start_watcher:
+            self.watcher_thread = threading.Thread(target=self._live_watcher_loop, daemon=True)
+            self.watcher_thread.start()
 
         # Window protocol
         self.root.protocol("WM_DELETE_WINDOW", self._on_close)
@@ -277,11 +278,35 @@ class AutopilotGUI:
 
         title_row = tk.Frame(card, bg=BG_CARD)
         title_row.pack(fill=tk.X, padx=10, pady=(8, 2))
-        tk.Label(title_row, text="LATEST INGESTED PROMPT", font=("Segoe UI", 8, "bold"), fg=COLOR_AMBER, bg=BG_CARD).pack(side=tk.LEFT)
+        tk.Label(title_row, text="ACTIVE PROMPT", font=("Segoe UI", 8, "bold"), fg=COLOR_AMBER, bg=BG_CARD).pack(side=tk.LEFT)
 
-        self.txt_prompt_snippet = tk.Text(card, bg=BG_PANEL, fg=TEXT_PRIMARY, font=("Consolas", 8),
-                                          height=4, wrap=tk.WORD, bd=0, highlightthickness=0, padx=6, pady=4)
-        self.txt_prompt_snippet.pack(fill=tk.BOTH, expand=True, padx=10, pady=4)
+        btn_box = tk.Frame(title_row, bg=BG_CARD)
+        btn_box.pack(side=tk.RIGHT)
+
+        btn_sandbox = tk.Button(btn_box, text="🎯 Sandbox", font=("Segoe UI", 7, "bold"),
+                                bg=BG_PANEL, fg=COLOR_CYAN, activebackground=BG_CARD_HOVER,
+                                activeforeground=COLOR_CYAN, relief=tk.FLAT, bd=0, padx=5, pady=1,
+                                cursor="hand2", command=self._send_active_to_sandbox)
+        btn_sandbox.pack(side=tk.LEFT, padx=2)
+
+        self.btn_copy_prompt = tk.Button(btn_box, text="📋 Copy", font=("Segoe UI", 7),
+                                         bg=BG_PANEL, fg=TEXT_MUTED, activebackground=BG_CARD_HOVER,
+                                         activeforeground=TEXT_PRIMARY, relief=tk.FLAT, bd=0, padx=5, pady=1,
+                                         cursor="hand2", command=self._copy_prompt_to_clipboard)
+        self.btn_copy_prompt.pack(side=tk.LEFT, padx=2)
+
+        # Full prompt scrollable container
+        text_container = tk.Frame(card, bg=BG_PANEL)
+        text_container.pack(fill=tk.BOTH, expand=True, padx=10, pady=4)
+
+        self.txt_prompt_snippet = tk.Text(text_container, bg=BG_PANEL, fg=TEXT_PRIMARY, font=("Consolas", 8),
+                                          wrap=tk.WORD, bd=0, highlightthickness=0, padx=6, pady=4)
+        sb_prompt = ttk.Scrollbar(text_container, orient=tk.VERTICAL, command=self.txt_prompt_snippet.yview, style="Vertical.TScrollbar")
+        self.txt_prompt_snippet.configure(yscrollcommand=sb_prompt.set)
+
+        self.txt_prompt_snippet.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        sb_prompt.pack(side=tk.RIGHT, fill=tk.Y)
+
         self.txt_prompt_snippet.insert(tk.END, "Waiting for prompt input...")
         self.txt_prompt_snippet.configure(state=tk.DISABLED)
 
@@ -364,21 +389,34 @@ class AutopilotGUI:
     def _build_tab_sandbox(self):
         frame = self.tab_sandbox
         tk.Label(frame, text="Interactive Prompt Evaluator", font=("Segoe UI", 11, "bold"), fg=COLOR_CYAN, bg=BG_PANEL).pack(anchor=tk.W, padx=14, pady=(12, 2))
-        tk.Label(frame, text="Type or paste any prompt draft below to preview its Cognitive Vector (Z), Viability Score (Q), and advice live.",
+        tk.Label(frame, text="Type, paste, or inspect full prompt drafts to preview Cognitive Vector (Z), Viability Score (Q), and advice live.",
                  font=("Segoe UI", 9), fg=TEXT_MUTED, bg=BG_PANEL).pack(anchor=tk.W, padx=14, pady=(0, 8))
 
         self.sandbox_input = tk.Text(frame, bg=BG_CARD, fg=TEXT_PRIMARY, insertbackground=TEXT_PRIMARY,
-                                     font=("Consolas", 10), height=7, wrap=tk.WORD, bd=0, highlightthickness=1,
+                                     font=("Consolas", 10), height=8, wrap=tk.WORD, bd=0, highlightthickness=1,
                                      highlightbackground=BORDER_COLOR, padx=10, pady=8)
         self.sandbox_input.pack(fill=tk.X, padx=14, pady=4)
-        self.sandbox_input.insert(tk.END, "Implement websocket reconnect logic and write comprehensive unit tests with exit code 0.")
+        initial_prompt = self.last_prompt_text.strip() if self.last_prompt_text else "Implement websocket reconnect logic and write comprehensive unit tests with exit code 0."
+        self.sandbox_input.insert(tk.END, initial_prompt)
 
         btn_row = tk.Frame(frame, bg=BG_PANEL)
         btn_row.pack(fill=tk.X, padx=14, pady=6)
         btn_eval = tk.Button(btn_row, text="⚡ Evaluate Prompt", font=("Segoe UI", 9, "bold"),
                              bg=COLOR_CYAN, fg="#000000", activebackground="#22d3ee", relief=tk.FLAT, bd=0, padx=12, pady=4,
                              cursor="hand2", command=self._evaluate_sandbox_prompt)
-        btn_eval.pack(side=tk.LEFT)
+        btn_eval.pack(side=tk.LEFT, padx=(0, 6))
+
+        btn_sync = tk.Button(btn_row, text="📥 Sync Active Prompt", font=("Segoe UI", 9),
+                             bg=BG_CARD, fg=COLOR_AMBER, activebackground=BG_CARD_HOVER,
+                             activeforeground=COLOR_AMBER, relief=tk.FLAT, bd=0, padx=10, pady=4,
+                             cursor="hand2", command=self._sync_active_prompt_to_sandbox)
+        btn_sync.pack(side=tk.LEFT, padx=(0, 6))
+
+        btn_clear = tk.Button(btn_row, text="🗑️ Clear", font=("Segoe UI", 9),
+                              bg=BG_CARD, fg=TEXT_MUTED, activebackground=BG_CARD_HOVER,
+                              activeforeground=TEXT_PRIMARY, relief=tk.FLAT, bd=0, padx=10, pady=4,
+                              cursor="hand2", command=self._clear_sandbox)
+        btn_clear.pack(side=tk.LEFT)
 
         # Output Card
         self.sandbox_output_frame = tk.Frame(frame, bg=BG_CARD, highlightbackground=BORDER_COLOR, highlightthickness=1)
@@ -643,14 +681,17 @@ class AutopilotGUI:
         self.lbl_sub_test.configure(text=f"Test: {subs.get('verifiability', 0.5):.2f}")
         self.lbl_sub_scope.configure(text=f"Scope: {subs.get('scope_density', 0.5):.2f}")
 
-        # Update Prompt Snippet
+        # Update Full Active Prompt Text (No truncation, preserves formatting)
         self.txt_prompt_snippet.configure(state=tk.NORMAL)
         self.txt_prompt_snippet.delete("1.0", tk.END)
-        snippet = prompt.strip().replace("\n", " ")
-        if len(snippet) > 140:
-            snippet = snippet[:140] + "..."
-        self.txt_prompt_snippet.insert(tk.END, snippet)
+        self.txt_prompt_snippet.insert(tk.END, prompt.strip())
         self.txt_prompt_snippet.configure(state=tk.DISABLED)
+
+        # Automatically apply full active prompt into the expanded sandbox
+        if hasattr(self, "sandbox_input"):
+            self.sandbox_input.delete("1.0", tk.END)
+            self.sandbox_input.insert(tk.END, prompt.strip())
+            self._evaluate_sandbox_prompt()
 
         # Advice
         hint = viability.get("refinement_hint")
@@ -803,6 +844,7 @@ class AutopilotGUI:
             pass
 
     def _on_new_prompt_detected(self, prompt: str):
+        self.last_prompt_text = prompt
         pred = self.engine.predict(prompt)
         viab = evaluate_prompt_viability(prompt)
         self._render_metrics(prompt, pred, viab)
@@ -817,6 +859,36 @@ class AutopilotGUI:
             self._load_initial_state()
         if self.is_expanded:
             self._populate_dashboard_tables()
+
+    def _send_active_to_sandbox(self):
+        """Expands dashboard if collapsed, selects the sandbox tab, and syncs active prompt."""
+        if not self.is_expanded:
+            self._toggle_expand()
+        if hasattr(self, "notebook") and hasattr(self, "tab_sandbox"):
+            self.notebook.select(self.tab_sandbox)
+        self._sync_active_prompt_to_sandbox()
+
+    def _sync_active_prompt_to_sandbox(self):
+        """Copies full active prompt text to sandbox and evaluates it immediately."""
+        if hasattr(self, "sandbox_input") and self.last_prompt_text:
+            self.sandbox_input.delete("1.0", tk.END)
+            self.sandbox_input.insert(tk.END, self.last_prompt_text.strip())
+            self._evaluate_sandbox_prompt()
+
+    def _clear_sandbox(self):
+        """Clears the sandbox text and output."""
+        if hasattr(self, "sandbox_input"):
+            self.sandbox_input.delete("1.0", tk.END)
+            self.lbl_sandbox_results.configure(text="")
+
+    def _copy_prompt_to_clipboard(self):
+        """Copies full active prompt to system clipboard."""
+        if self.last_prompt_text:
+            self.root.clipboard_clear()
+            self.root.clipboard_append(self.last_prompt_text)
+            if hasattr(self, "btn_copy_prompt"):
+                self.btn_copy_prompt.configure(text="✓ Copied!", fg=COLOR_GREEN)
+                self.root.after(1500, lambda: self.btn_copy_prompt.configure(text="📋 Copy", fg=TEXT_MUTED))
 
     def _restart_app(self):
         """Cleanly restarts the desktop HUD application."""

@@ -287,7 +287,7 @@ $$
 ### 🧬 Live Cognitive Engine Telemetry & Self-Learned State
 
 > **Engine Baseline**: $Z_{\mathrm{base}} = 2.20 + 1.03i$ | **Cognitive Energy**: $R = 2.429$ | **Attentional Phase**: $\theta = 25.0^\circ$ (Balanced Flow)
-> **Empirical Dataset**: `28` user task trajectories trained locally via Online SGD.
+> **Empirical Dataset**: `29` user task trajectories trained locally via Online SGD.
 
 #### 📊 Dynamically Discovered Vocabulary (Zero Hardcoded Dictionaries)
 
