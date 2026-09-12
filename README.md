@@ -248,20 +248,20 @@ $$
 
 #### Polar Coordinates: Energy and Phase
 In polar form $Z = R e^{i\theta}$:
-1. **Cognitive Energy Budget** $R = |Z| = \sqrt{X^2 + Y^2}$:
+1. **Cognitive Energy Budget** ($R = |Z| = \sqrt{X^2 + Y^2}$):
    The total computational mass allocated to the prompt.
-2. **Attentional Phase Angle** $\theta = \arctan(Y/X)$:
-   - $\theta < 20^\circ$ **(Action-Dominant)**: High code churn, mechanical migrations, formatting (e.g. $Z = 2.0 + 0.2i$).
-   - $20^\circ \le \theta \le 50^\circ$ **(Balanced Cognitive Flow)**: Standard fullstack PRs with synchronized frontend, backend, and tests ($Z = 2.0 + 1.0i$).
-   - $\theta > 55^\circ$ **(Epistemic-Dominant)**: Complex algorithms, formal proofs, concurrency invariants ($Z = 1.0 + 2.5i$).
+2. **Attentional Phase Angle** ($\theta = \arctan(Y/X)$):
+   - **Action-Dominant** ($\theta < 20^\circ$): High code churn, mechanical migrations, formatting (e.g. $Z = 2.0 + 0.2i$).
+   - **Balanced Cognitive Flow** ($20^\circ \le \theta \le 50^\circ$): Standard fullstack PRs with synchronized frontend, backend, and tests ($Z = 2.0 + 1.0i$).
+   - **Epistemic-Dominant** ($\theta > 55^\circ$): Complex algorithms, formal proofs, concurrency invariants ($Z = 1.0 + 2.5i$).
 
 ### 2. Continuous & Fractional Pass Execution ($X \in \mathbb{R}^+$)
 
 Pass depth is continuous rather than all-or-nothing:
-- $X = 1.0$ **(Direct Pass)**: Direct batch implementation without secondary audits.
-- $X = 1.3$ **(Scoped Sub-Pass)**: Pass 1 executes fully, followed by a targeted audit focused strictly on high-risk boundary constraints and negative exclusions.
-- $X = 2.2$ **(Resilient Gold Standard Double-Pass)**: Full 100% "Is vs. Ought" gap audit across every prompt requirement against modified files, followed by targeted delta re-verification.
-- $X = 3.0$ **(Triple-Pass)**: Full double pass plus adversarial edge-case generation and cross-platform regression matrices.
+- **Direct Pass** ($X = 1.0$): Direct batch implementation without secondary audits.
+- **Scoped Sub-Pass** ($X = 1.3$): Pass 1 executes fully, followed by a targeted audit focused strictly on high-risk boundary constraints and negative exclusions.
+- **Resilient Gold Standard Double-Pass** ($X = 2.2$): Full 100% "Is vs. Ought" gap audit across every prompt requirement against modified files, followed by targeted delta re-verification.
+- **Triple-Pass** ($X = 3.0$): Full double pass plus adversarial edge-case generation and cross-platform regression matrices.
 
 ### 3. Self-Learning Vocabulary via Feature Hashing (Zero Hardcoded Dictionaries)
 
@@ -286,8 +286,8 @@ $$
 
 ### 🧬 Live Cognitive Engine Telemetry & Self-Learned State
 
-> **Engine Baseline**: $Z_{\mathrm{base}} = 2.20 + 1.02i$ | **Cognitive Energy**: $R = 2.427$ | **Attentional Phase**: $\theta = 25.0^\circ$ (Balanced Flow)
-> **Empirical Dataset**: `2` user task trajectories trained locally via Online SGD.
+> **Engine Baseline**: $Z_{\mathrm{base}} = 2.21 + 1.03i$ | **Cognitive Energy**: $R = 2.440$ | **Attentional Phase**: $\theta = 25.1^\circ$ (Balanced Flow)
+> **Empirical Dataset**: `22` user task trajectories trained locally via Online SGD.
 
 #### 📊 Dynamically Discovered Vocabulary (Zero Hardcoded Dictionaries)
 
@@ -295,12 +295,14 @@ As users submit diverse real-world tasks, the engine continuously extracts subwo
 
 | Learned Token / Term | Action Depth Impact ($\Delta X$) | Epistemic Impact ($\Delta Y$) | Observed Trajectories | Category / Influence |
 |---|---|---|---|---|
-| `handle` | `+0.01` | `+0.03` | 1 | Balanced Refinement |
+| `handle` | `+0.01` | `+0.03` | 2 | Balanced Refinement |
+| `bugs` | `+0.01` | `+0.03` | 2 | Balanced Refinement |
 | `network` | `+0.01` | `+0.03` | 1 | Balanced Refinement |
-| `bugs` | `+0.01` | `+0.03` | 1 | Balanced Refinement |
 | `socket` | `+0.01` | `+0.03` | 1 | Balanced Refinement |
 | `reentrancy` | `+0.01` | `+0.03` | 1 | Balanced Refinement |
 | `backpressure` | `+0.01` | `+0.03` | 1 | Balanced Refinement |
+| `please` | `+0.02` | `+0.02` | 10 | Balanced Refinement |
+| `probably` | `+0.02` | `+0.02` | 6 | Balanced Refinement |
 
 #### 🎯 Dynamic Prompt Viability & Quality Guardrails ($Q \in [0.0, 1.0]$)
 

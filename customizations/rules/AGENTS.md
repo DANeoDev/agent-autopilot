@@ -116,12 +116,12 @@ $$
   - Fractional $X$ (e.g. $X=1.3$): Scoped sub-pass targeting only the highest-complexity files or highest-risk constraints.
 - **Epistemic Reflection Depth** ($Y = \mathrm{Im}(Z) \in [0.0, 3.0]$):
   - Governs internal verification tokens, counterfactual simulation, test synthesis, and mathematical proof checking prior to file writes.
-- **Cognitive Energy** $R = |Z| = \sqrt{X^2 + Y^2}$ and **Phase Angle** $\theta = \arctan(Y/X)$:
+- **Cognitive Energy** ($R = |Z| = \sqrt{X^2 + Y^2}$) and **Phase Angle** ($\theta = \arctan(Y/X)$):
   - $\theta < 20^\circ$: Action-dominant (heavy code refactoring, minimal reflection).
   - $\theta > 55^\circ$: Epistemic-dominant (heavy mathematical/architectural reasoning, minimal file edits).
 - **Dynamic Self-Learning (Feature Hashing & Online SGD)**:
   - Autopilot learns vocabulary correlations dynamically using subword feature hashing (zero static hardcoded keyword dictionaries).
-  - At the conclusion of Phase 2, the agent observes whether Pass 2 uncovered delta items or test regressions, deriving empirical ground truth $(X^*, Y^*)$ and updating local model weights (`bin/cognitive_engine.py --learn X* Y*`) in a privacy-preserving telemetry buffer.
+  - At the conclusion of Phase 2 or upon milestone completion, the agent MUST run `python bin/sync_transcript_learning.py` to ingest the session's conversation turns, derive empirical ground truth $(X^*, Y^*)$, and update local model weights (`models/cognitive_weights.json`) via confidence-weighted online SGD in a privacy-preserving telemetry buffer.
 
 
 ---

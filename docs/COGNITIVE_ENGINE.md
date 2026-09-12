@@ -36,10 +36,10 @@ $$
 
 ### 2.1 The Real Component: Physical Action Depth ($X = \mathrm{Re}(Z) \in [1.0, 3.0]$)
 Measures the depth of physical file mutation, AST alterations, and in-situ delta repair cycles:
-- $X = 1.0$ **(Direct Single-Pass)**: Direct batch execution. Code is authored in a single continuous tool-calling trajectory without secondary audits.
-- $X = 1.3$ **(Scoped Sub-Pass)**: Pass 1 executes fully, followed by a targeted audit focused strictly on high-risk boundary constraints and negative exclusions.
-- $X = 2.2$ **(Resilient Double-Pass Gold Standard)**: Full Pass 1 execution ($1.0$), 100% "Is vs. Ought" gap audit and delta patching ($1.0$), plus targeted delta re-verification loop ($+0.2$) ensuring delta AST edits introduce zero regressions.
-- $X = 3.0$ **(Triple-Pass)**: Full double pass plus adversarial edge-case stress-testing, fuzzing, and cross-platform matrix validation.
+- **Direct Single-Pass** ($X = 1.0$): Direct batch execution. Code is authored in a single continuous tool-calling trajectory without secondary audits.
+- **Scoped Sub-Pass** ($X = 1.3$): Pass 1 executes fully, followed by a targeted audit focused strictly on high-risk boundary constraints and negative exclusions.
+- **Resilient Double-Pass Gold Standard** ($X = 2.2$): Full Pass 1 execution ($1.0$), 100% "Is vs. Ought" gap audit and delta patching ($1.0$), plus targeted delta re-verification loop ($+0.2$) ensuring delta AST edits introduce zero regressions.
+- **Triple-Pass** ($X = 3.0$): Full double pass plus adversarial edge-case stress-testing, fuzzing, and cross-platform matrix validation.
 
 ### 2.2 The Imaginary Component: Epistemic Reflection Depth ($Y = \mathrm{Im}(Z) \in [0.0, 3.0]$)
 Measures internal cognitive deliberation that occurs without touching files:
@@ -51,12 +51,12 @@ Measures internal cognitive deliberation that occurs without touching files:
 ### 2.3 Polar State Coordinates ($Z = R e^{i\theta}$)
 Representing $Z$ in polar form reveals two vital operational metrics:
 
-1. **Cognitive Energy Budget** $R = |Z| = \sqrt{X^2 + Y^2}$:
+1. **Cognitive Energy Budget** ($R = |Z| = \sqrt{X^2 + Y^2}$):
    The total computational mass allocated to the prompt.
-2. **Attentional Phase Angle** $\theta = \arctan(Y/X)$:
-   - $\theta < 20^\circ$ **(Action-Dominant)**: High code churn, mechanical migrations, formatting (e.g. $Z = 2.0 + 0.2i$).
-   - $20^\circ \le \theta \le 50^\circ$ **(Balanced Cognitive Flow)**: Standard fullstack PRs with synchronized frontend, backend, and tests ($Z = 2.0 + 1.0i$).
-   - $\theta > 55^\circ$ **(Epistemic-Dominant)**: Complex algorithms, formal proofs, concurrency invariants ($Z = 1.0 + 2.5i$).
+2. **Attentional Phase Angle** ($\theta = \arctan(Y/X)$):
+   - **Action-Dominant** ($\theta < 20^\circ$): High code churn, mechanical migrations, formatting (e.g. $Z = 2.0 + 0.2i$).
+   - **Balanced Cognitive Flow** ($20^\circ \le \theta \le 50^\circ$): Standard fullstack PRs with synchronized frontend, backend, and tests ($Z = 2.0 + 1.0i$).
+   - **Epistemic-Dominant** ($\theta > 55^\circ$): Complex algorithms, formal proofs, concurrency invariants ($Z = 1.0 + 2.5i$).
 
 ---
 

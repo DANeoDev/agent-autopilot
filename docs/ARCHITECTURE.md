@@ -251,8 +251,8 @@ $$
 2. **Epistemic Reflection Depth** ($Y = \mathrm{Im}(Z) \in [0.0, 3.0]$):
    Quantifies internal verification tokens, counterfactual simulation, test synthesis, and mathematical proof checking prior to file writes.
 3. **Polar State Metrics** ($Z = R e^{i\theta}$):
-   - **Cognitive Energy Budget** $R = |Z| = \sqrt{X^2 + Y^2}$: The total attentional mass allocated to the prompt.
-   - **Attentional Phase Angle** $\theta = \arctan(Y/X)$:
+   - **Cognitive Energy Budget** ($R = |Z| = \sqrt{X^2 + Y^2}$): The total attentional mass allocated to the prompt.
+   - **Attentional Phase Angle** ($\theta = \arctan(Y/X)$):
      - $\theta < 20^\circ$: Action-dominant (heavy file refactoring, minimal reflection).
      - $20^\circ \le \theta \le 50^\circ$: Balanced cognitive flow (synchronized backend, frontend, and tests).
      - $\theta > 55^\circ$: Epistemic-dominant (formal mathematical proofs, protocol invariants).

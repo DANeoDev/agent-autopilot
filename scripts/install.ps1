@@ -22,6 +22,8 @@ $agentsSrc = Join-Path $root "customizations\rules\AGENTS.md"
 $skillsSrc = Join-Path $root "customizations\skills"
 $binSrc = Join-Path $root "bin"
 $binTarget = Join-Path $HOME ".gemini\antigravity\bin"
+$modelsSrc = Join-Path $root "models"
+$modelsTarget = Join-Path $HOME ".gemini\autopilot\models"
 
 function Install-AgentRules {
     param(
@@ -111,12 +113,19 @@ if ($Target -in @("auto", "all", "codex", "universal")) {
     Install-AgentRules -TargetFile (Join-Path $agentsConfigDir "AGENTS.md") -SourceFile $agentsSrc -AgentName "Universal Config"
 }
 
-# 6. Install Global Binaries & CLI Tools to User PATH
-Write-Host "[6/6] Installing CLI Tools & Configuring PATH..." -ForegroundColor Yellow
+# 6. Install Global Binaries, Cognitive Models & CLI Tools to User PATH
+Write-Host "[6/6] Installing CLI Tools, Cognitive Models & Configuring PATH..." -ForegroundColor Yellow
 if (!(Test-Path $binTarget)) {
     New-Item -ItemType Directory -Path $binTarget -Force | Out-Null
 }
 Copy-Item -Path "$binSrc\*" -Destination $binTarget -Force
+
+if (Test-Path $modelsSrc) {
+    if (!(Test-Path $modelsTarget)) {
+        New-Item -ItemType Directory -Path $modelsTarget -Force | Out-Null
+    }
+    Copy-Item -Path "$modelsSrc\*" -Destination $modelsTarget -Force
+}
 
 $userPath = [System.Environment]::GetEnvironmentVariable("Path", "User")
 if ($userPath -notlike "*$binTarget*") {

@@ -24,6 +24,8 @@ AGENTS_SRC="$ROOT_DIR/customizations/rules/AGENTS.md"
 SKILLS_SRC="$ROOT_DIR/customizations/skills"
 BIN_SRC="$ROOT_DIR/bin"
 BIN_TARGET="$HOME/.gemini/antigravity/bin"
+MODELS_SRC="$ROOT_DIR/models"
+MODELS_TARGET="$HOME/.gemini/autopilot/models"
 
 install_rules() {
     local target_file="$1"
@@ -95,10 +97,14 @@ echo -e "${YELLOW}[5/6] Configuring Universal Agent Standards (Codex, Aider, Ope
 install_rules "$HOME/AGENTS.md" "Universal Home"
 install_rules "$HOME/.config/agents/AGENTS.md" "Universal Config"
 
-# 6. Install CLI Tools & Configure PATH
-echo -e "${YELLOW}[6/6] Installing CLI Tools & Configuring PATH...${NC}"
+# 6. Install CLI Tools, Models & Configure PATH
+echo -e "${YELLOW}[6/6] Installing CLI Tools, Cognitive Models & Configuring PATH...${NC}"
 mkdir -p "$BIN_TARGET"
 cp -rf "$BIN_SRC/"* "$BIN_TARGET/"
+if [ -d "$MODELS_SRC" ]; then
+    mkdir -p "$MODELS_TARGET"
+    cp -rf "$MODELS_SRC/"* "$MODELS_TARGET/"
+fi
 chmod +x "$BIN_TARGET/agy-route" "$BIN_TARGET/agy-autopilot" "$BIN_TARGET/agy-predict" "$BIN_TARGET/agent-route" "$BIN_TARGET/agent-autopilot" "$BIN_TARGET/agent-predict" 2>/dev/null || true
 
 PATH_LINE="export PATH=\"\$HOME/.gemini/antigravity/bin:\$PATH\""

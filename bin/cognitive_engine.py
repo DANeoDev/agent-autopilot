@@ -25,7 +25,19 @@ from datetime import datetime, timezone
 from typing import Dict, Any, List, Tuple, Optional
 
 DEFAULT_HASH_DIM = 256
-DEFAULT_WEIGHTS_PATH = Path(__file__).parent.parent / "models" / "cognitive_weights.json"
+USER_WEIGHTS_FILE = Path.home() / ".gemini" / "autopilot" / "models" / "cognitive_weights.json"
+REPO_WEIGHTS_FILE = Path(__file__).resolve().parent.parent / "models" / "cognitive_weights.json"
+
+
+def resolve_weights_path() -> Path:
+    if USER_WEIGHTS_FILE.exists():
+        return USER_WEIGHTS_FILE
+    if REPO_WEIGHTS_FILE.exists():
+        return REPO_WEIGHTS_FILE
+    return USER_WEIGHTS_FILE
+
+
+DEFAULT_WEIGHTS_PATH = resolve_weights_path()
 DEFAULT_TELEMETRY_DIR = Path.home() / ".gemini" / "autopilot" / "telemetry"
 DEFAULT_TELEMETRY_FILE = DEFAULT_TELEMETRY_DIR / "samples.jsonl"
 DEFAULT_CONFIG_FILE = Path.home() / ".gemini" / "autopilot" / "config.json"
@@ -298,9 +310,24 @@ class CognitiveEngine:
             "w_x": self.w_x,
             "w_y": self.w_y,
             "learned_terms": self.learned_terms,
+            "last_updated": datetime.now(timezone.utc).isoformat()
         }
         with open(self.weights_path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2)
+
+        if REPO_WEIGHTS_FILE.exists() and REPO_WEIGHTS_FILE.resolve() != self.weights_path.resolve():
+            try:
+                with open(REPO_WEIGHTS_FILE, "w", encoding="utf-8") as f:
+                    json.dump(data, f, indent=2)
+            except Exception:
+                pass
+        if USER_WEIGHTS_FILE.resolve() != self.weights_path.resolve():
+            try:
+                USER_WEIGHTS_FILE.parent.mkdir(parents=True, exist_ok=True)
+                with open(USER_WEIGHTS_FILE, "w", encoding="utf-8") as f:
+                    json.dump(data, f, indent=2)
+            except Exception:
+                pass
 
     def extract_term_influences(self, text: str) -> Tuple[float, float, List[Dict[str, Any]]]:
         """
@@ -584,6 +611,7 @@ class CognitiveEngine:
 def main():
     import argparse
     parser = argparse.ArgumentParser(description="Autopilot Cognitive Pass Prediction & Self-Learning Engine")
+    parser.add_argument("positional_prompt", nargs="*", default=[], help="Prompt text to analyze (positional)")
     parser.add_argument("--prompt", type=str, help="Prompt text to analyze and predict pass parameters")
     parser.add_argument("--explain", action="store_true", help="Display semantic term contribution breakdown")
     parser.add_argument("--learn", nargs=2, metavar=("X_STAR", "Y_STAR"), type=float, help="Record ground-truth outcome and perform online SGD + vocabulary update")
@@ -595,6 +623,8 @@ def main():
     parser.add_argument("--card", action="store_true", help="Output prediction as a compact ASCII telemetry card")
     parser.add_argument("--footer", action="store_true", help="Output prediction as a GitHub-compliant markdown footer")
     args = parser.parse_args()
+
+    active_prompt = args.prompt or (" ".join(args.positional_prompt).strip() if args.positional_prompt else None)
 
     if args.telemetry_mode:
         set_configured_telemetry_mode(args.telemetry_mode)
@@ -623,11 +653,11 @@ def main():
         print("========================================================\n")
         return
 
-    if args.prompt:
+    if active_prompt:
         if args.learn:
             x_star, y_star = args.learn
             engine.record_and_update(
-                args.prompt,
+                active_prompt,
                 x_star,
                 y_star,
                 delta_items=args.delta_items,
@@ -635,7 +665,7 @@ def main():
             )
             print(f"[SUCCESS] Updated cognitive model & dynamic vocabulary: X*={x_star}, Y*={y_star}")
 
-        result = engine.predict(args.prompt)
+        result = engine.predict(active_prompt)
         if args.json:
             print(json.dumps(result, indent=2))
         elif args.card:

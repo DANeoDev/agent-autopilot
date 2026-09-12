@@ -115,7 +115,7 @@ $$
   Measures code creation, AST mutations, and in-situ delta repair passes.
 - **Epistemic Reflection Depth** ($Y = \mathrm{Im}(Z) \in [0.0, 3.0]$):
   Measures internal simulation, reasoning tokens, mathematical proof checking, and test synthesis.
-- **Cognitive Energy** $R = |Z| = \sqrt{X^2 + Y^2}$ & **Phase Angle** $\theta = \arctan(Y/X)$:
+- **Cognitive Energy** ($R = |Z| = \sqrt{X^2 + Y^2}$) & **Phase Angle** ($\theta = \arctan(Y/X)$):
   - $\theta < 20^\circ$: Action-dominant (heavy file refactoring, fast mechanical execution).
   - $\theta > 55^\circ$: Epistemic-dominant (deep algorithmic proofs, minimal code churn).
 
