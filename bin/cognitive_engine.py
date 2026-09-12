@@ -183,20 +183,50 @@ def tokenize_and_hash(text: str, dim: int = DEFAULT_HASH_DIM) -> List[float]:
     return vec
 
 
+def synthesize_one_liner_example(prompt: str, is_inquiry: bool, vague_found: List[str]) -> str:
+    """
+    Synthesizes a tailored, human-level one-liner prompt rewrite example
+    to demonstrate how to rephrase the request to achieve high viability (Q >= 0.80).
+    """
+    clean = prompt.lower()
+    if is_inquiry:
+        if any(w in clean for w in ["viability", "0.60", "q", "metric", "score", "value"]):
+            return "Explain what Q=0.60 means in human terms, how the 3 sub-scores are calculated, and give 2 before/after prompt examples."
+        elif any(w in clean for w in ["summary", "summarize", "changes", "10 prompts", "last"]):
+            return "Summarize changes from the last 10 prompts in a markdown table, evaluate their sensibility, and propose top 3 next steps."
+        elif any(w in clean for w in ["vector", "complex", "z", "phase", "angle"]):
+            return "Explain how the complex state vector Z = X + iY maps to physical tool actions versus internal reflection."
+        else:
+            return "Explain the core concept in simple terms, include 2 concrete examples, and state recommended next steps."
+    else:
+        if any(w in clean for w in ["footer", "feedback", "refine", "hints", "example"]):
+            return "In cognitive_engine.py, make Q intent-aware and add a concrete one-liner rewrite example to the footer when Q < 0.78."
+        elif any(w in clean for w in ["readme", "docs", "documentation"]):
+            return "Update README.md with the live telemetry showcase and verify all block math syntax renders cleanly on GitHub."
+        elif any(w in clean for w in ["install", "script", "setup"]):
+            return "In scripts/install.ps1, add auto-copying of model weights to ~/.gemini/autopilot/models/ and verify with verify.ps1."
+        else:
+            return "In [target_file], implement [specific behavior] so that [expected result], and verify with [test command]."
+
+
 def evaluate_prompt_viability(prompt: str) -> Dict[str, Any]:
     """
     Evaluates prompt viability Q in [0.0, 1.0] across three orthogonal dimensions:
-      1. Q_spec  (Specificity vs. Subjective Fluff)
-      2. Q_test  (Testability & Verifiability Constraints)
+      1. Q_spec  (Specificity & Clarity vs. Subjective Vagueness)
+      2. Q_test  (Verifiability & Scope Determinism - Intent Aware)
       3. Q_scope (Scope & Structure Feasibility)
     
-    Returns score, classification, and actionable prompt refinement hints.
+    Reconciles human-level communication with agent precision, providing
+    actionable, non-robotic prompt refinement hints and concrete one-liner examples.
     """
     clean = prompt.lower()
     words = tokenize_words(clean)
     num_words = len(words)
 
-    # 1. Specificity: concrete technical cues vs vague subjective words
+    # Detect intent: Inquiry/Reflection vs Action/Code Mutation
+    is_inquiry = bool(re.search(r"\b(?:explain|why|how|what|evaluate|assess|review|summarize|discuss|compare|clarify|meaning|assessment|opinion)\b", clean)) or ("?" in prompt and not re.search(r"\b(?:implement|build|refactor|fix|create|write|delete|patch|modify)\b", clean))
+
+    # 1. Specificity: concrete technical or domain cues vs vague subjective hesitation
     vague_lexicon = {
         "better", "nice", "good", "cool", "cleaner", "somehow", "maybe", 
         "idk", "stuff", "things", "proper", "awesome", "slick", "crazy", 
@@ -205,35 +235,45 @@ def evaluate_prompt_viability(prompt: str) -> Dict[str, Any]:
     concrete_indicators = [
         r"\.[a-z0-9]{1,4}\b",  # file extensions (.py, .ts, .md, .css)
         r"['\"`][^'\"`]+['\"`]", # quoted strings / exact identifiers
-        r"\b(?:function|class|def|route|endpoint|schema|database|table|column|api|css|html|dom|hook|state|component)\b",
-        r"\b(?:add|remove|fix|refactor|export|orient|render|assert|calculate|implement|update|delete|migrate|align|filter)\b"
+        r"\b(?:function|class|def|route|endpoint|schema|database|table|column|api|css|html|dom|hook|state|component|metric|score|formula|vector|parameter)\b",
+        r"\b(?:add|remove|fix|refactor|export|orient|render|assert|calculate|implement|update|delete|migrate|align|filter|summarize|explain)\b"
     ]
     
     vague_found = [w for w in words if w in vague_lexicon]
     concrete_matches = sum(len(re.findall(pat, prompt, re.IGNORECASE)) for pat in concrete_indicators)
     
-    raw_spec = 0.50 + 0.08 * min(6, concrete_matches) - 0.12 * len(vague_found)
-    q_spec = max(0.10, min(1.00, raw_spec))
+    raw_spec = 0.52 + 0.08 * min(6, concrete_matches) - 0.10 * len(vague_found)
+    q_spec = max(0.15, min(1.00, raw_spec))
 
-    # 2. Testability: explicit verification criteria & conditional logic
-    test_lexicon = [
-        r"\b(?:test|pytest|unit|assert|verify|verification|exit\s*code|status\s*code|error\s*code)\b",
-        r"\b(?:200|404|500|true|false|null|none|equal|expect|match)\b",
-        r"\b(?:if\b.+?\bthen|when\b.+?\bshould|only\b.+?\binstead|ensure|must|guarantee)\b",
-        r"#\d+|rank\s*#?\d+|\d+\s*items"
-    ]
-    test_matches = sum(len(re.findall(pat, clean)) for pat in test_lexicon)
-    raw_test = 0.35 + 0.15 * min(5, test_matches)
-    q_test = max(0.10, min(1.00, raw_test))
+    # 2. Verifiability / Delivery Determinism (Intent-Aware)
+    if is_inquiry:
+        inquiry_deliverables = [
+            r"\b(?:example|examples|summary|overview|breakdown|table|comparison|steps|guidelines|meaning|definition|score|metric)\b",
+            r"\b(?:in\s+simple\s+terms|in\s+detail|step\s*by\s*step|specifically|concretely|sensible|roadmap)\b",
+            r"\b(?:why|how\s+to|what\s+is|what\s+does)\b"
+        ]
+        inquiry_matches = sum(len(re.findall(pat, clean)) for pat in inquiry_deliverables)
+        raw_test = 0.55 + 0.15 * min(4, inquiry_matches)
+        q_test = max(0.20, min(1.00, raw_test))
+    else:
+        test_lexicon = [
+            r"\b(?:test|pytest|unit|assert|verify|verification|exit\s*code|status\s*code|check|run|command)\b",
+            r"\b(?:200|404|500|true|false|null|none|equal|expect|match|table|output|result)\b",
+            r"\b(?:if\b.+?\bthen|when\b.+?\bshould|only\b.+?\binstead|ensure|must|guarantee|preserve)\b",
+            r"#\d+|rank\s*#?\d+|\d+\s*items"
+        ]
+        test_matches = sum(len(re.findall(pat, clean)) for pat in test_lexicon)
+        raw_test = 0.45 + 0.15 * min(4, test_matches)
+        q_test = max(0.15, min(1.00, raw_test))
 
     # 3. Scope & Structure: density, itemization, and attention-sink risk
     item_matches = len(re.findall(r"(?:^|\n)\s*(?:\d+[\.\)]|[-*])\s+", prompt))
     if num_words < 8:
-        q_scope = 0.35 # Underspecified
+        q_scope = 0.35
     elif 8 <= num_words <= 250:
         q_scope = 0.95 if item_matches > 0 else 0.85
     elif num_words > 250:
-        q_scope = 0.90 if item_matches >= 4 else 0.60 # Wall of text risk without bullet points
+        q_scope = 0.90 if item_matches >= 4 else 0.65
     else:
         q_scope = 0.80
 
@@ -250,25 +290,33 @@ def evaluate_prompt_viability(prompt: str) -> Dict[str, Any]:
     hints = []
     if vague_found:
         unique_vague = sorted(list(set(vague_found)))[:3]
-        hints.append(f"Subjective phrasing detected: {', '.join(repr(v) for v in unique_vague)}. Replace with concrete functional criteria or DOM/CSS rules.")
+        hints.append(f"Contains exploratory language ({', '.join(repr(v) for v in unique_vague)}). Stating your preferred direct outcome helps compress internal reflection.")
+    
     if q_test < 0.60:
-        hints.append("Lacks explicit verification condition. Specify expected output, exit code (0), or assertion to guarantee 100% gap audit fidelity.")
+        if is_inquiry:
+            hints.append("Clarify question focus: Name the specific concept or component you want broken down.")
+        else:
+            hints.append("Anchor expected outcome: Mention target files, visual expectations, or concrete behavior.")
+    
     if item_matches == 0 and num_words > 40:
-        hints.append("Consider numbered punch-list format (1., 2., 3.). Multi-item lists improve Pass 2 gap-audit recall by ~40%.")
+        hints.append("Consider numbered punch-list format (1., 2., 3.) for multi-part requests to maximize recall.")
+
+    example_rewrite = synthesize_one_liner_example(prompt, is_inquiry, vague_found)
 
     potential_y_delta = 0.0
     if hints:
         potential_y_delta = round(-0.15 * len(hints), 2)
-        hints.append(f"Resolving these hints will compress epistemic uncertainty Y by {potential_y_delta:+.2f}, eliminating guesswork and saving tokens.")
 
     return {
         "Q": Q,
         "Q_spec": round(q_spec, 3),
         "Q_test": round(q_test, 3),
         "Q_scope": round(q_scope, 3),
+        "is_inquiry": is_inquiry,
         "classification": classification,
         "detected_vague_terms": vague_found,
         "hints": hints,
+        "example_rewrite": example_rewrite,
         "potential_y_reduction": potential_y_delta
     }
 
@@ -492,8 +540,13 @@ class CognitiveEngine:
         ]
 
         hints = v.get("hints", [])
+        example_rewrite = v.get("example_rewrite")
         if hints and q_val < 0.78:
-            lines.append(f"> 💡 **Input Refinement**: {hints[0]}")
+            hint_msg = hints[0]
+            if example_rewrite:
+                lines.append(f"> 💡 **Input Refinement**: {hint_msg} *(e.g., \"{example_rewrite}\")*")
+            else:
+                lines.append(f"> 💡 **Input Refinement**: {hint_msg}")
 
         return "\n".join(lines)
 

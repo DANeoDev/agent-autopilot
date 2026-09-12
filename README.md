@@ -286,8 +286,8 @@ $$
 
 ### 🧬 Live Cognitive Engine Telemetry & Self-Learned State
 
-> **Engine Baseline**: $Z_{\mathrm{base}} = 2.21 + 1.03i$ | **Cognitive Energy**: $R = 2.440$ | **Attentional Phase**: $\theta = 25.1^\circ$ (Balanced Flow)
-> **Empirical Dataset**: `22` user task trajectories trained locally via Online SGD.
+> **Engine Baseline**: $Z_{\mathrm{base}} = 2.21 + 1.04i$ | **Cognitive Energy**: $R = 2.443$ | **Attentional Phase**: $\theta = 25.1^\circ$ (Balanced Flow)
+> **Empirical Dataset**: `23` user task trajectories trained locally via Online SGD.
 
 #### 📊 Dynamically Discovered Vocabulary (Zero Hardcoded Dictionaries)
 
@@ -301,8 +301,8 @@ As users submit diverse real-world tasks, the engine continuously extracts subwo
 | `socket` | `+0.01` | `+0.03` | 1 | Balanced Refinement |
 | `reentrancy` | `+0.01` | `+0.03` | 1 | Balanced Refinement |
 | `backpressure` | `+0.01` | `+0.03` | 1 | Balanced Refinement |
+| `should` | `+0.02` | `+0.02` | 10 | Balanced Refinement |
 | `please` | `+0.02` | `+0.02` | 10 | Balanced Refinement |
-| `probably` | `+0.02` | `+0.02` | 6 | Balanced Refinement |
 
 #### 🎯 Dynamic Prompt Viability & Quality Guardrails ($Q \in [0.0, 1.0]$)
 
