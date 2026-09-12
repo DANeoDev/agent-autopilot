@@ -424,9 +424,22 @@ class CognitiveEngine:
         term_dx, term_dy, matched_terms = self.extract_term_influences(prompt)
         viability = evaluate_prompt_viability(prompt)
 
-        # Base hash projection + term influence + bias
+        # Factor active skeleton memory invariants into epistemic reflection Y
+        skeleton_y_boost = 0.0
+        skeleton_count = 0
+        adaptive_count = 0
+        try:
+            from bin.agy_memory import get_memory_stats
+            m_stats = get_memory_stats()
+            skeleton_count = m_stats.get("skeleton_count", 0)
+            adaptive_count = m_stats.get("adaptive_count", 0)
+            skeleton_y_boost = min(0.35, 0.08 * skeleton_count)
+        except Exception:
+            pass
+
+        # Base hash projection + term influence + skeleton invariant boost + bias
         raw_x = sum(w * x for w, x in zip(self.w_x, feats)) + term_dx + self.b_x
-        raw_y = sum(w * x for w, x in zip(self.w_y, feats)) + term_dy + self.b_y
+        raw_y = sum(w * x for w, x in zip(self.w_y, feats)) + term_dy + self.b_y + skeleton_y_boost
 
         X = max(1.0, min(3.0, raw_x))
         Y = max(0.0, min(3.0, raw_y))
@@ -466,6 +479,9 @@ class CognitiveEngine:
             "samples_trained": self.samples_seen,
             "matched_terms": matched_terms,
             "total_learned_vocabulary_size": len(self.learned_terms),
+            "skeleton_invariants": skeleton_count,
+            "adaptive_learnings": adaptive_count,
+            "skeleton_reflection_boost": round(skeleton_y_boost, 3),
             "telemetry_mode": telemetry_mode,
             "viability": viability
         }

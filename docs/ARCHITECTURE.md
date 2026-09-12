@@ -282,6 +282,40 @@ $$
 
 Upon reaching the Satisfactory threshold, the session automatically delivers 3–5 high-value, logical next-step proposals that naturally expand upon the fulfilled foundation without violating product identity.
 
+### 4.5 Dual-Tier Epistemic Memory & Anti-Sycophantic Grounding
+
+To prevent conversational drift, model sycophancy, and accidental overwrite of foundational architectural principles across multi-turn sessions, Autopilot bifurcates memory into two distinct tiers:
+
+1. **The Living Skeleton (Epistemic Invariants & Bedrock)**:
+   - **Tier**: `skeleton`
+   - **Mutability**: `protected`
+   - Foundational constraints, anti-sycophancy guardrails, empirical falsifiability rules, and system boundaries.
+   - **Safety Protection Barrier**: Attempting to mutate or delete a `skeleton` entry without `--force-skeleton` immediately raises a `PermissionError` (exit code 1).
+   - **Auto-Seeded Invariants**:
+     - *Empirical Grounding*: Code and assertions must be validated against real tool executions; never fabricate test passes.
+     - *Epistemic Friction*: Respectfully challenge technical contradictions or mathematically flawed directives rather than unthinkingly validating impossible premises.
+     - *Boundary Separation*: Maintain clear architectural separation between mathematical invariants and fluid application logic.
+
+2. **The Adaptive Layer (Dynamic Experience)**:
+   - **Tier**: `adaptive`
+   - **Mutability**: `mutable`
+   - Project conventions, domain vocabulary, runtime discoveries, and architectural decisions.
+   - **Generous Append**: Re-recording an existing concept performs an in-place version increment ($v1 \longrightarrow v2$) and merges tags without destructive overwrite.
+
+#### Connection to Epistemic Reflection Depth ($Y$)
+
+Active skeleton invariants directly reinforce the model's reflective reasoning budget. In `cognitive_engine.py`, the predicted epistemic reflection depth $Y$ receives a bounded boost proportional to the number of active skeleton constraints:
+
+$$
+\Delta Y = \min\left(0.35, 0.08 \cdot N_{\mathrm{skeleton}}\right)
+$$
+
+$$
+Y_{\mathrm{effective}} = Y_{\mathrm{base}} + \Delta Y
+$$
+
+This guarantees that as a system accumulates protected architectural bedrock, the agent allocates proportionately higher reasoning and proof-verification tokens before modifying code.
+
 ---
 
 ## 5. Theoretical Foundations: Velocity Dynamics & Token Economics

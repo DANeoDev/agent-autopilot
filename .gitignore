@@ -1,4 +1,4 @@
-﻿__pycache__/
+__pycache__/
 *.py[cod]
 *$py.class
 .pytest_cache/
@@ -7,3 +7,4 @@ env/
 *.log
 .DS_Store
 Thumbs.db
+Sympnoia/

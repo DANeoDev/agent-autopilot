@@ -98,6 +98,15 @@ def render_terminal_dashboard(engine: CognitiveEngine, prompt_preview: Optional[
     bar_y = render_bar(disp_y, 0.0, 3.0, width=18)
     bar_q = render_bar(q_val, 0.0, 1.0, width=18, fill_char="█", empty_char="░")
 
+    try:
+        from bin.agy_memory import get_memory_stats
+        mem_stats = get_memory_stats()
+        sk_count = mem_stats.get("skeleton_count", 0)
+        ad_count = mem_stats.get("adaptive_count", 0)
+    except Exception:
+        sk_count = 0
+        ad_count = 0
+
     lines = []
     lines.append("╔══════════════════════════════════════════════════════════════════════════════════════╗")
     lines.append("║                   🤖 ANTIGRAVITY AUTOPILOT - COGNITIVE HUD DASHBOARD                 ║")
@@ -105,6 +114,7 @@ def render_terminal_dashboard(engine: CognitiveEngine, prompt_preview: Optional[
     lines.append("╠══════════════════════════════════════════════════════════════════════════════════════╣")
     lines.append(f"║  Active Model Weights : {str(weights_path)[-56:]:<56} ║")
     lines.append(f"║  Empirical Dataset    : {samples_count:<4} training samples | Vocabulary: {vocab_count:<5} learned tokens ║")
+    lines.append(f"║  Epistemic Memory     : {sk_count:<2} Skeleton Invariants (Protected) | {ad_count:<2} Adaptive Learnings   ║")
     lines.append("╠══════════════════════════════════════════════════════════════════════════════════════╣")
     lines.append("║ 1. COGNITIVE COMPLEX STATE VECTOR (Z)                                                ║")
     lines.append(f"║    Vector Equation    : Z = {disp_x:.2f} + {disp_y:.2f}i                                              ║")
@@ -128,7 +138,7 @@ def render_terminal_dashboard(engine: CognitiveEngine, prompt_preview: Optional[
 
     lines.append("╠══════════════════════════════════════════════════════════════════════════════════════╣")
     lines.append("║ 3. DYNAMICALLY LEARNED VOCABULARY (Online SGD Subword Feature Hashing)               ║")
-    top_terms = engine.get_top_learned_terms(limit=6)
+    top_terms = engine.get_top_learned_terms(limit=4)
     if not top_terms:
         lines.append("║    No dynamic terms recorded yet. Engine operating on base concept priors.           ║")
     else:
@@ -140,8 +150,12 @@ def render_terminal_dashboard(engine: CognitiveEngine, prompt_preview: Optional[
             lines.append(f"║    • {term:<16} : ΔX={dx:+.3f}, ΔY={dy:+.3f} (seen {occ:<2}x) | Concept Prior Active        ║")
 
     lines.append("╠══════════════════════════════════════════════════════════════════════════════════════╣")
-    lines.append("║ 4. RECENT TELEMETRY TRAJECTORIES                                                     ║")
-    recent = load_recent_telemetry_samples(limit=3)
+    lines.append("║ 4. DUAL-TIER EPISTEMIC MEMORY (Living Skeleton vs. Adaptive Layer)                   ║")
+    lines.append(f"║    * Living Skeleton Bedrock : {sk_count} protected invariants (Anti-sycophantic grounding)   ║")
+    lines.append(f"║    * Dynamic Adaptive Layer  : {ad_count} project conventions & architectural patterns        ║")
+    lines.append("╠══════════════════════════════════════════════════════════════════════════════════════╣")
+    lines.append("║ 5. RECENT TELEMETRY TRAJECTORIES                                                     ║")
+    recent = load_recent_telemetry_samples(limit=2)
     if not recent:
         lines.append("║    No historical telemetry samples recorded in ~/.gemini/autopilot/telemetry/       ║")
     else:

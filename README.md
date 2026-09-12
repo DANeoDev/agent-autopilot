@@ -286,8 +286,8 @@ $$
 
 ### 🧬 Live Cognitive Engine Telemetry & Self-Learned State
 
-> **Engine Baseline**: $Z_{\mathrm{base}} = 2.21 + 1.04i$ | **Cognitive Energy**: $R = 2.443$ | **Attentional Phase**: $\theta = 25.1^\circ$ (Balanced Flow)
-> **Empirical Dataset**: `24` user task trajectories trained locally via Online SGD.
+> **Engine Baseline**: $Z_{\mathrm{base}} = 2.20 + 1.03i$ | **Cognitive Energy**: $R = 2.429$ | **Attentional Phase**: $\theta = 25.0^\circ$ (Balanced Flow)
+> **Empirical Dataset**: `25` user task trajectories trained locally via Online SGD.
 
 #### 📊 Dynamically Discovered Vocabulary (Zero Hardcoded Dictionaries)
 
@@ -295,14 +295,14 @@ As users submit diverse real-world tasks, the engine continuously extracts subwo
 
 | Learned Token / Term | Action Depth Impact ($\Delta X$) | Epistemic Impact ($\Delta Y$) | Observed Trajectories | Category / Influence |
 |---|---|---|---|---|
+| `update` | `-0.03` | `-0.03` | 7 | Balanced Refinement |
+| `feature` | `-0.02` | `-0.02` | 7 | Balanced Refinement |
+| `documentation` | `-0.02` | `-0.02` | 7 | Balanced Refinement |
+| `these` | `-0.02` | `-0.02` | 4 | Balanced Refinement |
 | `handle` | `+0.01` | `+0.03` | 2 | Balanced Refinement |
 | `bugs` | `+0.01` | `+0.03` | 2 | Balanced Refinement |
 | `network` | `+0.01` | `+0.03` | 1 | Balanced Refinement |
 | `socket` | `+0.01` | `+0.03` | 1 | Balanced Refinement |
-| `reentrancy` | `+0.01` | `+0.03` | 1 | Balanced Refinement |
-| `backpressure` | `+0.01` | `+0.03` | 1 | Balanced Refinement |
-| `should` | `+0.02` | `+0.02` | 10 | Balanced Refinement |
-| `please` | `+0.02` | `+0.02` | 10 | Balanced Refinement |
 
 #### 🎯 Dynamic Prompt Viability & Quality Guardrails ($Q \in [0.0, 1.0]$)
 
@@ -587,10 +587,12 @@ agent-status --watch
 agent-audit --gap-matrix "Implement interactive HUD, PR generator, and memory"
 agent-audit --pr --save PULL_REQUEST.md
 
-# 6. Cross-Project Memory: Record and query architectural decisions across workspaces
-agent-memory record "Double-Pass Gold Standard (X=2.2)" "Execute Pass 1 batch + Pass 2 gap audit"
-agent-memory search "pass depth"
-agent-memory list
+# 6. Dual-Tier Epistemic Memory: Record invariants (skeleton) and learnings (adaptive)
+agent-memory record "Empirical Grounding" "No fabricated verification; exit code 0" --tier skeleton
+agent-memory record "Glicko-2 Volatility" "Default tau=0.5 for fast volatility convergence"
+agent-memory list --tier skeleton
+agent-memory search "verification"
+agent-memory delete <id> --force-skeleton  # Protected invariants require explicit force flag
 ```
 
 ---
