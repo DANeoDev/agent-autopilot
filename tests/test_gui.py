@@ -71,7 +71,7 @@ class TestAutopilotGUI(unittest.TestCase):
         self.app._toggle_expand()
         self.assertTrue(self.app.is_expanded)
         self.assertTrue(hasattr(self.app, "notebook"))
-        self.assertEqual(len(self.app.notebook.tabs()), 5)
+        self.assertEqual(len(self.app.notebook.tabs()), 6)
 
         # Collapse back
         self.app._toggle_expand()

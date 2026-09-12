@@ -3,11 +3,14 @@
 Antigravity Autopilot - Standalone Desktop HUD (Dual-Mode GUI)
 
 Features:
-- Dual Form Factor: Compact floating sidebar (380px) expandable to full dashboard (840px).
+- Native Windows 11/10 Dark Title Bar via DWM API.
+- Dual Form Factor: Compact floating sidebar (380px) expandable to full dashboard (1080px).
+- Robust "Always on Top 📌" Pinning.
 - Zero External Dependencies: Pure Python standard library (tkinter + ttk).
 - Real-Time Live Watcher: Automatically updates metrics whenever a new prompt is submitted.
 - Interactive Prompt Sandbox: Test-type prompts to preview Q and Z in real time.
-- Selectable Analysis Views: Cognitive Vector (Z), Viability (Q), Memory, Vocabulary, Stream.
+- Direct Documentation Links & Local Markdown Guides.
+- Hot-Reload Capability: Dynamic source file reload and restart.
 - Windowless execution via pythonw.
 """
 
@@ -16,7 +19,9 @@ import sys
 import json
 import time
 import math
+import ctypes
 import threading
+import webbrowser
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, Any, List, Optional
@@ -51,8 +56,31 @@ COLOR_BLUE = "#3b82f6"
 
 SIDEBAR_WIDTH = 380
 SIDEBAR_HEIGHT = 680
-DASHBOARD_WIDTH = 880
-DASHBOARD_HEIGHT = 700
+DASHBOARD_WIDTH = 1080
+DASHBOARD_HEIGHT = 760
+
+DOCS_REPO_URL = "https://github.com/DANeoDev/agent-autopilot#readme"
+
+
+def apply_dark_title_bar(window: tk.Tk):
+    """Enables Windows 10/11 native immersive dark mode on the window title bar."""
+    try:
+        window.update_idletasks()
+        # Find window handle
+        hwnd = ctypes.windll.user32.GetParent(window.winfo_id()) or window.winfo_id()
+        # Windows 11 Build 22000+ attribute: DWMWA_USE_IMMERSIVE_DARK_MODE = 20
+        DWMWA_USE_IMMERSIVE_DARK_MODE = 20
+        value = ctypes.c_int(1)
+        res = ctypes.windll.dwmapi.DwmSetWindowAttribute(
+            hwnd, DWMWA_USE_IMMERSIVE_DARK_MODE, ctypes.byref(value), ctypes.sizeof(value)
+        )
+        if res != 0:
+            # Fallback for Windows 10 (1809 - 1909): DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1 = 19
+            ctypes.windll.dwmapi.DwmSetWindowAttribute(
+                hwnd, 19, ctypes.byref(value), ctypes.sizeof(value)
+            )
+    except Exception:
+        pass
 
 
 class AutopilotGUI:
@@ -63,6 +91,8 @@ class AutopilotGUI:
         self.root.minsize(360, 600)
         self.root.configure(bg=BG_MAIN)
 
+        apply_dark_title_bar(self.root)
+
         self.engine = CognitiveEngine()
         self.is_expanded = False
         self.is_topmost = False
@@ -70,6 +100,12 @@ class AutopilotGUI:
         self.last_transcript_path: Optional[Path] = None
         self.last_prompt_text = ""
         self.running = True
+
+        # Track self source mtime for hot-reload notifications
+        try:
+            self.self_file_mtime = os.path.getmtime(__file__)
+        except Exception:
+            self.self_file_mtime = 0
 
         self._setup_styles()
         self._build_ui()
@@ -92,10 +128,10 @@ class AutopilotGUI:
         style.configure(".", background=BG_PANEL, foreground=TEXT_PRIMARY, font=("Segoe UI", 9))
         style.configure("TFrame", background=BG_PANEL)
         style.configure("Card.TFrame", background=BG_CARD)
-        
+
         # Notebook / Tabs
         style.configure("TNotebook", background=BG_PANEL, borderwidth=0)
-        style.configure("TNotebook.Tab", background=BG_CARD, foreground=TEXT_MUTED, padding=[10, 5], font=("Segoe UI", 9, "bold"))
+        style.configure("TNotebook.Tab", background=BG_CARD, foreground=TEXT_MUTED, padding=[12, 6], font=("Segoe UI", 9, "bold"))
         style.map("TNotebook.Tab",
                   background=[("selected", BG_PANEL)],
                   foreground=[("selected", COLOR_CYAN)])
@@ -106,12 +142,16 @@ class AutopilotGUI:
                         foreground=TEXT_PRIMARY,
                         fieldbackground=BG_CARD,
                         borderwidth=0,
+                        rowheight=24,
                         font=("Segoe UI", 9))
         style.configure("Treeview.Heading",
                         background=BG_PANEL,
                         foreground=COLOR_CYAN,
                         font=("Segoe UI", 9, "bold"))
         style.map("Treeview", background=[("selected", "#374151")])
+
+        # Scrollbar styling
+        style.configure("Vertical.TScrollbar", background=BG_CARD, troughcolor=BG_PANEL, borderwidth=0, arrowsize=12)
 
     def _build_ui(self):
         # Container frame
@@ -151,17 +191,26 @@ class AutopilotGUI:
         btn_box = tk.Frame(header, bg=BG_PANEL)
         btn_box.pack(side=tk.RIGHT)
 
+        # Documentation Link Button
+        self.docs_btn = tk.Button(btn_box, text="📚 Docs", font=("Segoe UI", 8),
+                                  bg=BG_CARD, fg=COLOR_BLUE, activebackground=BG_CARD_HOVER,
+                                  activeforeground=COLOR_BLUE, relief=tk.FLAT, bd=0, padx=6, pady=2,
+                                  cursor="hand2", command=self._open_online_docs)
+        self.docs_btn.pack(side=tk.LEFT, padx=2)
+
+        # Pin / Always on Top Button
         self.topmost_btn = tk.Button(btn_box, text="📌 Pin", font=("Segoe UI", 8),
                                      bg=BG_CARD, fg=TEXT_MUTED, activebackground=BG_CARD_HOVER,
                                      activeforeground=TEXT_PRIMARY, relief=tk.FLAT, bd=0, padx=6, pady=2,
-                                     command=self._toggle_topmost)
-        self.topmost_btn.pack(side=tk.LEFT, padx=3)
+                                     cursor="hand2", command=self._toggle_topmost)
+        self.topmost_btn.pack(side=tk.LEFT, padx=2)
 
+        # Expand / Collapse Button
         self.expand_btn = tk.Button(btn_box, text="Expand ⤢", font=("Segoe UI", 8, "bold"),
                                     bg=BG_CARD, fg=COLOR_CYAN, activebackground=BG_CARD_HOVER,
                                     activeforeground=COLOR_CYAN, relief=tk.FLAT, bd=0, padx=6, pady=2,
-                                    command=self._toggle_expand)
-        self.expand_btn.pack(side=tk.LEFT, padx=3)
+                                    cursor="hand2", command=self._toggle_expand)
+        self.expand_btn.pack(side=tk.LEFT, padx=2)
 
     def _build_sidebar_cognitive(self):
         card = tk.Frame(self.sidebar_frame, bg=BG_CARD, highlightbackground=BORDER_COLOR, highlightthickness=1)
@@ -262,11 +311,20 @@ class AutopilotGUI:
         self.lbl_status = tk.Label(footer, text="Live watching...", font=("Segoe UI", 8), fg=TEXT_DIM, bg=BG_PANEL)
         self.lbl_status.pack(side=tk.LEFT)
 
-        btn_refresh = tk.Button(footer, text="🔄 Sync", font=("Segoe UI", 8),
+        btn_box = tk.Frame(footer, bg=BG_PANEL)
+        btn_box.pack(side=tk.RIGHT)
+
+        btn_reload = tk.Button(btn_box, text="⚡ Reload", font=("Segoe UI", 8),
+                               bg=BG_CARD, fg=COLOR_AMBER, activebackground=BG_CARD_HOVER,
+                               activeforeground=COLOR_AMBER, relief=tk.FLAT, bd=0, padx=6, pady=2,
+                               cursor="hand2", command=self._restart_app)
+        btn_reload.pack(side=tk.LEFT, padx=(0, 4))
+
+        btn_refresh = tk.Button(btn_box, text="🔄 Sync", font=("Segoe UI", 8),
                                 bg=BG_CARD, fg=TEXT_MUTED, activebackground=BG_CARD_HOVER,
                                 activeforeground=TEXT_PRIMARY, relief=tk.FLAT, bd=0, padx=6, pady=2,
-                                command=self._manual_refresh)
-        btn_refresh.pack(side=tk.RIGHT)
+                                cursor="hand2", command=self._manual_refresh)
+        btn_refresh.pack(side=tk.LEFT)
 
     def _build_dashboard_panel(self):
         # Build multi-tab notebook
@@ -298,28 +356,33 @@ class AutopilotGUI:
         self.notebook.add(self.tab_stream, text="📡 Telemetry Stream")
         self._build_tab_stream()
 
+        # Tab 6: Documentation & Guides
+        self.tab_docs = tk.Frame(self.notebook, bg=BG_PANEL)
+        self.notebook.add(self.tab_docs, text="📚 Docs & Guides")
+        self._build_tab_docs()
+
     def _build_tab_sandbox(self):
         frame = self.tab_sandbox
-        tk.Label(frame, text="Interactive Prompt Evaluator", font=("Segoe UI", 11, "bold"), fg=COLOR_CYAN, bg=BG_PANEL).pack(anchor=tk.W, padx=12, pady=(10, 2))
+        tk.Label(frame, text="Interactive Prompt Evaluator", font=("Segoe UI", 11, "bold"), fg=COLOR_CYAN, bg=BG_PANEL).pack(anchor=tk.W, padx=14, pady=(12, 2))
         tk.Label(frame, text="Type or paste any prompt draft below to preview its Cognitive Vector (Z), Viability Score (Q), and advice live.",
-                 font=("Segoe UI", 9), fg=TEXT_MUTED, bg=BG_PANEL).pack(anchor=tk.W, padx=12, pady=(0, 8))
+                 font=("Segoe UI", 9), fg=TEXT_MUTED, bg=BG_PANEL).pack(anchor=tk.W, padx=14, pady=(0, 8))
 
         self.sandbox_input = tk.Text(frame, bg=BG_CARD, fg=TEXT_PRIMARY, insertbackground=TEXT_PRIMARY,
                                      font=("Consolas", 10), height=7, wrap=tk.WORD, bd=0, highlightthickness=1,
-                                     highlightbackground=BORDER_COLOR, padx=8, pady=8)
-        self.sandbox_input.pack(fill=tk.X, padx=12, pady=4)
+                                     highlightbackground=BORDER_COLOR, padx=10, pady=8)
+        self.sandbox_input.pack(fill=tk.X, padx=14, pady=4)
         self.sandbox_input.insert(tk.END, "Implement websocket reconnect logic and write comprehensive unit tests with exit code 0.")
 
         btn_row = tk.Frame(frame, bg=BG_PANEL)
-        btn_row.pack(fill=tk.X, padx=12, pady=6)
+        btn_row.pack(fill=tk.X, padx=14, pady=6)
         btn_eval = tk.Button(btn_row, text="⚡ Evaluate Prompt", font=("Segoe UI", 9, "bold"),
                              bg=COLOR_CYAN, fg="#000000", activebackground="#22d3ee", relief=tk.FLAT, bd=0, padx=12, pady=4,
-                             command=self._evaluate_sandbox_prompt)
+                             cursor="hand2", command=self._evaluate_sandbox_prompt)
         btn_eval.pack(side=tk.LEFT)
 
         # Output Card
         self.sandbox_output_frame = tk.Frame(frame, bg=BG_CARD, highlightbackground=BORDER_COLOR, highlightthickness=1)
-        self.sandbox_output_frame.pack(fill=tk.BOTH, expand=True, padx=12, pady=(6, 12))
+        self.sandbox_output_frame.pack(fill=tk.BOTH, expand=True, padx=14, pady=(6, 12))
 
         self.lbl_sandbox_results = tk.Label(self.sandbox_output_frame, text="", font=("Segoe UI", 9), fg=TEXT_PRIMARY,
                                             bg=BG_CARD, justify=tk.LEFT, anchor=tk.NW, padx=12, pady=12)
@@ -327,8 +390,8 @@ class AutopilotGUI:
 
     def _build_tab_cognitive(self):
         frame = self.tab_cognitive
-        tk.Label(frame, text="Continuous Cognitive Plane Mathematics (Z = X + iY)", font=("Segoe UI", 11, "bold"), fg=COLOR_PURPLE, bg=BG_PANEL).pack(anchor=tk.W, padx=12, pady=(10, 4))
-        
+        tk.Label(frame, text="Continuous Cognitive Plane Mathematics (Z = X + iY)", font=("Segoe UI", 11, "bold"), fg=COLOR_PURPLE, bg=BG_PANEL).pack(anchor=tk.W, padx=14, pady=(12, 4))
+
         info_text = (
             "Under Project Autopilot, execution and reflection depth are modeled as a complex state:\n\n"
             "• Physical Action Depth (X = Re(Z) ∈ [1.0, 3.0]):\n"
@@ -336,84 +399,158 @@ class AutopilotGUI:
             "    X = 2.2 : Resilient Double-Pass Gold Standard (Pass 1 batch + Pass 2 gap audit + delta check).\n"
             "    X = 3.0 : Triple-pass multi-tier adversarial stress testing and edge-case validation.\n\n"
             "• Epistemic Reflection Depth (Y = Im(Z) ∈ [0.0, 3.0]):\n"
-            "    Internal verification tokens, proof-checking, counterfactual simulation, and test synthesis.\n\n"
+            "    Internal verification tokens, proof-checking, counterfactual simulation, and test synthesis.\n"
+            "    Factored with active Skeleton Invariants boost: ΔY = min(0.35, 0.08 * N_skeleton).\n\n"
             "• Polar Dynamics (Z = R * exp(iθ)):\n"
             "    R = sqrt(X^2 + Y^2) : Total Attentional Energy budget allocated to prompt.\n"
             "    θ = arctan(Y/X)     : Attentional Phase Angle (<20° Action-Dominant, >55° Epistemic-Dominant)."
         )
-        txt = tk.Label(frame, text=info_text, font=("Segoe UI", 9), fg=TEXT_MUTED, bg=BG_PANEL, justify=tk.LEFT, padx=12, pady=8)
+        txt = tk.Label(frame, text=info_text, font=("Segoe UI", 9), fg=TEXT_MUTED, bg=BG_PANEL, justify=tk.LEFT, padx=14, pady=8)
         txt.pack(anchor=tk.W)
 
     def _build_tab_memory(self):
         frame = self.tab_memory
         top_row = tk.Frame(frame, bg=BG_PANEL)
-        top_row.pack(fill=tk.X, padx=12, pady=(10, 6))
+        top_row.pack(fill=tk.X, padx=14, pady=(12, 6))
 
-        tk.Label(top_row, text="Dual-Tier Epistemic Memory", font=("Segoe UI", 11, "bold"), fg=COLOR_BLUE, bg=BG_PANEL).pack(side=tk.LEFT)
+        tk.Label(top_row, text="Dual-Tier Epistemic Memory (Living Skeleton vs. Adaptive Layer)", font=("Segoe UI", 11, "bold"), fg=COLOR_BLUE, bg=BG_PANEL).pack(side=tk.LEFT)
+
+        tree_container = tk.Frame(frame, bg=BG_PANEL)
+        tree_container.pack(fill=tk.BOTH, expand=True, padx=14, pady=(0, 12))
 
         columns = ("id", "tier", "title", "version", "tags")
-        self.tree_memory = ttk.Treeview(frame, columns=columns, show="headings", height=12)
+        self.tree_memory = ttk.Treeview(tree_container, columns=columns, show="headings", height=14)
         self.tree_memory.heading("id", text="ID")
         self.tree_memory.heading("tier", text="Tier")
         self.tree_memory.heading("title", text="Title")
         self.tree_memory.heading("version", text="Ver")
         self.tree_memory.heading("tags", text="Tags")
 
-        self.tree_memory.column("id", width=70)
-        self.tree_memory.column("tier", width=90)
-        self.tree_memory.column("title", width=220)
-        self.tree_memory.column("version", width=45)
-        self.tree_memory.column("tags", width=180)
+        self.tree_memory.column("id", width=80)
+        self.tree_memory.column("tier", width=110)
+        self.tree_memory.column("title", width=280)
+        self.tree_memory.column("version", width=55)
+        self.tree_memory.column("tags", width=220)
 
-        self.tree_memory.pack(fill=tk.BOTH, expand=True, padx=12, pady=(0, 12))
+        sb = ttk.Scrollbar(tree_container, orient=tk.VERTICAL, command=self.tree_memory.yview, style="Vertical.TScrollbar")
+        self.tree_memory.configure(yscrollcommand=sb.set)
+
+        self.tree_memory.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        sb.pack(side=tk.RIGHT, fill=tk.Y)
 
     def _build_tab_vocab(self):
         frame = self.tab_vocab
-        tk.Label(frame, text="Dynamically Learned Subword Feature Hashing (Online SGD)", font=("Segoe UI", 11, "bold"), fg=COLOR_GREEN, bg=BG_PANEL).pack(anchor=tk.W, padx=12, pady=(10, 6))
+        tk.Label(frame, text="Dynamically Learned Subword Feature Hashing (Online SGD)", font=("Segoe UI", 11, "bold"), fg=COLOR_GREEN, bg=BG_PANEL).pack(anchor=tk.W, padx=14, pady=(12, 6))
+
+        tree_container = tk.Frame(frame, bg=BG_PANEL)
+        tree_container.pack(fill=tk.BOTH, expand=True, padx=14, pady=(0, 12))
 
         columns = ("token", "delta_x", "delta_y", "count", "category")
-        self.tree_vocab = ttk.Treeview(frame, columns=columns, show="headings", height=12)
+        self.tree_vocab = ttk.Treeview(tree_container, columns=columns, show="headings", height=14)
         self.tree_vocab.heading("token", text="Subword / Token")
         self.tree_vocab.heading("delta_x", text="ΔX (Action)")
         self.tree_vocab.heading("delta_y", text="ΔY (Reflection)")
         self.tree_vocab.heading("count", text="Observed")
         self.tree_vocab.heading("category", text="Category")
 
-        self.tree_vocab.column("token", width=140)
-        self.tree_vocab.column("delta_x", width=90)
-        self.tree_vocab.column("delta_y", width=100)
-        self.tree_vocab.column("count", width=70)
-        self.tree_vocab.column("category", width=160)
+        self.tree_vocab.column("token", width=180)
+        self.tree_vocab.column("delta_x", width=110)
+        self.tree_vocab.column("delta_y", width=120)
+        self.tree_vocab.column("count", width=85)
+        self.tree_vocab.column("category", width=200)
 
-        self.tree_vocab.pack(fill=tk.BOTH, expand=True, padx=12, pady=(0, 12))
+        sb = ttk.Scrollbar(tree_container, orient=tk.VERTICAL, command=self.tree_vocab.yview, style="Vertical.TScrollbar")
+        self.tree_vocab.configure(yscrollcommand=sb.set)
+
+        self.tree_vocab.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        sb.pack(side=tk.RIGHT, fill=tk.Y)
 
     def _build_tab_stream(self):
         frame = self.tab_stream
-        tk.Label(frame, text="Recent Telemetry Trajectories (Local Samples)", font=("Segoe UI", 11, "bold"), fg=COLOR_AMBER, bg=BG_PANEL).pack(anchor=tk.W, padx=12, pady=(10, 6))
+        tk.Label(frame, text="Recent Telemetry Trajectories (Local Samples)", font=("Segoe UI", 11, "bold"), fg=COLOR_AMBER, bg=BG_PANEL).pack(anchor=tk.W, padx=14, pady=(12, 6))
+
+        tree_container = tk.Frame(frame, bg=BG_PANEL)
+        tree_container.pack(fill=tk.BOTH, expand=True, padx=14, pady=(0, 12))
 
         columns = ("time", "prompt", "target_x", "target_y", "q")
-        self.tree_stream = ttk.Treeview(frame, columns=columns, show="headings", height=12)
+        self.tree_stream = ttk.Treeview(tree_container, columns=columns, show="headings", height=14)
         self.tree_stream.heading("time", text="Timestamp")
         self.tree_stream.heading("prompt", text="Prompt Snippet")
         self.tree_stream.heading("target_x", text="Target X*")
         self.tree_stream.heading("target_y", text="Target Y*")
         self.tree_stream.heading("q", text="Viability Q")
 
-        self.tree_stream.column("time", width=130)
-        self.tree_stream.column("prompt", width=260)
-        self.tree_stream.column("target_x", width=70)
-        self.tree_stream.column("target_y", width=70)
-        self.tree_stream.column("q", width=80)
+        self.tree_stream.column("time", width=140)
+        self.tree_stream.column("prompt", width=340)
+        self.tree_stream.column("target_x", width=80)
+        self.tree_stream.column("target_y", width=80)
+        self.tree_stream.column("q", width=90)
 
-        self.tree_stream.pack(fill=tk.BOTH, expand=True, padx=12, pady=(0, 12))
+        sb = ttk.Scrollbar(tree_container, orient=tk.VERTICAL, command=self.tree_stream.yview, style="Vertical.TScrollbar")
+        self.tree_stream.configure(yscrollcommand=sb.set)
+
+        self.tree_stream.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        sb.pack(side=tk.RIGHT, fill=tk.Y)
+
+    def _build_tab_docs(self):
+        frame = self.tab_docs
+        tk.Label(frame, text="Documentation & Subsystem Guides", font=("Segoe UI", 11, "bold"), fg=COLOR_CYAN, bg=BG_PANEL).pack(anchor=tk.W, padx=14, pady=(12, 4))
+        tk.Label(frame, text="Click any guide below to open it in your default browser or markdown reader:",
+                 font=("Segoe UI", 9), fg=TEXT_MUTED, bg=BG_PANEL).pack(anchor=tk.W, padx=14, pady=(0, 12))
+
+        docs_list = [
+            ("🌐 GitHub Repository & Online README", DOCS_REPO_URL, "Main repository with installation guides, model decision matrix, and live telemetry."),
+            ("🏗️ System Architecture & Token Economics", REPO_ROOT / "docs" / "ARCHITECTURE.md", "Complete runtime mechanics, velocity dynamics, and mathematical proof of O(N) token scaling."),
+            ("🧠 Cognitive Plane & Continuous State Z", REPO_ROOT / "docs" / "COGNITIVE_ENGINE.md", "Mathematical formulation of Z = X + iY, polar metrics R and θ, and online SGD feature hashing."),
+            ("🔄 Multi-Pass Autopilot & Gap Analysis", REPO_ROOT / "docs" / "MULTI_PASS_AUTOPILOT.md", "The Double-Pass Gold Standard (X=2.2), in-situ delta repair engine, and 20-task case study."),
+            ("📡 Telemetry & Dynamic Learning", REPO_ROOT / "docs" / "TELEMETRY_AND_LEARNING.md", "Closed-loop transcript ingestion, explicit vs. anonymous modes, and privacy boundaries."),
+            ("🛡️ Security & Permission Elevation", REPO_ROOT / "docs" / "SECURITY_AND_PERMISSIONS.md", "Pre-execution elevation protocols, security safeguards, and experimental disclaimers.")
+        ]
+
+        cards_frame = tk.Frame(frame, bg=BG_PANEL)
+        cards_frame.pack(fill=tk.BOTH, expand=True, padx=14, pady=4)
+
+        for title, target, desc in docs_list:
+            card = tk.Frame(cards_frame, bg=BG_CARD, highlightbackground=BORDER_COLOR, highlightthickness=1)
+            card.pack(fill=tk.X, pady=4)
+
+            top_line = tk.Frame(card, bg=BG_CARD)
+            top_line.pack(fill=tk.X, padx=10, pady=(6, 2))
+
+            lbl_title = tk.Label(top_line, text=title, font=("Segoe UI", 9, "bold"), fg=TEXT_PRIMARY, bg=BG_CARD)
+            lbl_title.pack(side=tk.LEFT)
+
+            btn_open = tk.Button(top_line, text="Open ↗", font=("Segoe UI", 8, "bold"),
+                                 bg=BG_PANEL, fg=COLOR_CYAN, activebackground=BG_CARD_HOVER,
+                                 activeforeground=COLOR_CYAN, relief=tk.FLAT, bd=0, padx=8, pady=2,
+                                 cursor="hand2", command=lambda t=target: self._open_doc_target(t))
+            btn_open.pack(side=tk.RIGHT)
+
+            lbl_desc = tk.Label(card, text=desc, font=("Segoe UI", 8), fg=TEXT_MUTED, bg=BG_CARD, justify=tk.LEFT)
+            lbl_desc.pack(anchor=tk.W, padx=10, pady=(0, 6))
+
+    def _open_online_docs(self):
+        webbrowser.open(DOCS_REPO_URL)
+
+    def _open_doc_target(self, target):
+        if isinstance(target, Path):
+            if target.exists():
+                webbrowser.open(target.as_uri())
+            else:
+                webbrowser.open(DOCS_REPO_URL)
+        else:
+            webbrowser.open(str(target))
 
     def _toggle_topmost(self):
         self.is_topmost = not self.is_topmost
-        self.root.attributes("-topmost", self.is_topmost)
+        # Use 1 / 0 for robust Windows Tkinter behavior
+        self.root.wm_attributes("-topmost", 1 if self.is_topmost else 0)
         if self.is_topmost:
-            self.topmost_btn.configure(text="📌 Pinned", fg=COLOR_GREEN)
+            self.root.lift()
+            self.root.focus_force()
+            self.topmost_btn.configure(text="📌 Pinned", fg="#22c55e", bg="#064e3b", relief=tk.SUNKEN)
         else:
-            self.topmost_btn.configure(text="📌 Pin", fg=TEXT_MUTED)
+            self.topmost_btn.configure(text="📌 Pin", fg=TEXT_MUTED, bg=BG_CARD, relief=tk.FLAT)
 
     def _toggle_expand(self):
         self.is_expanded = not self.is_expanded
@@ -422,6 +559,7 @@ class AutopilotGUI:
                 self._build_dashboard_panel()
             self.sidebar_frame.pack_configure(expand=False)
             self.dashboard_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+            self.root.minsize(980, 680)
             self.root.geometry(f"{DASHBOARD_WIDTH}x{DASHBOARD_HEIGHT}")
             self.expand_btn.configure(text="Compact ⤡")
             self._populate_dashboard_tables()
@@ -429,6 +567,7 @@ class AutopilotGUI:
         else:
             self.dashboard_frame.pack_forget()
             self.sidebar_frame.pack_configure(expand=True)
+            self.root.minsize(360, 600)
             self.root.geometry(f"{SIDEBAR_WIDTH}x{SIDEBAR_HEIGHT}")
             self.expand_btn.configure(text="Expand ⤢")
 
@@ -547,7 +686,7 @@ class AutopilotGUI:
             self.tree_vocab.delete(item)
         try:
             tokens = self.engine.weights.get("token_frequencies", {})
-            for tok, cnt in sorted(tokens.items(), key=lambda x: x[1], reverse=True)[:40]:
+            for tok, cnt in sorted(tokens.items(), key=lambda x: x[1], reverse=True)[:50]:
                 h = self.engine._hash_token(tok)
                 dx = self.engine.weights.get("weights_x", [0.0]*256)[h]
                 dy = self.engine.weights.get("weights_y", [0.0]*256)[h]
@@ -569,10 +708,10 @@ class AutopilotGUI:
             if samples_path.exists():
                 with open(samples_path, "r", encoding="utf-8") as f:
                     lines = f.readlines()
-                for l in reversed(lines[-25:]):
+                for l in reversed(lines[-35:]):
                     try:
                         d = json.loads(l)
-                        p_snip = d.get("prompt_snippet", "")[:45]
+                        p_snip = d.get("prompt_snippet", "")[:50]
                         self.tree_stream.insert("", tk.END, values=(
                             d.get("timestamp", "")[:19],
                             p_snip,
@@ -618,9 +757,21 @@ class AutopilotGUI:
                 if transcript_path and transcript_path.exists():
                     self.last_transcript_path = transcript_path
                     self._check_transcript_updates(transcript_path)
+
+                # Also detect if self source file has been modified (hot-reload hint)
+                try:
+                    current_mtime = os.path.getmtime(__file__)
+                    if self.self_file_mtime != 0 and current_mtime > self.self_file_mtime:
+                        self.self_file_mtime = current_mtime
+                        self.root.after(0, self._notify_source_updated)
+                except Exception:
+                    pass
             except Exception:
                 pass
             time.sleep(0.75)
+
+    def _notify_source_updated(self):
+        self.lbl_status.configure(text="Source modified! Click ⚡ Reload", fg=COLOR_AMBER)
 
     def _check_transcript_updates(self, transcript_path: Path):
         try:
@@ -666,6 +817,21 @@ class AutopilotGUI:
             self._load_initial_state()
         if self.is_expanded:
             self._populate_dashboard_tables()
+
+    def _restart_app(self):
+        """Cleanly restarts the desktop HUD application."""
+        self.running = False
+        try:
+            self.root.destroy()
+        except Exception:
+            pass
+        python = sys.executable
+        if "pythonw" in python.lower():
+            # Spawn detached pythonw process
+            import subprocess
+            subprocess.Popen([python, __file__] + sys.argv[1:], close_fds=True)
+        else:
+            os.execl(python, python, __file__, *sys.argv[1:])
 
     def _on_close(self):
         self.running = False
