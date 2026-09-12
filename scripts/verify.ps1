@@ -10,12 +10,21 @@ $checks = @(
     @{ Name = "Router Binary"; Path = Join-Path $binDir "agy_router.py" },
     @{ Name = "Project Manager Binary"; Path = Join-Path $binDir "agy_project_manager.py" },
     @{ Name = "Cognitive Engine Binary"; Path = Join-Path $binDir "cognitive_engine.py" },
+    @{ Name = "Visual HUD Binary"; Path = Join-Path $binDir "agy_status.py" },
+    @{ Name = "Audit & PR Binary"; Path = Join-Path $binDir "agy_audit.py" },
+    @{ Name = "Memory Binary"; Path = Join-Path $binDir "agy_memory.py" },
     @{ Name = "CLI Launcher (agy-route)"; Path = Join-Path $binDir "agy-route.bat" },
     @{ Name = "CLI Launcher (agy-autopilot)"; Path = Join-Path $binDir "agy-autopilot.bat" },
     @{ Name = "CLI Launcher (agy-predict)"; Path = Join-Path $binDir "agy-predict.bat" },
+    @{ Name = "CLI Launcher (agy-status)"; Path = Join-Path $binDir "agy-status.bat" },
+    @{ Name = "CLI Launcher (agy-audit)"; Path = Join-Path $binDir "agy-audit.bat" },
+    @{ Name = "CLI Launcher (agy-memory)"; Path = Join-Path $binDir "agy-memory.bat" },
     @{ Name = "Universal Launcher (agent-route)"; Path = Join-Path $binDir "agent-route.bat" },
     @{ Name = "Universal Launcher (agent-autopilot)"; Path = Join-Path $binDir "agent-autopilot.bat" },
-    @{ Name = "Universal Launcher (agent-predict)"; Path = Join-Path $binDir "agent-predict.bat" }
+    @{ Name = "Universal Launcher (agent-predict)"; Path = Join-Path $binDir "agent-predict.bat" },
+    @{ Name = "Universal Launcher (agent-status)"; Path = Join-Path $binDir "agent-status.bat" },
+    @{ Name = "Universal Launcher (agent-audit)"; Path = Join-Path $binDir "agent-audit.bat" },
+    @{ Name = "Universal Launcher (agent-memory)"; Path = Join-Path $binDir "agent-memory.bat" }
 )
 
 

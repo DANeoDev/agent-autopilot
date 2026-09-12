@@ -287,7 +287,7 @@ $$
 ### 🧬 Live Cognitive Engine Telemetry & Self-Learned State
 
 > **Engine Baseline**: $Z_{\mathrm{base}} = 2.21 + 1.04i$ | **Cognitive Energy**: $R = 2.443$ | **Attentional Phase**: $\theta = 25.1^\circ$ (Balanced Flow)
-> **Empirical Dataset**: `23` user task trajectories trained locally via Online SGD.
+> **Empirical Dataset**: `24` user task trajectories trained locally via Online SGD.
 
 #### 📊 Dynamically Discovered Vocabulary (Zero Hardcoded Dictionaries)
 
@@ -561,19 +561,36 @@ Re-use our existing foundation, but use standard time-based Glicko/WHR (no match
 - **Force current model**: *"Refactor the auth controller, use currently selected model"* ➔ Skips all subagents.
 - **Quota conservation**: *"Conserve Claude tokens for now"* ➔ Diverts Tier 4 tasks to Flash/GPT-OSS.
 
-### 4. From Any Command Line (CLI Tools)
-```bash
-# Instant model recommendation for any prompt (use agent-route or agy-route)
-agent-route "Design a new Glicko rating volatility algorithm"
+### 4. From Any Command Line (Universal CLI Tools)
 
-# JSON output for automated agent pipelines and scripts
+Agent Autopilot ships with 6 native CLI commands available globally across all terminals:
+
+```bash
+# 1. Model Routing: Instant model recommendation for any prompt
+agent-route "Design a new Glicko rating volatility algorithm"
 agent-route --json "Fix typo in variable name"
 
-# Inspect active project settings
+# 2. Project Permissions: Enable autonomous permissions for current workspace
+agent-autopilot --dir . --enable-autopilot
 agent-autopilot --dir . --status
 
-# Enable autonomous execution permissions for current workspace
-agent-autopilot --dir . --enable-autopilot
+# 3. Cognitive Engine: Predict complex pass depth (Z = X + iY) and prompt viability (Q)
+agent-predict "Refactor websocket connection and handle network timeouts"
+agent-predict --footer "Implement visual HUD and automated PR generator"
+
+# 4. Visual HUD: Interactive terminal telemetry dashboard & HTML exporter
+agent-status
+agent-status --html dashboard.html
+agent-status --watch
+
+# 5. In-Situ Gap Audit & PR Generator: Verify requirement fidelity and generate PR
+agent-audit --gap-matrix "Implement interactive HUD, PR generator, and memory"
+agent-audit --pr --save PULL_REQUEST.md
+
+# 6. Cross-Project Memory: Record and query architectural decisions across workspaces
+agent-memory record "Double-Pass Gold Standard (X=2.2)" "Execute Pass 1 batch + Pass 2 gap audit"
+agent-memory search "pass depth"
+agent-memory list
 ```
 
 ---

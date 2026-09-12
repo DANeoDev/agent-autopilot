@@ -127,6 +127,11 @@ if (Test-Path $modelsSrc) {
     Copy-Item -Path "$modelsSrc\*" -Destination $modelsTarget -Force
 }
 
+$memoryTarget = Join-Path $HOME ".gemini\autopilot\memory"
+if (!(Test-Path $memoryTarget)) {
+    New-Item -ItemType Directory -Path $memoryTarget -Force | Out-Null
+}
+
 $userPath = [System.Environment]::GetEnvironmentVariable("Path", "User")
 if ($userPath -notlike "*$binTarget*") {
     [System.Environment]::SetEnvironmentVariable("Path", "$userPath;$binTarget", "User")
@@ -152,5 +157,8 @@ Write-Host "Available CLI commands across all agent terminals:" -ForegroundColor
 Write-Host "  * agy-route / agent-route         : Classify and select optimal model" -ForegroundColor White
 Write-Host "  * agy-autopilot / agent-autopilot : Inspect or enable autonomous mode" -ForegroundColor White
 Write-Host "  * agy-predict / agent-predict     : Predict continuous complex pass depth (Z = X + iY)" -ForegroundColor White
+Write-Host "  * agy-status / agent-status       : Interactive visual HUD & cognitive dashboard" -ForegroundColor White
+Write-Host "  * agy-audit / agent-audit         : In-situ 'Is vs. Ought' gap audit & PR generator" -ForegroundColor White
+Write-Host "  * agy-memory / agent-memory       : Cross-project architectural memory & decisions" -ForegroundColor White
 Write-Host ""
 

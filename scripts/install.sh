@@ -105,7 +105,9 @@ if [ -d "$MODELS_SRC" ]; then
     mkdir -p "$MODELS_TARGET"
     cp -rf "$MODELS_SRC/"* "$MODELS_TARGET/"
 fi
-chmod +x "$BIN_TARGET/agy-route" "$BIN_TARGET/agy-autopilot" "$BIN_TARGET/agy-predict" "$BIN_TARGET/agent-route" "$BIN_TARGET/agent-autopilot" "$BIN_TARGET/agent-predict" 2>/dev/null || true
+mkdir -p "$HOME/.gemini/autopilot/memory"
+chmod +x "$BIN_TARGET/agy-route" "$BIN_TARGET/agy-autopilot" "$BIN_TARGET/agy-predict" "$BIN_TARGET/agy-status" "$BIN_TARGET/agy-audit" "$BIN_TARGET/agy-memory" 2>/dev/null || true
+chmod +x "$BIN_TARGET/agent-route" "$BIN_TARGET/agent-autopilot" "$BIN_TARGET/agent-predict" "$BIN_TARGET/agent-status" "$BIN_TARGET/agent-audit" "$BIN_TARGET/agent-memory" 2>/dev/null || true
 
 PATH_LINE="export PATH=\"\$HOME/.gemini/antigravity/bin:\$PATH\""
 for rc_file in "$HOME/.zshrc" "$HOME/.bashrc" "$HOME/.profile"; do
@@ -133,5 +135,9 @@ echo "Available CLI commands across all agent terminals:"
 echo "  * agy-route / agent-route         : Classify and select optimal model"
 echo "  * agy-autopilot / agent-autopilot : Inspect or enable autonomous mode"
 echo "  * agy-predict / agent-predict     : Predict continuous complex pass depth (Z = X + iY)"
+echo "  * agy-status / agent-status       : Interactive visual HUD & cognitive dashboard"
+echo "  * agy-audit / agent-audit         : In-situ 'Is vs. Ought' gap audit & PR generator"
+echo "  * agy-memory / agent-memory       : Cross-project architectural memory & decisions"
+echo ""
 echo ""
 

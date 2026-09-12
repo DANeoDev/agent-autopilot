@@ -84,6 +84,34 @@ def clean_user_prompt(raw_text: str) -> Optional[str]:
     return text
 
 
+def parse_transcript_user_requests(transcript_path: Path) -> List[Dict[str, Any]]:
+    """
+    Parses a transcript file and returns list of valid user prompt records
+    with timestamps and step indices.
+    """
+    if not transcript_path.exists():
+        return []
+    records = []
+    with open(transcript_path, "r", encoding="utf-8") as f:
+        for line_num, line in enumerate(f, 1):
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                step = json.loads(line)
+            except Exception:
+                continue
+            if step.get("type") == "USER_INPUT":
+                prompt = clean_user_prompt(step.get("content", ""))
+                if prompt:
+                    records.append({
+                        "step_index": step.get("step_index", line_num),
+                        "created_at": step.get("created_at", ""),
+                        "prompt": prompt
+                    })
+    return records
+
+
 def compute_ground_truth(prompt: str, viability: Dict[str, Any]) -> Tuple[float, float, List[str]]:
     """
     Computes empirical ground-truth target (X*, Y*) based on task attributes:
